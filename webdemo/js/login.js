@@ -56,7 +56,7 @@ var Login = {
 			pwd = that.$pwd.val(),
 			errorMsg = '';
 		if (account.length === 0) {
-			errorMsg = '账号不能为空';
+			errorMsg = '帐号不能为空';
 		} else if (!pwd || pwd.length < 6) {
 			errorMsg = '密码长度至少6位';
 		} else {

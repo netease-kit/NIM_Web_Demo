@@ -31,7 +31,7 @@ var register = {
 			nickname = $.trim(this.$nickname.val()),
 			errorMsg = '';
 		if (username.length === 0) {
-			errorMsg = '账号不能为空';
+			errorMsg = '帐号不能为空';
 		} else if(nickname.length===0){
 			errorMsg = '昵称不能为空';
 		}else if (!pwd || pwd.length < 6) {

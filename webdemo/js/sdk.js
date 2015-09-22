@@ -69,7 +69,7 @@ var SDKBridge = function (ctr,data) {
 				WindowsPhone:"手机版"
 			}
 			var str =obj.kicked.from;
-		    alert("你的账号于"+dateFormat(+new Date(),"HH:mm")+"被"+(map[obj.kicked.from]||"其他端")+"踢出下线，请确定帐号信息安全!");
+		    alert("你的帐号于"+dateFormat(+new Date(),"HH:mm")+"被"+(map[obj.kicked.from]||"其他端")+"踢出下线，请确定帐号信息安全!");
 		    delCookie('uid');
 		    delCookie('sdktoken');
 		    window.location.href = '/webdemo/index.html'; 		 
@@ -105,7 +105,7 @@ var SDKBridge = function (ctr,data) {
 	    	if(msgs[i].scene==="p2p"){
 	    		this.person[msgs[i].from!==userUID?msgs[i].from:msgs[i].to] = true;
 	    	}
-	    	//拿到一条数据即可记录账号
+	    	//拿到一条数据即可记录帐号
 	    	break;
 		}
 	};

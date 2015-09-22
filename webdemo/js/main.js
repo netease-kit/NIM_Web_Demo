@@ -166,7 +166,7 @@ var yunXin = {
             avatarSrc = 'images/'+user.gender+'.png'
         }
         $node.find(".j-gender").attr('src',avatarSrc);
-        $node.find(".j-username").text("账号："+user.account);
+        $node.find(".j-username").text("帐号："+user.account);
         $node.find(".j-birth").text(user.birth ===undefined?"--":user.birth||"--")
         $node.find(".j-tel").text(user.tel ===undefined?"--":user.tel||"--")
         $node.find(".j-email").text(user.email ===undefined?"--":user.email||"--")
@@ -472,7 +472,7 @@ var yunXin = {
             this.cache.updatePersonlist(this.friendData);
             this.buildContacts();
         }else{
-            this.$addFriendBox.find(".tip").html("该账号不存在，请检查你输入的账号是否正确");
+            this.$addFriendBox.find(".tip").html("该帐号不存在，请检查你输入的帐号是否正确");
             this.$addFriendBox.attr('class',"m-dialog done");          
         }
         
@@ -487,7 +487,7 @@ var yunXin = {
                 account = data.account;
             $info.find("img").attr("src",getAvatar(user.avatar));
             $info.find(".j-nickname").html(user.nick);
-            $info.find(".j-username").html("账号："+ account);
+            $info.find(".j-username").html("帐号："+ account);
             if(account == userUID){
                 this.$addFriendBox.find(".tip").html("别看了就是你自己");
                 this.$addFriendBox.attr('class',"m-dialog done");   
@@ -505,7 +505,7 @@ var yunXin = {
             }
             
         }else{
-            this.$addFriendBox.find(".tip").html("该账号不存在，请检查你输入的账号是否正确");
+            this.$addFriendBox.find(".tip").html("该帐号不存在，请检查你输入的帐号是否正确");
             this.$addFriendBox.attr('class',"m-dialog done");      
         }
     },
@@ -545,7 +545,7 @@ var yunXin = {
             avatarSrc = 'images/'+user.gender+'.png'
         }
         $node.find(".j-gender").attr('src',avatarSrc);
-        $node.find(".j-username").text("账号："+user.account);
+        $node.find(".j-username").text("帐号："+user.account);
         $node.find(".j-birth").text(user.birth ===undefined?"--":user.birth)
         $node.find(".j-tel").text(user.tel ===undefined?"--":user.tel)
         $node.find(".j-email").text(user.email ===undefined?"--":user.email)
@@ -984,7 +984,7 @@ var yunXin = {
      */
     openChatBox: function (account,type) {
         var info;
-        //根据账号跟消息类型获取消息数据
+        //根据帐号跟消息类型获取消息数据
         if(type=="p2p"){
             info = this.cache.getUserById(account);
         }else{
