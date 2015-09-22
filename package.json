@@ -1,0 +1,11 @@
+{
+  "name": "NIM_Web_Demo",
+  "version": "1.5.0",
+  "description": "",
+  "main": "app.js",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "url": "~0.11.0"
+  }
+}
