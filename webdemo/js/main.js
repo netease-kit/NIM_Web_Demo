@@ -256,14 +256,13 @@ var yunXin = {
             return;
         }
         this.mysdk.previewImage({fileInput:fileInput,callback:this.cbUploadAvatar.bind(this)})
-        this.$modifyAvatar.find(".j-uploadForm").get(0).reset();
+        this.$modifyAvatar.find(".j-choseFile").val(null);;
     },
     cbUploadAvatar:function(err,data){
         if(err){
             alert(err);
             return;
         }else{
-            debugger;
             if(data.w<300||data.h<300){
                 alert("图片长宽不能小于300")
                 return;

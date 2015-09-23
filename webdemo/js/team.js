@@ -74,7 +74,7 @@ var myTeam = {
 		var accounts = [], 
 			names = [], 
 			$items = $('#j-addedUserList ul li'),
-			teamId = this.$teamInfo.data('team-id'), 
+			teamId = this.addTag&&this.$teamInfo.data('team-id'), 
 			that = this, 
 			type = 0;
 		if($items.length===0){
@@ -176,8 +176,9 @@ var myTeam = {
 						}
 					}
 				});
+				that.addTag = true;
 			} else {
-				that.$teamInfo.data('team-id', '');
+				that.addTag = false;
 			}
 			for (var i = 0, l = list.length; i < l; ++i) {
 				if (list[i].uid !== userUID) { // 除自己以外

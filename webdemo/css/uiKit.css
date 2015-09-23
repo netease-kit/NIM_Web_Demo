@@ -1,0 +1,134 @@
+.m-panel .emoji {
+	width: 20px;
+	height: 20px;
+	vertical-align: middle;
+	float: none;
+}
+.m-panel .empty{
+    padding: 10px 5px;
+}
+.m-panel .list {
+    height: 100%;
+    width: 100%;
+    position: relative;
+    overflow-y: auto;
+    background-color: #fff;
+    border-radius: 0 0 5px 5px;
+}
+.m-panel .list>p, .m-panel .list>ul>p {
+    padding: 10px;
+}
+.m-panel li,.m-panel .item{
+    clear:both;
+    border-bottom:1px solid #eaeeef;
+    overflow:hidden;
+    height:61px;
+    padding:8px 10px;
+    box-sizing:border-box;
+    -webkit-box-sizing:border-box;
+    -moz-box-sizing:border-box;
+    cursor:default;
+    cursor: pointer;
+}
+.m-panel li:hover, .teams li:hover,.m-panel .item::hover{
+    background-color: #f5f5f5;
+}
+.m-panel li.active,.m-panel .item.active{
+    background-color: #f5f5f5;
+}
+.m-panel li.active .count{
+    display: none;
+}
+.m-panel li img,.m-panel .item img{
+    float: left;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    -ms-border-radius: 50%;
+}
+.m-panel .text {
+    margin-left: 60px;
+    padding:3px 0;
+    position: relative;
+    height: 45px;
+    overflow: hidden
+}
+.m-panel .tag{
+    float: left;
+    line-height: 40px;
+    margin-left:16px; 
+}
+.m-panel .text span, .m-panel .first-msg {
+    width: 60%;
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-text-overflow: ellipsis;
+    -moz-text-overflow: ellipsis;
+    -ms-text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.m-panel .text .time{
+    position: absolute;
+    right:0;
+    top:5px;
+    font-size: 12px;
+    color: #999;
+}
+.m-panel .text .nick {
+    line-height: 61px;
+    height:61px;
+    font-size: 13px;
+    color:#999;
+    margin: -11px 0;
+}
+.m-panel .text .nick, .m-panel .text .message {
+    position: relative;
+    color:#666;
+}
+.m-panel .text .nick span, .m-panel .text .message span {
+    display: inline-block;
+    width: 80%;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    -webkit-text-overflow: ellipsis;
+    -moz-text-overflow: ellipsis;
+    -ms-text-overflow: ellipsis;
+    overflow: hidden;
+}
+.m-panel .text .nick time {
+    position: absolute;
+    right: 0;
+    top: 0;
+    color:#aaa;
+}
+.m-panel .text .first-msg {
+    display: inline-block;
+    width: 80%;
+    color:#6b8299;
+    font-size: 12px;
+    height: 20px;
+    line-height: 20px;
+}
+.m-panel .text p{
+    height: 20px;
+}
+
+.m-panel .text .message span {
+    width: 80%;
+}
+.m-panel .text .count {
+    position: absolute;
+    background-color: #f24c3d;
+    display: inline-block;
+    font-size: 12px;
+    color: #fff;
+    border-radius: 10px;
+    right: 0;
+    top: 24px;
+    text-align: center;
+    padding: 0 5px;
+    width: 20px;
+}
