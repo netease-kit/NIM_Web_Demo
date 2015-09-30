@@ -35,7 +35,7 @@ var notification = {
 	* @param team: 群（普通/高级）对象
 	*/
 	addMember: function(team) {
-		if(!this.cache.hasTeam(team)){
+		if(!this.cache.hasTeam(team.teamId)){
 			this.cache.addTeam(team);
 		}
 	},

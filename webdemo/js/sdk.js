@@ -13,8 +13,8 @@ var SDKBridge = function (ctr,data) {
 	this.cache = data;
 	this.nim = new NIM({
 		debug: true || { api: 'info', style: 'font-size:14px;color:blue;background-color:rgba(0,0,0,0.1)' },
-        appKey: 'fe416640c8e8a72734219e1847ad2547',//测试
-        // appKey: '45c6af3c98409b18a84451215d0bdd6e',
+        // appKey: 'fe416640c8e8a72734219e1847ad2547',//测试
+        appKey: '45c6af3c98409b18a84451215d0bdd6e',
         account: userUID,
         token: sdktoken,
         onconnect: onConnect.bind(this),
@@ -29,6 +29,7 @@ var SDKBridge = function (ctr,data) {
         onsyncteammembersdone: onSyncTeamMembersDone.bind(this),
         onsyncdone: onSyncDone.bind(this),
         onmsg: onMsg.bind(this),
+        onmyinfo:onMyInfo.bind(this),
         onsysmsg: onSysMsg.bind(this),
         oncustommsg: onCustomMsg.bind(this),
         oncreateteam: onCreateTeam.bind(this),
@@ -200,6 +201,11 @@ var SDKBridge = function (ctr,data) {
 		for(var i = 0;i<data.length;i++){
 			this.person[data[i]] = true;
 		}
+	};
+
+	function onMyInfo(data){
+		this.cache.updatePersonlist(data);
+		this.controller.showMe();
 	};
 	function onSyncCreateteam(data){
 		this.cache.addTeam(data);
@@ -426,18 +432,18 @@ SDKBridge.prototype.updateMyAvatar = function(avatar,callback){
 	});
 }
 
-SDKBridge.prototype.thumbnailImage = function (options) {
-	return this.nim.thumbnailImage({
-		url:options.url,
-		mode:options.mode,
-		width:options.width,
-		height:options.height
-	})
-}
+// SDKBridge.prototype.thumbnailImage = function (options) {
+// 	return this.nim.thumbnailImage({
+// 		url:options.url,
+// 		mode:options.mode,
+// 		width:options.width,
+// 		height:options.height
+// 	})
+// }
 
-SDKBridge.prototype.cropImage = function(option){
-	return this.nim.cropImage(option);
-}
+// SDKBridge.prototype.cropImage = function(option){
+// 	return this.nim.cropImage(option);
+// }
 
 SDKBridge.prototype.previewImage = function(option){
 	this.nim.previewFile({

@@ -133,7 +133,7 @@ var yunXin = {
         this.$modifyAvatar.delegate('.j-choseFile, .j-reupload', 'click', this.doClickModifyAvatar.bind(this));
         this.$modifyAvatar.delegate('.j-save', 'click', this.doSaveAvatar.bind(this));
         this.$modifyAvatar.delegate('.j-upload','change', this.viewAvatar.bind(this));
-        $("#datepicker").datepicker();
+        $("#datepicker").datepicker({yearRange:"1900:2015"});
     },
 
     //获取用户信息
@@ -163,7 +163,10 @@ var yunXin = {
         $node.find(".j-nickname").text(user.nick);
         var avatarSrc="";
         if(user.gender&&user.gender!=="unknown"){
-            avatarSrc = 'images/'+user.gender+'.png'
+            avatarSrc = 'images/'+user.gender+'.png';
+            $node.find(".j-gender").removeClass("hide");
+        }else{
+            $node.find(".j-gender").addClass("hide");
         }
         $node.find(".j-gender").attr('src',avatarSrc);
         $node.find(".j-username").text("帐号："+user.account);
@@ -256,7 +259,6 @@ var yunXin = {
             return;
         }
         this.mysdk.previewImage({fileInput:fileInput,callback:this.cbUploadAvatar.bind(this)})
-        this.$modifyAvatar.find(".j-choseFile").val(null);;
     },
     cbUploadAvatar:function(err,data){
         if(err){
@@ -271,69 +273,39 @@ var yunXin = {
         }
     },
     showPreAvatar:function(url){
-         var that = this,
+        var that = this,
+            preUrl,
             $choseFileCtn = this.$modifyAvatar.find(".choseFileCtn"),
             $preBig = this.$modifyAvatar.find(".big img"),
             $preSmall = this.$modifyAvatar.find(".small img"),
             $cropImgContainer = $('#cropImg'),
-            $cropImg = $cropImgContainer.find("img"),
-            c = {"x":50,"y":50,"x2":250,"y2":250,"w":200,"h":200};
+            $cropImg = $cropImgContainer.find("img");
         $choseFileCtn.addClass("hide");
-        this.avatarUrl = this.mysdk.thumbnailImage({
-            url:url,
-            mode:"crop",
-            width:300,
-            height:300
-        })
-        $preBig.attr("src",this.avatarUrl)
-        $preSmall.attr("src",this.avatarUrl)
-        $cropImg.attr("src",this.avatarUrl)
-        if(!!this.modifyAvatar){
-            this.modifyAvatar.enable();
-            this.modifyAvatar.setSelect([50,50,250,250])
-        }else{
-            $cropImgContainer.Jcrop({
-                                    bgFade: true,
-                                    allowSelect:false,
-                                    setSelect: [c.x,c.y,c.x2,c.y2],
-                                    aspectRatio:1,
-                                    onChange: updatePreview,
-                                    onSelect: updatePreview,
-                                },function(){
-                                    that.modifyAvatar = this;
-                                });        
-        }
-        function updatePreview(c){
-            that.corpParameters = c;
-            $preBig.css({
-                width:160*300/c.w,
-                height:160*300/c.h,
-                marginLeft: '-' + c.x*160/c.w + 'px',
-                marginTop: '-' + c.y*160/c.h+ 'px'
-            });
-            $preSmall.css({
-                width:40*300/c.w,
-                height:40*300/c.h,
-                marginLeft: '-' + c.x*40/c.w + 'px',
-                marginTop: '-' + c.y*40/c.h + 'px'
-            });
-        }
+        this.avatarUrl =url;
+        preUrl = url+"?imageView&thumbnail=300y300";
+        $preBig.attr("src",preUrl);
+        $preSmall.attr("src",preUrl);
+        $cropImg.attr("src",preUrl);
+         $preBig.css({
+            width:160,
+            height:160
+        });
+        $preSmall.css({
+            width:40,
+            height:40
+        });
     },
     doClickModifyAvatar:function(){
+        //置空节点避免2次上传无响应
+        this.$modifyAvatar.find(".j-uploadForm").get(0).reset();
+        this.$modifyAvatar.find(".j-choseFile").val(null);
         this.$modifyAvatar.find(".j-upload").click();
 
     },
     doSaveAvatar:function(){
         var url;
         if(!!this.avatarUrl){
-            url = this.mysdk.cropImage({
-                url: this.avatarUrl,
-                x: this.corpParameters.x,
-                y: this.corpParameters.y,
-                width: this.corpParameters.w,
-                height: this.corpParameters.h
-            });
-            this.mysdk.updateMyAvatar(url,this.cbSaveMyAvatar.bind(this))
+            this.mysdk.updateMyAvatar(this.avatarUrl,this.cbSaveMyAvatar.bind(this))
         }else{
             alert("请上传一张头像");
         }
@@ -431,7 +403,7 @@ var yunXin = {
     beginChat:function(){
         var account = $.trim(this.$addFriendBox.find(".j-account").val().toLowerCase());
         this.hideAddFriend();
-        this.doChat(account,"p2p");
+        this.openChatBox(account,"p2p");
     },
     resetSearchFriend:function(){
         this.$addFriendBox.attr('class',"m-dialog");
@@ -839,7 +811,7 @@ var yunXin = {
 
             } 
             this.friends = new NIMUIKit.FriendList(options);
-            this.friends.inject(this.$contacts);
+            this.friends.inject(this.$contacts.get(0));
         }else{
             this.friends.update(data);
         }     
@@ -866,7 +838,7 @@ var yunXin = {
 
             } 
             this.sessions = new NIMUIKit.SessionList(options);
-            this.sessions.inject(this.$conversations);
+            this.sessions.inject(this.$conversations.get(0));
         }else{
             this.sessions.update(data);
         }           		
@@ -888,7 +860,7 @@ var yunXin = {
 
             } 
             this.teams = new NIMUIKit.TeamList(options);
-            this.teams.inject($('#j-teams'));
+            this.teams.inject($('#j-teams').get(0));
         }else{
             this.teams.update(data);
         }                   

@@ -115,7 +115,7 @@ var appUI = {
         for(var i = 0;i<data.length;i++){
             var user = cache.getUserById(data[i]); 
             html += ['<li class="items f-cb">',
-                        '<img src="'+getAvatar(user.account)+'" class="head">',
+                        '<img src="'+getAvatar(user.avatar)+'" class="head">',
                         '<span class="nick">'+user.nick+'</span>',
                         '<button class="btn radius4px btn-ok j-rm" data-id="'+user.account+'">解除</button>',
                     '</li>'].join('');

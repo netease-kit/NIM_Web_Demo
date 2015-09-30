@@ -285,6 +285,7 @@ html, body {
 }
 .item-you .img,.item-me .img{
     width: 40px;
+    height: 40px;
 }
 .msg {
     position: relative;
@@ -619,6 +620,7 @@ html, body {
     float: left;
     width: 56px;
     height: 56px;
+    border-radius: 50%;
 }
 .m-dialog .info .desc{
     float: left;
@@ -977,6 +979,7 @@ html, body {
     float: left;
     width: 40px;
     height: 40px;
+    border-radius: 50%;
 }
 .m-blacklist .items .nick{
     float: left;
@@ -1062,7 +1065,7 @@ html, body {
     right: 90px;
 }
 .m-modifyAvatar .small .img{
-    width: 40px;
+width: 40px;
     height: 40px;
     background-color: #e4e9ee;
     overflow: hidden;

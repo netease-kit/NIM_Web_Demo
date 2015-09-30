@@ -76,7 +76,7 @@ var Login = {
 			'client_type': 1
 		};
 		$.ajax({
-			url: 'https://apptest.netease.im/api/token',
+			url: 'https://app.netease.im/api/token',
 			type: 'POST',
 			data: JSON.stringify(params),
 			contentType: 'application/json',

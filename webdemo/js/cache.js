@@ -101,6 +101,7 @@ var Cache = (function(){
 			this.sessions.unshift(sessions);
 			return;
 		}
+		this.sessions = [];
 		for (var i = 0; i <sessions.length; i++) {
 			this.sessions.push(sessions[i].scene +"-"+sessions[i].to);
 		};

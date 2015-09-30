@@ -63,9 +63,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var uiKit = {};
+
 	/**
-	 * module
+	 * list
 	 */
+
 	uiKit.SessionList = __webpack_require__(1);
 	uiKit.FriendList = __webpack_require__(4);
 	uiKit.TeamList = __webpack_require__(5);
@@ -107,8 +109,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	var SessionList = function(options){
 		var parent = options.parent,
 			data = options.data,
-			cbClickList = options.onclickitem||function(account,type){console.log('account:'+account+'---type:'+type)},
-			cbClickPortrait = options.onclickavatar||function(account,type){console.log('account:'+account+'---type:'+type)};
+			cbClickList = options.onclickitem||function(account,type){console.log('account:'+account+'---type:'+type);},
+			cbClickPortrait = options.onclickavatar||function(account,type){console.log('account:'+account+'---type:'+type);};
 		ACCOUNT = data.account;
 		this._body = document.createElement('ul');
 		this._body.className = options.clazz||"m-panel" +" j-session";	
@@ -120,13 +122,13 @@ return /******/ (function(modules) { // webpackBootstrap
 				type,
 	            target = evt.srcElement||evt.target;
 	        while(self!==target){
-	        	if (target.tagName.toLowerCase() == "img") {
+	        	if (target.tagName.toLowerCase() === "img") {
 	                var item = target.parentNode;
 	                account = item.getAttribute("data-account");
 	                type = item.getAttribute("data-type");
 	                cbClickPortrait(account,type);
 	                return;
-	            }else if(target.tagName.toLowerCase() == "li"){
+	            }else if(target.tagName.toLowerCase() === "li"){
 	        	 	account = target.getAttribute("data-account");
 	                type = target.getAttribute("data-type");
 	                util.removeClass(util.getNode(".j-session li.active"),'active');
@@ -139,7 +141,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	            target = target.parentNode;
 	        }    
-		})
+		});
 		this.update(data);
 		if(!!parent){
 			this.inject(parent);
@@ -153,8 +155,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @return {Void}      
 	 */
 	SessionList.prototype.inject = function(node){
-		node[0].innerHTML = "";
-		node[0].appendChild(this._body);
+	    var injectNode = util.getNode(node);
+		injectNode.innerHTML = "";
+		injectNode.appendChild(this._body);
 	};
 
 	/**
@@ -168,16 +171,16 @@ return /******/ (function(modules) { // webpackBootstrap
 			unreadMsg = data.unreadmsgs,
 			info = data.userinfo,
 			team = data.teamInfo,
-			msg,nick,type,avatar,time,who,team,
+			msg,nick,type,avatar,time,who,
 			count,isShow;
 		if (msgs.length === 0) {
 			html += '<p class="empty">暂无最近联系人哦</p>';
 		}else{
 			for (var i = 0;i<msgs.length;i++) {
-				msg = msgs[i],
-				who = switchConversationUser(msg),
-	            time = msg.time,   
-	            isShow = false,
+				msg = msgs[i];
+				who = switchConversationUser(msg);
+	            time = msg.time;
+	            isShow = false;
 	            count = 0;
 				if (unreadMsg.hasOwnProperty(who)) {
 					count = unreadMsg[who].count > 99 ? '99+' : unreadMsg[who].count;
@@ -223,8 +226,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	* @param msg：消息对象
 	*/
 	var buildSessionMsg = function(msg,info,account) {
-	    var text = (msg.scene!='p2p'?msg.fromNick+":":""), type = msg.type;
-	    if (!/text|image|file|audio|video|geo|custom|notification/i.test(type)) return '';
+	    var text = (msg.scene!=='p2p'?msg.fromNick+":":""), type = msg.type;
+	    if (!/text|image|file|audio|video|geo|custom|notification/i.test(type)){
+	        return '';
+	    }
 	    switch (type) {
 	        case 'text':
 	            text += util.safeHtml(msg.text);
@@ -271,7 +276,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            break;
 	    }
 	    return text;
-	}
+	};
 
 
 
@@ -291,17 +296,29 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 	var CONST  = __webpack_require__(3),
 		emoji = CONST.emoji;
-	var util = {
-		getNode: function(str){
-			return document.querySelector(str);
-		},
 
+	var util = {
+		getNode: function(ipt){
+			if(this.isString(ipt)){
+				return document.querySelector(ipt);	
+			}else if(this.isElement(ipt)){
+				return ipt;
+			}else{
+				console.error("输入参数必须为node||String");
+			}
+		},
 		getNodes: function(string){
 			return document.querySelectorAll(string);
 		},
 		isString: function(data){
 	        return typeof(data)==='string';
 	    },
+	    isElement:function(obj){
+	    	return !!(obj && obj.nodeType === 1);
+	    },
+	    isArray:Array.isArray|| function(obj) {
+			return Object.prototype.toString.call(obj) === '[object Array]';
+	  	},
 
 		addEvent: function(node,type,callback){
 			if(window.addEventListener){
@@ -313,7 +330,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 		hasClass: function(elem, cls){
 		    cls = cls || '';
-		    if(cls.replace(/\s/g, '').length == 0) return false;
+		    if(cls.replace(/\s/g, '').length === 0){
+		    	return false;
+		    }
 		    return new RegExp(' ' + cls + ' ').test(' ' + elem.className + ' ');
 		},
 
@@ -338,15 +357,15 @@ return /******/ (function(modules) { // webpackBootstrap
 		    }
 		},
 		safeHtml: (function(){
-		    var _reg = /<br\/?>$/,
-		        _map = {
-		            r:/\<|\>|\&|\r|\n|\s|\'|\"/g,
+		    var reg = /<br\/?>$/,
+		        map = {
+		            r:/<|>|\&|\r|\n|\s|\'|\"/g,
 		            '<':'&lt;','>':'&gt;','&':'&amp;',' ':'&nbsp;',
 		            '"':'&quot;',"'":'&#39;','\n':'<br/>','\r':''
 		        };
-		    return function(_content){
-		        _content = _$encode(_map,_content);
-		        return _content.replace(_reg,'<br/><br/>');
+		    return function(content){
+		        content = _$encode(map,content);
+		        return content.replace(reg,'<br/><br/>');
 		    };
 		})(),
 		getAvatar:function(url){
@@ -354,7 +373,7 @@ return /******/ (function(modules) { // webpackBootstrap
 			if(re.test(url)){
 				return url;
 			}else{
-				return "images/default-icon.png"
+				return "images/default-icon.png";
 			}
 		},
 		/**
@@ -379,12 +398,14 @@ return /******/ (function(modules) { // webpackBootstrap
 		transNotification:function(item,info,myAccount) {
 		    var type = item.attach.type,
 		        from = (item.from === myAccount?true:false),
-		        str;
+		        str,
+		        accounts,
+		        member=[],
+		        i;
 		    switch (type) {
 		        case 'addTeamMembers':
-		            var accounts = item.attach.accounts,
-		                member=[];
-		            for(var i = 0;i<accounts.length;i++){
+		            accounts = item.attach.accounts;
+		            for(i = 0;i<accounts.length;i++){
 		                if(accounts[i]===myAccount){
 		                    member.push("你");
 		                }else{
@@ -394,12 +415,10 @@ return /******/ (function(modules) { // webpackBootstrap
 		            }
 		            member =  member.join(",");
 		            str = from?"你将"+member+"加群":member+"加入群";
-		            return str;
 		            break;
 		        case 'removeTeamMembers':
-		            var accounts = item.attach.accounts,
-		                member=[];
-		            for(var i = 0;i<accounts.length;i++){
+		            accounts = item.attach.accounts;
+		            for(i = 0;i<accounts.length;i++){
 		                if(accounts[i]===myAccount){
 		                    member.push("你");
 		                }else{
@@ -408,23 +427,20 @@ return /******/ (function(modules) { // webpackBootstrap
 		            }
 		            member =  member.join(",");
 		            str = from?("你将"+member+"移除群"):(member+"被移除群");
-		            return str;
 		            break;
 		        case 'leaveTeam':
-		            var member =  (item.from ===myAccount)?"你":item.fromNick;
+		            member =  (item.from ===myAccount)?"你":item.fromNick;
 		            str = member+"退出了群";
-		            return str;
 		            break;
 		        case 'updateTeam':
 		            var user =  (item.from ===myAccount)?"你":(item.fromNick||item.from);
 		            str = user+"更新群名为"+ item.attach.team.name;
-		            return str;
 		            break;
 		        default:
-		            return '群消息';
+		            str = '群消息';
 		            break;
-
 		    }
+		    return str;
 		},
 		/**
 		 * 时间戳转化为日期（用于消息列表）
@@ -441,17 +457,17 @@ return /******/ (function(modules) { // webpackBootstrap
 		        time.setDate(1);
 		        var yearDay = time.getTime();
 		        return [today,yearDay];
-		    }
+		    };
 		    return function(time){
 		        var check = getDayPoint(new Date());
 		        if (time>=check[0]){
-		            return dateFormat(time,"HH:mm")
+		            return dateFormat(time,"HH:mm");
 		        }else if(time<check[0]&&time>=check[1]){
-		            return dateFormat(time,"MM-dd HH:mm")
+		            return dateFormat(time,"MM-dd HH:mm");
 		        }else{
-		            return dateFormat(time,"yyyy-MM-dd HH:mm")
+		            return dateFormat(time,"yyyy-MM-dd HH:mm");
 		        }
-		    }
+		    };
 		})(),
 		/**
 		 * 时间戳转化为日期(用于左边面板)
@@ -468,11 +484,11 @@ return /******/ (function(modules) { // webpackBootstrap
 		        time.setDate(1);
 		        var yearDay = time.getTime();
 		        return [today,yearDay];
-		    }
+		    };
 		    return function(time){
 		        var check = getDayPoint(new Date());
 		        if (time>=check[0]){
-		            return dateFormat(time,"HH:mm")
+		            return dateFormat(time,"HH:mm");
 		        }else if(time>=check[0]-60*1000*60*24){
 		            return "昨天";
 		        }else if(time>=(check[0]-2*60*1000*60*24)){
@@ -480,13 +496,13 @@ return /******/ (function(modules) { // webpackBootstrap
 		        }else if(time>=(check[0]-7*60*1000*60*24)){
 		            return "星期"+dateFormat(time,"w");
 		        }else if(time>=check[1]){
-		            return dateFormat(time,"MM-dd")
+		            return dateFormat(time,"MM-dd");
 		        }else{
-		            return dateFormat(time,"yyyy-MM-dd")
+		            return dateFormat(time,"yyyy-MM-dd");
 		        }
-		    }
+		    };
 		})()
-	}
+	};
 	var _$encode = function(_map,_content){
 	    _content = ''+_content;
 	    if (!_map||!_content){
@@ -509,15 +525,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	        _cmon = ['一','二','三','四','五','六','七','八','九','十','十一','十二'],
 	        _emon = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sept','Oct','Nov','Dec'];
 	    var _fmtnmb = function(_number){
-	        _number = parseInt(_number)||0;
+	        _number = parseInt(_number,10)||0;
 	        return (_number<10?'0':'')+_number;
 	    };
 	    var _fmtclc = function(_hour){
 	        return _hour<12?0:1;
 	    };
 	    return function(_time,_format,_12time){
-	        if (!_time||!_format)
-	            return '';
+	        if (!_time||!_format){
+	        	 return '';
+	        }    
 	        _time = new Date(_time);
 	        _map.yyyy = _time.getFullYear();
 	        _map.yy   = (''+_map.yyyy).substr(2);
@@ -578,6 +595,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var util = __webpack_require__(2);
 
 	var ACCOUNT;
+
 	/**
 	 * 好友列表控件
 	 * @param {Object} options 控件初始化参数
@@ -590,8 +608,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	var FriendList = function(options){
 		var parent = options.parent,
 			data = options.data,
-			cbClickList = options.onclickitem||function(account,type){console.log('account:'+account+'---type:'+type)},
-			cbClickPortrait = options.onclickavatar||function(account,type){console.log('account:'+account+'---type:'+type)};
+			cbClickList = options.onclickitem||function(account,type){console.log('account:'+account+'---type:'+type);},
+			cbClickPortrait = options.onclickavatar||function(account,type){console.log('account:'+account+'---type:'+type);};
 		ACCOUNT = data.account;
 		this._body = document.createElement('ul');
 		this._body.className = options.clazz||"m-panel" +" j-friend";	
@@ -603,13 +621,13 @@ return /******/ (function(modules) { // webpackBootstrap
 				type,
 	            target = evt.srcElement||evt.target;
 	        while(self!==target){
-	        	if (target.tagName.toLowerCase() == "img") {
+	        	if (target.tagName.toLowerCase() === "img") {
 	                var item = target.parentNode;
 	                account = item.getAttribute("data-account");
 	                type = item.getAttribute("data-type");
 	                cbClickPortrait(account,type);
 	                return;
-	            }else if(target.tagName.toLowerCase() == "li"){
+	            }else if(target.tagName.toLowerCase() === "li"){
 	        	 	account = target.getAttribute("data-account");
 	                type = target.getAttribute("data-type");
 	                util.removeClass(util.getNode(".j-friend li.active"),'active');
@@ -619,7 +637,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	            target = target.parentNode;
 	        }    
-		})
+		});
 		this.update(data);
 		if(!!parent){
 			this.inject(parent);
@@ -633,8 +651,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @return {Void}      
 	 */
 	FriendList.prototype.inject = function(node){
-		node[0].innerHTML = "";
-		node[0].appendChild(this._body);
+		var injectNode = util.getNode(node);
+		injectNode.innerHTML = "";
+		injectNode.appendChild(this._body);
 	};
 
 	/**
@@ -698,8 +717,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	var TeamList = function(options){
 		var parent = options.parent,
 			data = options.data,
-			cbClickList = options.onclickitem||function(account,type){console.log('account:'+account+'---type:'+type)},
-			cbClickPortrait = options.onclickavatar||function(account,type){console.log('account:'+account+'---type:'+type)};
+			cbClickList = options.onclickitem||function(account,type){console.log('account:'+account+'---type:'+type);},
+			cbClickPortrait = options.onclickavatar||function(account,type){console.log('account:'+account+'---type:'+type);};
 
 		this._body = document.createElement('ul');
 		this._body.className = options.clazz||"m-panel" +" j-team";	
@@ -711,13 +730,13 @@ return /******/ (function(modules) { // webpackBootstrap
 				type,
 	            target = evt.srcElement||evt.target;
 	        while(self!==target){
-	        	if (target.tagName.toLowerCase() == "img") {
+	        	if (target.tagName.toLowerCase() === "img") {
 	                var item = target.parentNode;
 	                account = item.getAttribute("data-account");
 	                type = item.getAttribute("data-type");
 	                cbClickPortrait(account,type);
 	                return;
-	            }else if(target.tagName.toLowerCase() == "li"){
+	            }else if(target.tagName.toLowerCase() === "li"){
 	        	 	account = target.getAttribute("data-account");
 	                type = target.getAttribute("data-type");
 	                util.removeClass(util.getNode(".j-team li.active"),'active');
@@ -727,12 +746,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	            target = target.parentNode;
 	        }    
-		})
+		});
 		this.update(data);
 		if(!!parent){
 			this.inject(parent);
 		}
 	};
+
 	/** --------------------------public------------------------------ */
 
 	/**
@@ -741,8 +761,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @return {Void}      
 	 */
 	TeamList.prototype.inject = function(node){
-		node[0].innerHTML = "";
-		node[0].appendChild(this._body);
+		var injectNode = util.getNode(node);
+	    injectNode.innerHTML = "";
+	    injectNode.appendChild(this._body);
 	};
 
 	/**
@@ -756,17 +777,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	        flag1 = false,
 	        flag2 = false,
 	        html = '',
-	        data = data.teams;
-	        if (data && data.length > 0) {
-	            for (var i = 0, l = data.length; i < l; ++i) {
-	                if (data[i].type === 'normal') {
+	        teams = data.teams;
+	        if (teams && teams.length > 0) {
+	            for (var i = 0, l = teams.length; i < l; ++i) {
+	                if (teams[i].type === 'normal') {
 	                    flag1 = true;
-	                    tmp1 += '<li data-gtype="normal" data-type="team" data-account="' + data[i].teamId + '"><img src="images/normal.png"/><div class="text">';
-	                    tmp1 += '<p class="nick"><span>' + data[i].name||data[i].teamId + '</span><b class="hide count"></b></p><p class="first-msg"></p></div></li>';
-	                } else if (data[i].type === 'advanced') {
+	                    tmp1 += '<li data-gtype="normal" data-type="team" data-account="' + teams[i].teamId + '"><img src="images/normal.png"/><div class="text">';
+	                    tmp1 += '<p class="nick"><span>' + teams[i].name||teams[i].teamId + '</span><b class="hide count"></b></p><p class="first-msg"></p></div></li>';
+	                } else if (teams[i].type === 'advanced') {
 	                    flag2 = true;
-	                    tmp2 += '<li data-gtype="advanced" data-type="team" data-account="' + data[i].teamId + '"><img src="images/advanced.png"/><div class="text">';
-	                    tmp2 += '<p class="nick"><span>' + data[i].name||data[i].teamId + '</span><b class="hide count"></b></p><p class="first-msg"></p></div></li>';
+	                    tmp2 += '<li data-gtype="advanced" data-type="team" data-account="' + teams[i].teamId + '"><img src="images/advanced.png"/><div class="text">';
+	                    tmp2 += '<p class="nick"><span>' + teams[i].name||teams[i].teamId + '</span><b class="hide count"></b></p><p class="first-msg"></p></div></li>';
 	                }
 	            }
 	            tmp1 += '</ul></div>';
