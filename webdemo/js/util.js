@@ -297,7 +297,7 @@ var transTime2 = (function(){
         var today = time.getTime();
         time.setMonth(1);
         time.setDate(1);
-        yearDay = time.getTime();
+        var yearDay = time.getTime();
         return [today,yearDay];
     }
     return function(time){
