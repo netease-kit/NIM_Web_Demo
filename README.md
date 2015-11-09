@@ -1,5 +1,5 @@
 #网易云信web demo简介
-网易云信demo工程基于网易云信[webSDK](http://dev.netease.im/docs/index.php?t=web&md=web)，演示了SDK聊天，群组等功能。用户可参照该demo，将网易云信SDK接入自己的app。
+网易云信demo工程基于网易云信[webSDK](http://dev.netease.im/docs?doc=web)，演示了SDK聊天，群组等功能。用户可参照该demo，将网易云信SDK接入自己的app。
 
 ##预览demo
 将工程克隆到本地，使用静态服务启动本工程。
