@@ -325,10 +325,10 @@ var transTime2 = (function(){
 function buildSender(msg) {
     var sender = '';
     if (msg.from === msg.to) {
-        if (msg.fromClientType) {
-            sender = 'you';
+        if (msg.fromClientType==="Web") {
+             sender = 'me';
         } else {
-            sender = 'me';
+           sender= 'you';
         }
     } else {
         if (msg.from === userUID && !msg.fromClientType) {

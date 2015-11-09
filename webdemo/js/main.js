@@ -118,6 +118,9 @@ var yunXin = {
         this.$blacklist.delegate('.j-close', 'click', this.hideBlacklist.bind(this));
         this.$blacklist.delegate('.items .j-rm', 'click', this.removeFromBlacklist);
 
+        //我的手机
+        $("#myPhone").on('click',this.sendToMyPhone.bind(this));
+
         $("#j-cloudMsgContainer").delegate('.j-mbox','click',this.playAudio);
         $("#j-chatContent").delegate('.j-mbox','click',this.playAudio);
 
@@ -248,9 +251,9 @@ var yunXin = {
         if(!!this.modifyAvatar){
             this.modifyAvatar.disable();     
         }
-        this.$modifyAvatar.find(".big img").attr("src","");
-        this.$modifyAvatar.find(".small img").attr("src","");
-        $('#cropImg img').attr("src","");
+        this.$modifyAvatar.find(".big img").attr("src","").addClass("hide");
+        this.$modifyAvatar.find(".small img").attr("src","").addClass("hide");
+        $('#cropImg img').attr("src","").addClass("hide");
         this.$modifyAvatar.find(".choseFileCtn").removeClass("hide");
     },
     viewAvatar:function(){
@@ -283,9 +286,9 @@ var yunXin = {
         $choseFileCtn.addClass("hide");
         this.avatarUrl =url;
         preUrl = url+"?imageView&thumbnail=300y300";
-        $preBig.attr("src",preUrl);
-        $preSmall.attr("src",preUrl);
-        $cropImg.attr("src",preUrl);
+        $preBig.attr("src",preUrl).removeClass("hide");
+        $preSmall.attr("src",preUrl).removeClass("hide");
+        $cropImg.attr("src",preUrl).removeClass("hide");
          $preBig.css({
             width:160,
             height:160
@@ -346,8 +349,8 @@ var yunXin = {
                 $(".m-devices").html("正在使用云信电脑版")
                 $("#j-devices .pc").removeClass("hide");
                 $("#j-devices .mobile").addClass("hide");
-                mysdk.mobileDeviceId = false;
-                mysdk.pcDeviceId = pc.deviceId;
+                this.mysdk.mobileDeviceId = false;
+                this.mysdk.pcDeviceId = pc.deviceId;
             }else{
                 $(".m-devices").html("正在使用云信手机版")
                 $("#j-devices .mobile").removeClass("hide");
@@ -514,6 +517,8 @@ var yunXin = {
         var avatarSrc ="";
         if(user.gender&&user.gender!=="unknown"){
             avatarSrc = 'images/'+user.gender+'.png'
+        }else{
+            $node.find(".j-gender").addClass("hide");
         }
         $node.find(".j-gender").attr('src',avatarSrc);
         $node.find(".j-username").text("帐号："+user.account);
@@ -654,6 +659,12 @@ var yunXin = {
         }
     },
 
+    /**
+     * 我的手机
+     */
+    sendToMyPhone:function(){
+        this.openChatBox(userUID,"p2p");
+    },
     /**
      * 显示黑名单列表
      */
@@ -925,6 +936,8 @@ var yunXin = {
             msg.time = +new Date();
             msg.message = error;
         }
+        //下个版本SDK会加上这些字段
+        msg.fromClientType = "Web";
         msg.fromNick = this.cache.getUserById(msg.from).nick;
         this.cache.addMsgs(msg);
         this.$messageText.val('');
@@ -971,8 +984,13 @@ var yunXin = {
 
         //设置聊天面板
         if (type === 'p2p') {
-            this.$chatTitle.find('img').attr('src', getAvatar(info.avatar)); 
-            this.$nickName.html(info.nick);
+            if(info.account == userUID){
+                this.$nickName.html("我的手机");
+                this.$chatTitle.find('img').attr('src', "images/myPhone.png"); 
+            }else{
+                this.$nickName.html(info.nick);
+                this.$chatTitle.find('img').attr('src', getAvatar(info.avatar)); 
+            }
         }else{
             this.$chatTitle.find('img').attr('src', "images/" + info.type + ".png"); 
             this.$nickName.html(info.name);
@@ -1017,32 +1035,52 @@ var yunXin = {
     },
 
     /**
-     * 处理收到的消息
+     * 处理收到的消息 
      * @param  {Object} msg 
      * @return 
      */
     doMsg:function(msg){
         var that = this,
-            who = msg.to === userUID ? msg.from : msg.to;
+            who = msg.to === userUID ? msg.from : msg.to,
+            updateContentUI = function(){
+                //如果当前消息对象的会话面板打开
+                if ($('#j-chatEditor').data('to') === who) { 
+                    var msgHtml = appUI.updateChatContentUI(msg,that.cache);
+                    that.$chatContent.find('.no-msg').remove();
+                    that.$chatContent.append(msgHtml).scrollTop(99999);
+                }    
+            };
+        //非群通知消息处理
         if (/text|image|file|audio|video|geo|custom/i.test(msg.type)) {
             this.cache.addMsgs(msg); 
-            if ($('#j-chatEditor').data('to') !== who&&msg.from!==userUID) { 
-                this.cache.addUnreadMsg(msg);
+            if ($('#j-chatEditor').data('to') !== who) { 
+                //条件1为多端同步的消息不计数  2.发给我的手机
+                if(msg.from!==userUID||(msg.from==userUID&&msg.fromClientType!=="Web")){
+                    this.cache.addUnreadMsg(msg);
+                }
             }
             var account = (msg.scene==="p2p"?who:msg.from);
+            //用户信息本地没有缓存，需存储
             if(!this.cache.getUserById(account)){
                 this.mysdk.getUser(account,function(err,data){
                     if(!err){
                         that.cache.updatePersonlist(data);
-                        that.buildConversations();     
+                        that.buildConversations(); 
+                        updateContentUI();
                     }
                 })      
             }else{
                 this.buildConversations();
+                updateContentUI();
             } 
-        } else { // type=notification
+        }else{ 
+            // 群消息处理
             if (msg.attach && msg.attach.type) {
-                if(msg.from!==userUID||msg.attach.type!=="leaveTeam"){  
+                //自己退群特殊处理
+                notification.messageHandler(msg);
+                if(msg.from===userUID&&msg.attach.type==="leaveTeam"){    
+                    return;
+                }else{  
                     notification.messageHandler(msg);
                     if(msg.attach.type==="addTeamMembers"||msg.attach.type==="removeTeamMembers"){
                         var accounts = msg.attach.accounts,
@@ -1054,31 +1092,27 @@ var yunXin = {
                             }
                         }
                         if(array.length>0){
-                            this.mysdk.getUser(array,function(err,data){
-                                for (var i = data.list.length - 1; i >= 0; i--) {
-                                    that.cache.updatePersonlist(data);
+                            this.mysdk.getUsers(array,function(err,data){
+                                for (var i = data.length - 1; i >= 0; i--) {
+                                    that.cache.updatePersonlist(data[i]);
                                 };
+                                //蛋疼的异步处理，必须确保用户消息缓存在本地，再进行UI展示
                                 that.cache.addMsgs(msg);
-                                that.buildConversations();  
+                                that.buildConversations(); 
+                                updateContentUI(); 
                             })
                         }else{
                             this.cache.addMsgs(msg);
                             this.buildConversations();  
+                            updateContentUI();
                         }
                     }else{
                         this.cache.addMsgs(msg);
                         this.buildConversations();  
+                        updateContentUI();
                     }   
-                }else{
-                    notification.messageHandler(msg);
-                    return;
                 }
             }    
-        }
-        if ($('#j-chatEditor').data('to') === who) { 
-            var msgHtml = appUI.updateChatContentUI(msg,this.cache);
-            this.$chatContent.find('.no-msg').remove();
-            this.$chatContent.append(msgHtml).scrollTop(99999);
         }
     },
     /**
@@ -1126,7 +1160,7 @@ var yunXin = {
                 btn = $(this).children(".j-play");
             node.addClass("play");
             setTimeout(function(){node.removeClass("play");},parseInt(btn.attr("data-dur")))
-            new window.Audio(btn.attr("data-src")).play();
+            new window.Audio(btn.attr("data-src")+"&audioTrans&type=mp3").play();
         }
     },
     /**

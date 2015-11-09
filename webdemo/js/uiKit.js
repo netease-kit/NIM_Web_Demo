@@ -95,7 +95,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @return {String} 会话的对象
 	 */
 	function switchConversationUser(msg){
-		return msg.to === ACCOUNT ? msg.from : msg.to;
+	    if(msg.from === msg.to){
+	        return "我的手机";
+	    }else{
+		   return msg.to === ACCOUNT ? msg.from : msg.to;      
+	    }
 	}
 	/**
 	 * 会话列表控件
@@ -191,13 +195,8 @@ return /******/ (function(modules) { // webpackBootstrap
 					type = team[who].type||'normal';
 					avatar = "images/"+type+".png";
 				} else {
-	                if(who ===ACCOUNT){
-	                    nick = "我的手机";
-	                    avatar = "images/myPhone.png";
-	                }else{
-	    				nick = info[who].nick;
-	    				avatar = util.getAvatar(info[who].avatar);     
-	                }
+					nick = info[who].nick;
+					avatar = util.getAvatar(info[who].avatar);
 				}
 	            var str = ['<li data-gtype="' + type + '" data-type="' + msg.scene + '" data-account="' + who + '">',
 	                            '<img src="'+avatar+'"/>',

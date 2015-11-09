@@ -105,9 +105,16 @@ var SDKBridge = function (ctr,data) {
 	    for(var i = 0;i<msgs.length;i++){
 	    	if(msgs[i].scene==="p2p"){
 	    		this.person[msgs[i].from!==userUID?msgs[i].from:msgs[i].to] = true;
+	    	}else{
+	    		if(msgs[i].type==="notification"){
+	    			if(msgs[i].attach.type ==="removeTeamMembers"||msgs[i].attach.type ==="addTeamMembers"){
+	    				var accounts = msgs[i].attach.accounts;
+                        for(var j=0;j<accounts.length;j++){
+                            this.person[accounts[j]] = true;
+                        }
+	    			}
+	    		}
 	    	}
-	    	//拿到一条数据即可记录帐号
-	    	break;
 		}
 	};
 	function onOfflineMsgs(msgs) {
@@ -117,6 +124,15 @@ var SDKBridge = function (ctr,data) {
   	 	for(var i = 0;i<msgs.length;i++){
 	    	if(msgs[i].scene==="p2p"){
 	    		this.person[msgs[i].from!==userUID?msgs[i].from:msgs[i].to] = true;
+	    	}else{
+	    		if(msgs[i].type==="notification"){
+	    			if(msgs[i].attach.type ==="removeTeamMembers"||msgs[i].attach.type ==="addTeamMembers"){
+	    				var accounts = msgs[i].attach.accounts;
+                        for(var j=0;j<accounts.length;j++){
+                            this.person[accounts[j]] = true;
+                        }
+	    			}
+	    		}
 	    	}
 		}
 	};

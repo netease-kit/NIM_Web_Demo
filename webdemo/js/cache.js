@@ -1,4 +1,4 @@
-
+// 建议开发者选择mvvm框架来通过数据来驱动UI变化
 var Cache = (function(){
 	var Cache = function (argument) {
 		this.friendsList = [];

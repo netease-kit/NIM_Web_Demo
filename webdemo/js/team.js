@@ -1,3 +1,4 @@
+//注：高级群功能demo暂时不展示
 var myTeam = {
 	init: function(cache,sdk) {
 		this.cache = cache;
@@ -39,17 +40,17 @@ var myTeam = {
 		var $this = $(this);
 		if ($this.hasClass('owner')) {
 			$this.parent('.wrap').addClass('active');
-			$this.next('input').removeClass('hide');
+			$this.parent('.wrap').find("input").focus();
 		}
 	},
 
 	saveTeamName: function() {
 		var $input = $('#j-nameInput'),
 			$teams = $('#j-teams'),
-			name = $input.val(),
+			name = $input.val().trim(),
 			that = this,
 			teamId = this.$teamInfo.data('team-id');
-		if ($.trim(name).length > 0) {
+		if (name.length > 0) {
 			this.sdk.updateTeam({
 				teamId: teamId,
 				name: name,
@@ -57,12 +58,14 @@ var myTeam = {
 					if (!error) {
 						var name = params.name;
 						$('#j-teamName .name').text(name);
-						$input.val('').addClass('hide').parents('.wrap').removeClass('active');
+						$input.val('').parents('.wrap').removeClass('active');
 					} else {
 						alert('群名称修改失败');
 					}
 				}
 			});
+		}else{
+			$input.parents('.wrap').removeClass('active');
 		}
 	},
 
@@ -244,7 +247,7 @@ var myTeam = {
 							};
 						}
 						if(array.length>0){
-							yunXin.getUser(array,function(data){
+							yunXin.mysdk.getUsers(array,function(data){
 								for(var j = 0;j<data.list.length;j++){
 									that.cache.updatePersonlist(data.list[j]);
 								}

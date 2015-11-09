@@ -204,7 +204,8 @@
     white-space: nowrap;
 }
 .info-footer input {
-    border-width:0 0 0 1px;
+    display: none;
+    border-width:0;
     border-color:#ddd;
     border-style: solid;
     padding: 5px 10px;
@@ -218,6 +219,16 @@
 .info-footer .wrap.active {
     border: 1px solid #ddd;
     padding: 8px 0;
+}
+.info-footer .wrap .groupName{
+    width:200px;
+    display:inline-block;
+}
+.info-footer .wrap.active input{
+    display: inline-block;
+}
+.info-footer .wrap.active .groupName{
+    display: none;
 }
 .info-footer .wrap a .icon {
     visibility: hidden;

@@ -1148,3 +1148,4 @@ width: 40px;
 }
 .f-cb:after{display:block;clear:both;visibility:hidden;height:0;overflow:hidden;content:".";}
 .f-cb{zoom:1;}
+.ui-datepicker{display: none;}
