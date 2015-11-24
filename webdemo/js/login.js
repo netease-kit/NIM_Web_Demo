@@ -69,32 +69,11 @@ var Login = {
 	},
 
 	requestLogin: function(account, pwd) {
-		var that = this;
-		var params = {
-			'userid': account,
-			'secret': MD5(pwd),
-			'client_type': 1
-		};
-		$.ajax({
-			url: 'https://app.netease.im/api/token',
-			type: 'POST',
-			data: JSON.stringify(params),
-			contentType: 'application/json',
-			success: function(data) {
-				if (data.res === 200) {	// 登录成功
-					setCookie('uid',data.msg.uid.toLocaleLowerCase());
-					setCookie('sdktoken',data.msg.sdktoken);
-					window.location.href = '/webdemo/main.html';
-				}else if(data.res===453){
-					that.$errorMsg.html('账户被锁，请30分钟后再试');
-				}else{
-					that.$errorMsg.html('用户名或密码错误');
-				}
-			},
-			error: function() {
-				that.$errorMsg.html('请求失败，请重试');
-			}
-		});
+		setCookie('uid',account.toLocaleLowerCase());
+		//从用自己的appKey管理后台创建的测试帐号（直接不用加密）
+		// setCookie('sdktoken',pwd);
+		setCookie('sdktoken',MD5(pwd));
+		window.location.href = '/webdemo/main.html';
 	},
 
 	/**

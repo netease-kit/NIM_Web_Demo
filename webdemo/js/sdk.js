@@ -13,7 +13,6 @@ var SDKBridge = function (ctr,data) {
 	this.cache = data;
 	this.nim = new NIM({
 		debug: true || { api: 'info', style: 'font-size:14px;color:blue;background-color:rgba(0,0,0,0.1)' },
-        // appKey: 'fe416640c8e8a72734219e1847ad2547',//测试
         appKey: '45c6af3c98409b18a84451215d0bdd6e',
         account: userUID,
         token: sdktoken,
@@ -56,6 +55,12 @@ var SDKBridge = function (ctr,data) {
 	};
 	function onError(error) {
 	    console.log('错误信息' + error);
+	    if(error.code ===302){
+	    	alert(error.message);
+	    	delCookie('uid');
+		    delCookie('sdktoken');
+		    window.location.href = '/webdemo/index.html'; 
+	    }
 	};
 	function onDisconnect(obj) {
 		var that = this;
