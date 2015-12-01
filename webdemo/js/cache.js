@@ -1,15 +1,19 @@
+// 数据缓存
 // 建议开发者选择mvvm框架来通过数据来驱动UI变化
 var Cache = (function(){
 	var Cache = function (argument) {
-		this.friendsList = [];
+		this.friendslist = [];
 		this.personlist = {};
-		this.teamList = [];
+		this.teamlist = [];
+		this.teamMembers = {};
 		this.teamMap = {};
 		this.msgs ={};
 		this.sessions=[];
-		this.unreadMsg = {};
 		this.blacklist = [];
 		this.mutelist = [];
+		this.sysMsgs = [];
+		this.customSysMsgs = [];
+		this.sysMsgCount = 0;
 	};
 	
 	/**
@@ -17,9 +21,9 @@ var Cache = (function(){
 	* @param account: 用户account
 	*/
 	Cache.prototype.getUserById = function (account) {
-	   if(this.personlist[account]){
+		if(this.personlist[account]){
 	   		return this.personlist[account];
-	   }
+	   	}
     	return false;
 	};
 	// 用户对象相关
@@ -52,39 +56,61 @@ var Cache = (function(){
 	/**
 	 * 好友相关
 	 */
+	Cache.prototype.setFriends = function(list){
+		this.friendslist = list;
+	};
+	Cache.prototype.getFriends = function(list){
+		return this.friendslist;
+	};
+	// 获取好友备注名
+	Cache.prototype.getFriendAlias = function(account){
+		for (var i = this.friendslist.length-1; i >= 0; i--) {
+			if(this.friendslist[i].account == account){
+				return this.friendslist[i].alias||"";
+			}
+		};
+	}
+	Cache.prototype.updateFriendAlias = function(account,alias){
+		for (var i = this.friendslist.length-1; i >= 0; i--) {
+			if(this.friendslist[i].account == account){
+				this.friendslist[i].alias = alias;
+				return;
+			}
+		};
+	}
 	Cache.prototype.addFriend = function(list){
-		if(!this.isFriend(list)){
-			this.friendsList.push(list);
+		if(!this.isFriend(list.account)){
+			this.friendslist.push(list);
 		}
 	};
 	Cache.prototype.removeFriend = function(account){
-		for (var i = this.friendsList.length-1; i >= 0; i--) {
-			if(this.friendsList[i] == account){
-				this.friendsList.splice(i,1);
+		for (var i = this.friendslist.length-1; i >= 0; i--) {
+			if(this.friendslist[i].account == account){
+				this.friendslist.splice(i,1);
 			}
 		};
 	};
 	Cache.prototype.getFriendslist = function(){
 		var array = [];
-		for(var i =0;i<this.friendsList.length; i++){
-			array.push(this.getUserById(this.friendsList[i]));
+		for(var i =0;i<this.friendslist.length; i++){
+			array.push(this.getUserById(this.friendslist[i].account));
 		}
 		return array;
 	};
 
 	Cache.prototype.getFriendslistOnShow = function(){
 		var array = [];
-		for(var i =0;i<this.friendsList.length; i++){
-			if(!this.inBlacklist(this.friendsList[i])){
-				array.push(this.getUserById(this.friendsList[i]));
+		for(var i =0;i<this.friendslist.length; i++){
+			if(!this.inBlacklist(this.friendslist[i].account)){
+				array.push(this.getUserById(this.friendslist[i].account));
 			}
 		}
 		return array;
 	};
 
 	Cache.prototype.isFriend = function(account){
-		for (var i = this.friendsList.length-1 ; i >= 0; i--) {
-			if(this.friendsList[i] == account){
+		for (var i = this.friendslist.length-1 ; i >= 0; i--) {
+			if(this.friendslist[i].account == account){
 				return true;
 			}
 		};
@@ -93,41 +119,34 @@ var Cache = (function(){
 
 
 	/**
-	 * 添加到会话列表
-	 * @param {Array|Object} sessions 会话对象
+	 * 设置会话列表
+	 * @param {Array} sessions 会话对象
 	 */
-	Cache.prototype.addSessions = function(sessions){
-		if(!$.isArray(sessions)){
-			this.sessions.unshift(sessions);
-			return;
-		}
-		this.sessions = [];
-		for (var i = 0; i <sessions.length; i++) {
-			this.sessions.push(sessions[i].scene +"-"+sessions[i].to);
-		};
+	Cache.prototype.setSessions = function(sessions){
+		this.sessions = sessions;
 	};
 
 	/**
-	 * 获取当前会话的消息
-	 * @return {Array} 消息集合
+	 * 获取当前会话
+	 * @return {Array} 会话集合
 	 */
-	Cache.prototype.getSessionsMsg = function () {
-		var arr = [],
-			item,
-			msgs;
-		for(var i = 0 ;i <this.sessions.length;i++){
-			item = this.sessions[i];
-			msgs = this.getMsgsByUser(item);
-			for (var j = msgs.length - 1; j >= 0; j--) {
-				if(msgs[j].status!==-1){
-					arr.push(msgs[j]);
-					break;
-				}
-			};
-		}
-		return arr;
+	Cache.prototype.getSessions = function () {
+		return this.sessions;
 	};
-	
+
+	/**
+	 * 获取指定会话
+	 * @return {Array} 会话集合
+	 */
+	Cache.prototype.findSession = function (id) {
+		for (var i = this.sessions.length - 1; i >= 0; i--) {
+			if(this.sessions[i].id ===id){
+				return this.sessions[i];
+			}
+		};
+		return false;
+	}
+
 	Cache.prototype.addMsgs = function(msgs) {
 		var item,
 			user;
@@ -135,32 +154,6 @@ var Cache = (function(){
 			this.addMsg(msgs);
 			return;
 		}
-		// 去重消息，防止断线重连后推送的消息跟本地存的重复
-		for (var i = msgs.length - 1; i >= 0; i--) {
-			if(msgs[i].scene==="team"){
-				user = msgs[i].to;
-				if(this.msgs["team-"+user]){
-					item = this.msgs["team-"+user];
-					for (var j = item.length - 1; j >= 0; j--) {
-						if(item[j].idClient === msgs[i].idClient){
-							msgs.splice(i,1);
-							break;
-						}
-					};	
-				}
-			}else{
-				user = (msgs[i].from === userUID?msgs[i].to:msgs[i].from);
-				if(this.msgs["p2p-"+user]){
-					item = this.msgs["p2p-"+user];
-					for (var j = item.length - 1; j >= 0; j--) {
-						if(item[j].idClient === msgs[i].idClient){
-							msgs.splice(i,1);
-							break;
-						}
-					};	
-				}
-			}	
-		};
 		for (var i = msgs.length - 1; i >= 0; i--) {
 			if(msgs[i].scene==="team"){
 				user = msgs[i].to;
@@ -198,44 +191,82 @@ var Cache = (function(){
 				break;
 			}
 		}
-		this.addSessions(user);
+	};
+	Cache.prototype.addMsgsByReverse = function(msgs) {
+		var item,
+			user;
+		for (var i = 0; i <msgs.length; i++) {
+			if(msgs[i].scene==="team"){
+				user = msgs[i].to;
+				if(!this.msgs["team-"+user]){
+					this.msgs["team-"+user] = [];
+				}
+				this.msgs["team-"+user].unshift(msgs[i]);
+			}else{
+				user = (msgs[i].from === userUID?msgs[i].to:msgs[i].from);
+				if(!this.msgs["p2p-"+user]){
+					this.msgs["p2p-"+user] = [];
+				}
+				this.msgs["p2p-"+user].unshift(msgs[i]);
+			}
+		};
 	};
 
-	/**
-	 * 删除漫游消息/历史消息
-	 * @param {String} to 需移除的消息对象标识
-	 */
-	Cache.prototype.rmMsgs = function(to) {
-		if($.type(to) === "string"){
-			if(!!this.msgs["p2p-"+to]){
-				delete this.msgs["p2p-"+to];
-			}
-		}else{
-			if(!!this.msgs["team-"+to]){
-				delete this.msgs["team-"+to];
-			}
-		}
-	};
+	//系统消息
+	Cache.prototype.setSysMsgs = function(data){
+		this.sysMsgs= data;
+	}
+	Cache.prototype.getSysMsgs = function(data){
+		return this.sysMsgs;
+	}
+	//自定义系统消息
+	Cache.prototype.addCustomSysMsgs = function(data){
+		for (var i = 0; i <data.length; i++) {
+			this.customSysMsgs.push(data[i]);
+		};
+	}
+	Cache.prototype.deleteCustomSysMsgs = function(){
+		this.customSysMsgs= [];
+	}
+	Cache.prototype.getCustomSysMsgs = function(data){
+		return this.customSysMsgs;
+	}
+	// 系统消息计数
+	Cache.prototype.getSysMsgCount = function(value){
+		return this.sysMsgCount;
+	}
+	Cache.prototype.setSysMsgCount = function(value){
+		this.sysMsgCount = value;
+	}
+	Cache.prototype.addSysMsgCount = function(value){
+		this.sysMsgCount= this.sysMsgCount + value;
+	}
+	// /**
+	//  * 删除漫游消息/历史消息
+	//  * @param {String} to 需移除的消息对象标识
+	//  */
+	// Cache.prototype.rmMsgs = function(to) {
+	// 	if($.type(to) === "string"){
+	// 		if(!!this.msgs["p2p-"+to]){
+	// 			delete this.msgs["p2p-"+to];
+	// 		}
+	// 	}else{
+	// 		if(!!this.msgs["team-"+to]){
+	// 			delete this.msgs["team-"+to];
+	// 		}
+	// 	}
+	// };
 
 	/**
 	 * 获取漫游/历史消息
-	 * @param  {String} to 消息的对象
 	 * @return {Array}    
 	 */
 
-	Cache.prototype.getMsgs = function(to) {
-		if($.type(to) === "string"){
-			if(!!this.msgs["p2p-"+to]){
-				return this.msgs["p2p-"+to];
-			}else{
-				return [];
-			}
+	Cache.prototype.getMsgs = function(id) {
+		if(!!this.msgs[id]){
+			return this.msgs[id];
 		}else{
-			if(!!this.msgs["team-"+to]){
-				return this.msgs["team-"+to];
-			}else{
-				return [];
-			}
+			return [];
 		}
 	};
 
@@ -258,37 +289,7 @@ var Cache = (function(){
 			}else{
 				continue;
 			}
-			//群通知消息不计数
-			if(/text|image|file|audio|video|geo|custom/i.test(msgs[i].type)){
-			 	this.addUnreadMsg(msgs[i]);
-			}
 		};
-	};
-
-	/**
-	 * 未读消息计数相关
-	 */
-	Cache.prototype.getUnreadMsg = function(){
-		return this.unreadMsg;
-	};
-
-	Cache.prototype.addUnreadMsg = function(msg) {
-		var who = (msg.scene==="team")?msg.to:msg.from;
-		// if(this.inMutelist(who)){
-		// 	return;
-		// }else{
-		if (this.unreadMsg.hasOwnProperty(who)) {
-			this.unreadMsg[who] = {count: ++this.unreadMsg[who].count};		
-		} else {
-			this.unreadMsg[who] = {count: 1};
-		}		
-		// }
-	};
-
-	Cache.prototype.setUnreadMsg = function(uid,count) {
-		if (this.unreadMsg[uid] && this.unreadMsg[uid].hasOwnProperty('count')) {
-			this.unreadMsg[uid].count = count;
-		}
 	};
 
 	/**
@@ -301,25 +302,31 @@ var Cache = (function(){
 			item = list[i];
 			this.teamMap[item.teamId] = item;
 		};
-		this.teamList = list;
+		this.teamlist = list;
 	};
 
 	Cache.prototype.addTeam = function(team) {
-		this.teamMap[team.teamId] = team;
-		this.teamList.push(team);
+		if(!this.hasTeam(team.teamId)){
+			this.teamMap[team.teamId] = team;
+			this.teamlist.push(team);
+		}
 	};
 	Cache.prototype.hasTeam = function(id) {
-		if(!!this.teamMap[id]){
-			return true;
-		}
+		var item;
+		for (var i = this.teamlist.length - 1; i >= 0; i--) {
+			item = this.teamlist[i];
+			if(item.teamId===id){
+				return true;
+			}
+		};
 		return false;
 	};
 
 	/**
 	* 获取群列表
 	*/
-	Cache.prototype.getTeamList = function() {
-	    return this.teamList;
+	Cache.prototype.getTeamlist = function() {
+	    return this.teamlist;
 	};
 
 	/**
@@ -328,28 +335,32 @@ var Cache = (function(){
 	Cache.prototype.getTeamMap = function() {
 	    return this.teamMap;
 	};
+	Cache.prototype.addTeamMap = function(data) {
+	    for (var i = data.length - 1; i >= 0; i--) {
+			item = data[i];
+			this.teamMap[item.teamId] = item;
+		};
+	};
 	/**
 	* 根据群id获取群对象
-	* @param id: 群（普通/高级）id
 	*/
 	Cache.prototype.getTeamById = function(teamId) {
-		var teamId = parseInt(teamId);
 	   	if(this.hasTeam(teamId)){
 			return this.teamMap[teamId];
 		}
 	    return null;
 	};
+	Cache.prototype.getTeamMapById = function(teamId) {
+		return this.teamMap[teamId]||null;
+	};
 
 	/**
 	* 根据群id删除群
-	* @param id: 群（普通/高级）id
 	*/
 	Cache.prototype.removeTeamById = function (id) {
-		var id = parseInt(id);
-		delete this.teamMap[id];
-	    for (var i in this.teamList) {
-	        if (this.teamList[i].teamId === id) {
-	            this.teamList.splice(i, 1);
+	    for (var i in this.teamlist) {
+	        if (this.teamlist[i].teamId === id) {
+	            this.teamlist.splice(i, 1);
 	            break;
 	        }
 	    }
@@ -358,22 +369,36 @@ var Cache = (function(){
 	/**
 	 * 更变群名
 	 */
-	Cache.prototype.setTeamName= function (teamId,name) {
-	   this.getTeamById(teamId).name = name;
-	   for (var i in this.teamList) {
-	        if (this.teamList[i].teamId === teamId) {
-	            this.teamList[i].name = name;
-	            break;
-	        }
-	    }
+	Cache.prototype.updateTeam= function (teamId,obj) {
+		for(var p in obj){
+			this.teamMap[teamId][p] = obj[p];
+		}
+		for (var i in this.teamlist) {
+		    if (this.teamlist[i].teamId === teamId) {
+		        for(var p in obj){
+					this.teamlist[i][p] = obj[p];
+				}
+		        break;
+		    }
+		}
 	};
-
+	Cache.prototype.setTeamMembers = function(account,list){
+		this.teamMembers[account] = list;
+	}
+	Cache.prototype.getTeamMembers = function(account){
+		return this.teamMembers[account]||[];
+	}
 	Cache.prototype.setMutelist= function (data) {
 	   this.mutelist = data;
-	}
+	};
+
+	Cache.prototype.getMutelist= function (data) {
+		return this.mutelist;
+	};
+
 	Cache.prototype.inMutelist = function(account){
 		for (var i = this.mutelist.length - 1; i >= 0; i--) {
-			if(this.mutelist[i] == account){
+			if(this.mutelist[i].account == account){
 				return true;
 			}
 		};
@@ -385,7 +410,7 @@ var Cache = (function(){
 	}
 	Cache.prototype.removeFromMutelist = function(account){
 		for (var i = this.mutelist.length - 1; i >= 0; i--) {
-			if(this.mutelist[i] == account){
+			if(this.mutelist[i].account == account){
 				this.mutelist.splice(i,1);
 				return true;
 			}
@@ -400,7 +425,7 @@ var Cache = (function(){
 	}
 	Cache.prototype.inBlacklist = function(account){
 		for (var i = this.blacklist.length - 1; i >= 0; i--) {
-			if(this.blacklist[i] == account){
+			if(this.blacklist[i].account == account){
 				return true;
 			}
 		};
@@ -411,7 +436,7 @@ var Cache = (function(){
 	};
 	Cache.prototype.removeFromBlacklist = function(account){
 		for (var i = this.blacklist.length - 1; i >= 0; i--) {
-			if(this.blacklist[i] == account){
+			if(this.blacklist[i].account == account){
 				this.blacklist.splice(i,1);
 				return true;
 			}

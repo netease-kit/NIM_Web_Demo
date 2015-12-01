@@ -17,7 +17,7 @@
 	<div class="bad-network hide tc radius5px" id="j-errorNetwork">已与服务器断开，请检查网络连接</div>
 	<div class="wrapper box-sizing">
 		<div class="content">
-			<div class="left-panel radius5px"><!-- 好友列表 -->
+			<div class="left-panel radius5px">
 				<div class="hide loading" id="j-loading"></div>
 				<div class="title">
 					<img src="" alt="" width="56" height="56" class="radius-circle avatar" id="j-userPic" /><span id="j-userName">&nbsp;</span>
@@ -31,32 +31,49 @@
 					<a href="javascript:;" class="box-sizing tc" data-type="teams"><span class="icon icon-team"></span></a>
 				</div>
 				<div class="friends" id="j-loadConversations" data-type="conversations">		<!-- 最近联系人 -->
-					<div class="list" id="j-conversations">
-						<ul>
+					<div class="list">
+						<div class="m-panel">
+							<div class="panel_item m-sysMsg" id="showNotice">
+								<div class="panel_avatar">
+									<img class="panel_image" src="images/notice.png" alt="消息中心"/>
+								</div>
+								<div class="panel_text">
+									<p class="panel_single-row">消息中心</p>
+								</div>
+								<b class="count j-sysMsgCount hide"></b>
+							</div>
+						</div>
+						<div id="j-conversations">
 							<p>正在获取最近联系人...</p>
-						</ul>
+						</div>
 					</div>
 				</div>
 				<div class="friends hide" id="j-loadContacts" data-type="contacts">
 					<!-- 通讯录 -->
 					<div class="list">		
 						<div class="m-panel">
-							<div class="item" id="addFriend">
-								<img src="images/addFriend.png" alt="添加好友">
-								<div class="tag">
-									添加好友
+							<div class="panel_item" id="addFriend">
+								<div class="panel_avatar">
+									<img  class="panel_image" src="images/addFriend.png" alt="添加好友"/>
+								</div>
+								<div class="panel_text">
+									<p class="panel_single-row">添加好友</p>
 								</div>
 							</div>
-							<div class="item" id="showBlacklist">
-								<img src="images/black.png" alt="黑名单">
-								<div class="tag">
-									黑名单	
+							<div class="panel_item" id="showBlacklist">
+								<div class="panel_avatar">
+									<img class="panel_image" src="images/black.png" alt="黑名单"/>
+								</div>
+								<div class="panel_text">
+									<p class="panel_single-row">黑名单</p>
 								</div>
 							</div>
-							<div class="item" id="myPhone">
-								<img src="images/myPhone.png" alt="我的手机">
-								<div class="tag">
-									我的手机	
+							<div class="panel_item" id="myPhone">
+								<div class="panel_avatar">
+									<img class="panel_image" src="images/myPhone.png" alt="我的手机"/>
+								</div>
+								<div class="panel_text">
+									<p class="panel_single-row">我的手机</p>
 								</div>
 							</div>		
 						</div>	
@@ -67,8 +84,35 @@
 				</div>
 				<div class="friends hide" id="j-loadTeams" data-type="teams">	<!-- 群 -->
 					<div class="list" >
-						<div class="create-team" id="j-createTeam">
-							<span class="icon icon-plus"></span>创建普通群
+						<div class="m-panel">
+							<div class="panel_item" id="createTeam">
+								<div class="panel_avatar">
+									<img class="panel_image" src="images/addTeam.png" alt="创建讨论组"/>
+								</div>
+								<div class="panel_text">
+									<p class="panel_single-row">创建讨论组</p>
+								</div>
+							</div>
+						</div>
+						<div class="m-panel">
+							<div class="panel_item" id="createAdvanceTeam">
+								<div class="panel_avatar">
+									<img class="panel_image" src="images/addTeam.png" alt="创建高级群"/>
+								</div>
+								<div class="panel_text">
+									<p class="panel_single-row">创建高级群</p>
+								</div>
+							</div>
+						</div>
+						<div class="m-panel">
+							<div class="panel_item" id="searchAdvanceTeam">
+								<div class="panel_avatar">
+									<img class="panel_image" src="images/searchTeam.png" alt="搜索高级群"/>
+								</div>
+								<div class="panel_text">
+									<p class="panel_single-row">搜索高级群</p>
+								</div>
+							</div>
 						</div>
 						<div class="teams m-panel" id="j-teams">
 						</div>
@@ -82,11 +126,13 @@
 						<img src="" width="56" height="56" class="radius-circle img" id="headImg"/>
 						<span id="j-nickName"></span>
 						<div class="cloudMsg tc radius4px" data-record-id="" id="j-cloudMsg"><i class="icon icon-team-info"></i><p>云记录</p></div>
-						<div class="team-info hide tc radius4px" data-team-id="" id="j-teamInfo"><i class="icon icon-team-info"></i><p>群资料</p></div>
+						<div class="team-info hide tc radius4px" data-team-id="" id="j-teamInfo"><i class="icon icon-team-info"></i><p>资料</p></div>
 					</div>
 					<div class="chat-content box-sizing" id="j-chatContent"> <!-- 聊天记录 -->
 
 					</div>
+					<div class="u-chat-notice">您已退出</div>
+					<div class="chat-mask"></div>
 					<div class="chat-editor box-sizing" id="j-chatEditor" data-disabled="1">
 						<div id="emojiTag" class="m-emojiTag"></div>
 						<a href="javascript:;" class="u-emoji" id="j-showEmoji"></a>
@@ -143,6 +189,46 @@
 				</li>
 			</ul>
 		</div>
+		<!-- 消息中心 -->
+		<div class="m-notice radius5px hide" id="notice">
+			<div class="title box-sizing">
+				消息中心
+				<i class="icon icon-close j-close"></i>
+				<b class="j-rmAllSysNotice rmAll"></b>
+			</div>
+			<ul class="tab f-cb">
+				<li class="crt" data-value="sys">系统通知</li>
+				<li  data-value="other">自定义通知</li>
+			</ul>
+			<div class="content j-sysMsg">
+			</div>
+			<div class="content j-customSysMsg hide">
+			</div>
+		</div>
+		<!-- 搜索高级群 -->
+		<div class="m-dialog hide" id="searchTeamBox">
+			<div class="title box-sizing">
+				搜索高级群
+				<i class="icon icon-close j-close"></i>
+			</div>
+			<div class="content tc">
+				<input type="text" class="ipt radius5px box-sizing j-account" placeholder="请输入群id"/>
+				<div class="info f-cb">
+					<img src="images/advanced.png">
+					<div class="desc">
+						<p class="j-name"></p>
+						<p><span class="j-teamId"></span></p>
+					</div>
+				</div>
+			</div>
+			<div class="btns tc">
+				<button class="btn btn-cancel radius4px cancel j-close">取消</button>
+				<button class="btn btn-ok radius4px search j-search">确定</button>
+				<button class="btn btn-cancel radius4px back j-back">继续搜索</button>
+				<button class="btn btn-ok radius4px add j-add">申请加入</button>
+				<button class="btn btn-ok radius4px chat j-chat">聊天</button>
+			</div>		
+		</div>
 	</div>
 	<div class="footer tc">
 		<span>&copy;1997 - 2015 网易公司版权所有</span>
@@ -191,13 +277,18 @@
 		<div class="uInfo f-cb">
 			<img class="u-icon" src="">
 			<div class="desc">
-				<p class="j-nickname nick">超级大饼</p>
+				<p class="j-nick nick">超级大饼</p>
 				<img src="" class="j-gender gender">
 				<p><span class="j-username">帐号：caojidabin</span></p>
+				<p><span class="j-nickname">昵称：caojidabin</span></p>
 			</div>
 		</div>
 		<div class="infos">
-			<div class="tt">基本信息</div>
+			<div class="items alias">
+				<div class="item">备注名</div>
+				<input type="text" class="e-alias ipt" maxlength="16">
+				<a class="j-saveAlias save">保存</a>
+			</div>
 			<div class="items">
 				<div class="item">生日</div>
 				<div class="j-birth">1990-08-18</div>
@@ -333,21 +424,18 @@
 		</div>
 	</div>	
 	<div id="j-mask" class="mask hide"></div>
-
-
 	<!-- js-->
 	<script src="js/jquery-1.7.1.min.js"></script>
 	<script src="js/3rd/jquery-ui-datepicker.js"></script>
-	<script src="js/3rd/jquery.Jcrop.min.js"></script>
-	<script src="js/util.js"></script>
-	<script src="js/NIM_Web_SDK_v1.5.0.js"></script>
+	<script src="js/NIM_Web_SDK_v1.7.0.js"></script>
 	<script src="js/emoji.js"></script>
-	<script src="js/cache.js"></script>
-	<script src="js/ui.js"></script>
-	<script src="js/sdk.js"></script>
-	<script src="js/notification.js"></script>
-	<script src="js/team.js"></script>
-	<script src="js/widget/uiKit.js"></script>
-	<script src="js/main.js"></script>
+	<script src="js/util.js?v=1.7"></script>
+	<script src="js/cache.js?v=1.7"></script>
+	<script src="js/ui.js?v=1.7"></script>
+	<script src="js/sdk.js?v=1.7"></script>
+	<script src="js/notification.js?v=1.7"></script>
+	<script src="js/team.js?v=1.7"></script>
+	<script src="js/widget/uiKit.js?v=1.7"></script>
+	<script src="js/main.js?v=1.7"></script>
 </body>
 </html>

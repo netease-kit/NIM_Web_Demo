@@ -1,4 +1,7 @@
-//注：高级群功能demo暂时不展示
+/**
+ * 群组功能
+ * @type {Object}
+ */
 var myTeam = {
 	init: function(cache,sdk) {
 		this.cache = cache;
@@ -6,22 +9,6 @@ var myTeam = {
 		this.initNode();
 		this.addEvent();
 	},
-
-	addEvent: function() {
-		this.$teamPanel.delegate('#j-createTeam', 'click', this.addUser.bind(this, 0));
-		this.$teamInfoContainer.delegate('.j-backBtn', 'click', this.closeTeamPanel.bind(this));
-		this.$teamInfoContainer.delegate('#j-userList .first', 'click', this.addUser.bind(this, 1));
-		this.$teamInfoContainer.delegate('#j-userList .hover', 'click', this.removeUser.bind(this));
-		this.$teamInfoContainer.delegate('#j-teamName', 'click', this.editTeamName);
-		this.$teamInfoContainer.delegate('#j-exitTeam', 'click', this.exitTeam.bind(this));
-		this.$teamInfoContainer.delegate('#j-nameInput', 'blur', this.saveTeamName.bind(this));
-		this.$createTeamContainer.delegate('.user-list li', 'click', this.checkedUser);
-		this.$createTeamContainer.delegate('.icon-close', 'click', this.closeDialog.bind(this));
-		this.$createTeamContainer.on('click', '#j-btnAdd', this.createTeam.bind(this));
-		this.$createTeamContainer.on('click', '#j-btnCancel', this.closeDialog.bind(this));
-		this.$teamInfo.on('click', this.showTeamInfo.bind(this, this.$teamInfo));
-	},
-
 	initNode: function() {
 		this.$teamPanel = $('#j-loadTeams');
 		this.$teamInfo = $('#j-teamInfo');
@@ -29,7 +16,35 @@ var myTeam = {
 		this.$mask = $('#j-mask');
 		this.$teamInfoContainer = $('#j-teamInfoContainer');
 		this.$createTeamContainer = $('#j-createTeamContainer');
+		this.$searchBox = $('#searchTeamBox');
 	},
+
+	addEvent: function() {
+		this.$teamPanel.delegate('#createTeam', 'click', this.showUserList.bind(this,0,0));
+		this.$teamPanel.delegate('#createAdvanceTeam', 'click', this.showUserList.bind(this,0,1));
+		this.$teamPanel.delegate('#searchAdvanceTeam', 'click', this.showSearch.bind(this,0,1));
+		this.$teamInfoContainer.delegate('.j-backBtn', 'click', this.closeTeamPanel.bind(this));
+		this.$teamInfoContainer.delegate('#j-userList .first', 'click', this.showUserList.bind(this,1));
+		this.$teamInfoContainer.delegate('#j-userList .hover', 'click', this.removeUser.bind(this));
+		this.$teamInfoContainer.delegate('#j-teamName', 'click', this.editTeamName);
+		this.$teamInfoContainer.delegate('#j-desc', 'click', this.editDesc);
+		this.$teamInfoContainer.delegate('.j-exitTeam', 'click', this.exitTeam.bind(this));
+		this.$teamInfoContainer.delegate('.j-dismissTeam', 'click', this.dismissTeam.bind(this));
+		this.$teamInfoContainer.delegate('#j-nameInput', 'blur', this.saveTeamName.bind(this));
+		this.$teamInfoContainer.delegate('#j-descInput', 'blur', this.saveTeamDesc.bind(this));
+		this.$teamInfoContainer.delegate('.j-joinMode', 'change', this.setJoinMode);
+		this.$createTeamContainer.delegate('.user-list li', 'click', this.checkedUser);
+		this.$createTeamContainer.delegate('.icon-close', 'click', this.closeDialog.bind(this));
+		this.$createTeamContainer.on('click', '#j-btnAdd', this.createTeam.bind(this));
+		this.$createTeamContainer.on('click', '#j-btnCancel', this.closeDialog.bind(this));
+		this.$teamInfo.on('click', this.showTeamInfo.bind(this, this.$teamInfo));
+		this.$searchBox.delegate('.j-close', 'click', this.hideSearch.bind(this));
+		this.$searchBox.delegate('.j-search', 'click', this.doSearch.bind(this));
+		this.$searchBox.delegate('.j-back', 'click', this.resetSearch.bind(this));
+		this.$searchBox.delegate('.j-chat', 'click', this.doChat.bind(this));
+		this.$searchBox.delegate('.j-add', 'click', this.doAdd.bind(this));
+	},
+
 
 	closeDialog: function() {
 		this.$createTeamContainer.addClass('hide');
@@ -37,6 +52,14 @@ var myTeam = {
 	},
 
 	editTeamName: function() {
+		var $this = $(this);
+		if ($this.hasClass('owner')) {
+			$this.parent('.wrap').addClass('active');
+			$this.parent('.wrap').find("input").focus();
+		}
+	},
+
+	editDesc:function(){
 		var $this = $(this);
 		if ($this.hasClass('owner')) {
 			$this.parent('.wrap').addClass('active');
@@ -69,17 +92,40 @@ var myTeam = {
 		}
 	},
 
+	saveTeamDesc: function() {
+		var $input = $('#j-descInput'),
+			$teams = $('#j-teams'),
+			name = $input.val().trim(),
+			that = this,
+			teamId = this.$teamInfo.data('team-id');
+		if (name.length > 0) {
+			this.sdk.updateTeam({
+				teamId: teamId,
+				intro: name,
+				done: function(error, params) {
+					if (!error) {
+						var name = params.intro;
+						$('#j-desc .name').text(name);
+						$input.val('').parents('.wrap').removeClass('active');
+					} else {
+						alert('修改群介绍失败');
+					}
+				}
+			});
+		}else{
+			$input.parents('.wrap').removeClass('active');
+		}
+	},
+
 	/**
-	 * 创建群 注： 建群 UI在回调处理，其他群消息UI在推送群通知 （notification）后处理
-	 * @return 
+	 * 创建群
 	 */
 	createTeam: function() {
 		var accounts = [], 
 			names = [], 
 			$items = $('#j-addedUserList ul li'),
 			teamId = this.addTag&&this.$teamInfo.data('team-id'), 
-			that = this, 
-			type = 0;
+			that = this;
 		if($items.length===0){
 			this.$createTeamContainer.addClass('hide');
 			this.$teamInfoContainer.addClass('hide');
@@ -92,7 +138,6 @@ var myTeam = {
 		});
 
 		if (!!teamId) {	// 如果存在群id，则为新添加成员
-			type = 1;
 			this.sdk.addTeamMembers({
 				teamId: teamId,
 				accounts: accounts,
@@ -102,38 +147,42 @@ var myTeam = {
 				}
 			});
 		} else { // 创建普通群
-			type = 0;
 			var owner = this.getUserById(userUID).nick;
 			names = [owner].concat(names).join('、').slice(0,20);
-			this.sdk.createTeam({
-				type: 'normal',
-				name: names + '等人',
-				accounts: accounts,
-				done: function(error, t) {
-					if (!error) {
-						that.cache.addTeam(t.team);
-						yunXin.buildTeams();
-						$('#normalTeam li[data-account]="'+t.team.teamId+'"').click();
-						// var html = '<li data-gtype="normal" data-type="team" data-account="' + t.team.teamId + '"><img class="radius-circle" src="images/normal.png" width="44" height="44"><div class="text"><p class="nick"><span>' + t.team.name + '</span></p></div></li>',
-						// 	$normalTeam = $('#normalTeam'),
-						// 	$teams = $('#j-teams .teams');
-						// if ($teams.find('.team').length > 0) {
-						// 	if ($normalTeam.length > 0) {
-						// 		$(html).prependTo($normalTeam).click();
-						// 	} else {
-						// 		$teams.append('<div class="team normal-team"><div class="team-title">普通群</div><ul id="normalTeam"></ul></div>');
-						// 		$(html).appendTo($('#normalTeam')).click();
-						// 	}
-						// } else {
-						// 	$teams.html('<div class="team normal-team"><div class="team-title">普通群</div><ul id="normalTeam"></ul></div>');
-						// 	$(html).appendTo($('#normalTeam')).click();
-						// }
-						
-					}else{
-						alert("创建失败");
+			if(that.teamType === 0){
+				this.sdk.createTeam({
+					type: 'normal',
+					name: names + '等人',
+					accounts: accounts,
+					done: function(error, t) {
+						if (!error) {
+							that.cache.addTeam(t.team);
+							yunXin.buildTeams();
+							$('#j-loadTeams .j-normalTeam li[data-account="'+t.team.teamId+'"]').click();
+							
+						}else{
+							alert("创建失败");
+						}
 					}
-				}
-			});
+				});			
+			}else{
+				this.sdk.createTeam({
+					type: 'advanced',
+					name: names + '等人',
+					accounts: accounts,
+					joinMode: 'needVerify',
+					done: function(error, t) {
+						if (!error) {
+							that.cache.addTeam(t.team);
+							yunXin.buildTeams();
+							$('#j-loadTeams .j-advanceTeam li[data-account="'+t.team.teamId+'"]').click();
+							
+						}else{
+							alert(error.message);
+						}
+					}
+				});			
+			}
 		}
 		this.$createTeamContainer.addClass('hide');
 		this.$teamInfoContainer.addClass('hide');
@@ -155,10 +204,14 @@ var myTeam = {
 	},
 
 	/**
-	* @param type: 0为新建群添加成员，1为在已有群的情况下添加成员
-	**/
-	addUser: function(type) {
+	 * 联系人选择界面展示
+	 * @param  {int} type 0为新建群添加成员，1为在已有群的情况下添加成员
+	 * @param  {int} teamType 高级群1 普通群 0
+	 * @return {void}      
+	 */
+	showUserList: function(type,teamType) {
 		var that = this;
+		this.teamType = teamType;
 		this.$createTeamContainer.load('/webdemo/create-team.html', function() {
 			$("#j-devices").addClass('hide');
 			that.$createTeamContainer.removeClass('hide');
@@ -166,12 +219,22 @@ var myTeam = {
 			var $addIcon = $('#j-userList .first'),
 				$addUserUl = $('#j-addUserList ul'),
 				list = that.cache.getFriendslistOnShow(),
-				tmp = '', teamId = '', members = [];
+				tmp = '',
+			 	teamId = '', 
+			 	members = [];
+ 			// 好友列表
+			for (var i = 0, l = list.length; i < l; ++i) {
+				if (list[i].uid !== userUID) { // 除自己以外
+					tmp += appUI.buildTeamMemberList(list[i]);
+				}
+			}
+			$addUserUl.html(tmp);
 			if (type !== 0) {
 				teamId = $addIcon.data('team-id');
 				that.sdk.getTeamMembers({
 					teamId: teamId,
 					done: function(error, obj) {
+						//给已经在群的好友标记
 						members = error ? getMembersById(teamId) : obj.members; // 群成员列表
 						for (var i = 0, l = members.length; i < l; ++i) {
 							var uid = members[i].account || members[i].uid;
@@ -179,89 +242,117 @@ var myTeam = {
 						}
 					}
 				});
+				//用来区分是否创群
 				that.addTag = true;
 			} else {
 				that.addTag = false;
 			}
-			for (var i = 0, l = list.length; i < l; ++i) {
-				if (list[i].uid !== userUID) { // 除自己以外
-					tmp += appUI.buildTeamMemberList(list[i]);
-				}
-			}
-			$addUserUl.html(tmp);
+			
 		});
 	},
-
 
 	showTeamInfo: function(o) {
 		var $this = $(o),
 	 		that = this;
 		this.$teamInfoContainer.load('/webdemo/team-info.html', function() {
-			that.$teamInfoContainer.removeClass('hide');
-
 			// 获取群成员
 			var teamId = $this.data('team-id'),
-				type = $this.data('gtype'),
-				teamName = $('#j-nickName').text(),
+				teamInfo = that.cache.getTeamById(teamId);
+			if(!teamInfo){
+				return;
+			}
+			var	type = teamInfo.type,
+				teamName = teamInfo.name,
+				teamOwner = teamInfo.owner,
+				intro = teamInfo.intro||"",
+				joinMode = teamInfo.joinMode||"",
 				members = [],
 				html = '',
 				$userList = $('#j-userList'),
-				$teamName = $('#j-teamName');
-			that.sdk.getTeamMembers({
-				teamId: teamId,
-				done: function(error, obj) {
-					if (!error) {
-						members = obj.members;
-						$teamName.find('.name').text(teamName);
-						that.sortMembers(members);  // 需要把群主放在第一个位置
-						var teamOwner = members[0].account || members[0].uid,
-							array=[];
-						var showUI = function(){
-							if (type === 'normal' || userUID === teamOwner) { // 是群主
-								html += '<li class="first add-item tc radius-circle" data-team-type="' + type + '" data-team-id="' + teamId + '"><i class="icon icon-plus"></i><p></p></li>';
-							}
-							for (var i = 0, l = members.length; i < l; ++i) {
-								var member = members[i],
-									uid = member.account || member.uid,
-									user = that.getUserById(uid),
-									nick = user.nick;
-								html += '<li data-uid="' + uid + '"><a href="javascript:;"><img src="'+getAvatar(user.avatar)+'"/>';
-								if (member.type === 'owner') {
-									html += '<i class="icon radius-circle icon-user"></i>';
-								} else {
-									html += '<span class="hover" data-nick="' + nick + '" data-team-name="' + teamName + '" data-uid="' + uid + '" data-team-id="' + teamId + '">移除</span>';
-								}
-								html += '</a><p class="text">' + nick + '</p></li>';
-							}
-							$userList.html(html);
-							if (type === 'normal' || teamOwner === userUID) {
-								$teamName.addClass('owner');
-							}
-							if (teamOwner === userUID) {
-								$userList.addClass('owner');
-							}
+				$teamId = that.$teamInfoContainer.find(".j-teamId"),
+				$teamName = $('#j-teamName'),
+				$teamDesc = $('#j-desc');
+			if(type==="advanced"){
+				that.$teamInfoContainer.find('.j-advanced').removeClass("hide");
+				$teamDesc.find('.name').text(intro);
+				if(teamOwner===userUID){
+					that.$teamInfoContainer.find('.j-joinMode[value='+joinMode+']').attr("checked", 'checked');
+				}else{
+					that.$teamInfoContainer.find('.j-joinMode').attr("disabled", 'disabled').filter('[value='+joinMode+']').attr("checked", 'checked');
+				}
+			}
+			if(userUID === teamOwner&&type==="advanced"){
+				that.$teamInfoContainer.find('.j-dismissTeam').removeClass("hide");
+				that.$teamInfoContainer.find('.j-exitTeam').addClass("hide");
+			}else if(type==="normal"){
+				that.$teamInfoContainer.find('.j-exitTeam').text("退出讨论组");
+			}
+			members = that.cache.getTeamMembers(teamId);
+			$teamName.find('.name').text(teamName);
+			$teamId.text(teamId);
+			var showMember = function(members){
+				that.sortMembers(members);  // 需要把群主放在第一个位置
+				var array=[];
+				var showUI = function(){
+
+					if (type === 'normal' || userUID === teamOwner) { // 是群主
+						html += '<li class="first add-item tc radius-circle" data-team-type="' + type + '" data-team-id="' + teamId + '"><i class="icon icon-plus"></i><p></p></li>';
+					}
+					for (var i = 0, l = members.length; i < l; ++i) {
+						var member = members[i],
+							uid = member.account || member.uid,
+							avatar = getAvatar(that.getUserById(uid)?that.getUserById(uid).avatar:""),
+							nick = getNick(uid);
+						html += '<li data-uid="' + uid + '"><a href="javascript:;"><img src="'+avatar+'"/>';
+						if (member.type === 'owner') {
+							html += '<i class="icon radius-circle icon-user"></i>';
+						} else {
+							html += '<span class="hover" data-nick="' + nick + '" data-team-name="' + teamName + '" data-uid="' + uid + '" data-team-id="' + teamId + '">移除</span>';
 						}
-						for(var i = 0;i<members.length;i++){
-							if(!that.getUserById(members[i].account)){
-								array.push({uid:members[i].account})
-							};
-						}
-						if(array.length>0){
-							yunXin.mysdk.getUsers(array,function(data){
-								for(var j = 0;j<data.list.length;j++){
-									that.cache.updatePersonlist(data.list[j]);
-								}
-								showUI();
-							})
-						}else{
-							showUI();
-						}
-						
-					} else {
-						console && console.error('获取群成员失败');
+						html += '</a><p class="text">' + nick + '</p></li>';
+					}
+					$userList.html(html);
+					if (type === 'normal' || teamOwner === userUID) {
+						$teamName.addClass('owner');
+						$teamDesc.addClass('owner');
+					}
+					if (teamOwner === userUID) {
+						$userList.addClass('owner');
 					}
 				}
-			});
+				for(var i = 0;i<members.length;i++){
+					if(!that.getUserById(members[i].account)){
+						array.push({uid:members[i].account})
+					};
+				}
+				if(array.length>0){
+					yunXin.mysdk.getUsers(array,function(data){
+						for(var j = 0;j<data.list.length;j++){
+							that.cache.updatePersonlist(data.list[j]);
+						}
+						showUI();
+					})
+				}else{
+					showUI();
+				}
+			}
+			// if(members.length>0){
+			// 	showMember(members);
+			// }else{
+				that.sdk.getTeamMembers({
+					teamId: teamId,
+					done: function(error, obj) {
+						if (!error) {
+							members = obj.members;
+							// that.cache.setTeamMembers(obj.teamId,members);
+							showMember(members);		
+						} else {
+							console && console.error('获取群成员失败');
+						}
+					}
+				});		
+			// }
+		that.$teamInfoContainer.removeClass('hide');
 		});
 	},
 
@@ -318,32 +409,18 @@ var myTeam = {
 			uid = $target.attr('data-uid'),
 			teamId = $target.data('team-id'),
 			teamType = $('#j-userList .first').data('team-type');
-		if (teamType === 'normal') {
-			this.sdk.removeTeamMembers({
-				teamId: teamId,
-				accounts: [uid],
-				done: function(error, params) {
-					if (error) {
-						alert('移除成员失败');
-					}else{
-						$target.parents('li').remove();
-					}
-						
+		this.sdk.removeTeamMembers({
+			teamId: teamId,
+			accounts: [uid],
+			done: function(error, params) {
+				if (error) {
+					alert('移除成员失败');
+				}else{
+					$target.parents('li').remove();
 				}
-			});
-		} else { // 高级群
-			this.sdk.removeMembers({
-				teamId: teamId,
-				accounts: [uid],
-				done: function(error, params) {
-					if (error) {
-						alert('移除成员失败');
-					}else{
-						$target.parents('li').remove();
-					}
-				}
-			});
-		}
+					
+			}
+		});
 	},
 
 	buildTeamName: function(members) {
@@ -356,11 +433,23 @@ var myTeam = {
 		return names.join('、') + '等人';
 	},
 
+	setJoinMode:function(){
+		var joinMode = $(this).val(),
+			teamId = myTeam.$teamInfo.data('team-id');
+		myTeam.sdk.updateTeam({
+			teamId: teamId,
+		    joinMode: joinMode,
+		    done: function(error, params){
+		    	if (!error) {
+				} else {
+					alert(error.message);
+				}
+		    }
+		});
+	},
 	exitTeam: function() {	// 普通群（任何人）/高级群（非群主），退出群
 		var that = this,
-			teamId = this.$teamInfo.data('team-id'),
-			type = $('.team li.active').data('gtype'),
-			$team = $('#j-teams .' + type + '-team');
+			teamId = this.$teamInfo.data('team-id');
 		this.sdk.leaveTeam({
 			teamId: teamId,
 			done: function(error, params) {
@@ -370,8 +459,25 @@ var myTeam = {
 					that.$rightPanel.addClass('hide');
 					removeChatVernier(teamId);
 				} else {
-					console && console.error(error);
-					alert('退群失败');
+					alert(error.message);
+				}
+			}
+		});
+	},
+	//高级群解散
+	dismissTeam: function() {	
+		var that = this,
+			teamId = this.$teamInfo.data('team-id');
+		this.sdk.dismissTeam({
+			teamId: teamId,
+			done: function(error, params) {
+				if (!error) {
+					$('#j-chatEditor').data({to:""});
+					that.$teamInfoContainer.addClass('hide');
+					that.$rightPanel.addClass('hide');
+					removeChatVernier(teamId);
+				} else {
+					alert(error.message);
 				}
 			}
 		});
@@ -380,6 +486,58 @@ var myTeam = {
 	closeTeamPanel: function() {	// 返回到群聊天面板
 		this.$teamInfoContainer.addClass('hide');
 		this.$mask.addClass('hide');
-	}
+	},
+	// 搜索高级群
+	showSearch:function(){
+ 		this.searchData = null;
+        this.$searchBox.removeClass("hide");
+        this.$mask.removeClass('hide');
+        this.$searchBox.find(".j-account").focus();
+	},
+    hideSearch:function(){
+        this.resetSearch();
+        this.$searchBox.addClass("hide");
+        this.$mask.addClass('hide');
+    },
+    doSearch:function(){
+        var account =  $.trim(this.$searchBox.find(".j-account").val());
+        if(/^\d+$/.test(account)){
+            this.sdk.getTeam(account,this.cbDoSearch.bind(this))
+        }else{
+        	alert("输入有误（群ID必须是数字）");
+        } 
+    },
+    cbDoSearch:function(err,data){
+    	if(err){
+    		alert(err.message);
+    	}else{
+    		if(data.type==="normal"||data.valid===false){
+    			alert("群不存在");
+    			return;
+    		}
+    		var $info = this.$searchBox.find(".info");
+    		var teamId = data.teamId;
+            $info.find(".j-name").html(data.name);
+            $info.find(".j-teamId").html(data.teamId);
+            if(this.cache.hasTeam(teamId)){
+            	this.$searchBox.addClass("inTeam");    
+            }else{
+            	this.$searchBox.addClass("notInTeam");    
+            }
+    	}
+    },
+    resetSearch:function(){
+        this.$searchBox.attr('class',"m-dialog");
+        this.$searchBox.find(".j-account").val("");
+    },
+    doChat:function(){
+    	var account =  $.trim(this.$searchBox.find(".j-account").val());
+    	yunXin.openChatBox(account,"team");
+    	this.hideSearch();
+    },
+     doAdd:function(){
+    	var account =  $.trim(this.$searchBox.find(".j-account").val());
+    	this.sdk.applyTeam(account);
+    },
 };
 

@@ -21,7 +21,6 @@ body{background:#fff;}
 a,a:hover{color:#333;}
 html,body{height: 100%;}
 body{position: relative;min-height: 500px;}
-*{outline:none;-webkit-appearance: none;}
 body{color:#666;font-family: Tahoma, '微软雅黑';-webkit-font-smoothing:antialiased;-webkit-text-size-adjust: none;}
 /* 滚动条样式 */
 ::-webkit-scrollbar {

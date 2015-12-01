@@ -70,10 +70,9 @@ var Login = {
 
 	requestLogin: function(account, pwd) {
 		setCookie('uid',account.toLocaleLowerCase());
-		//从用自己的appKey管理后台创建的测试帐号（直接不用加密）
-		// setCookie('sdktoken',pwd);
 		setCookie('sdktoken',MD5(pwd));
 		window.location.href = '/webdemo/main.html';
+			
 	},
 
 	/**

@@ -124,56 +124,59 @@ Array.union = function(a, b){
 * 构造第一条消息，显示在最近联系人昵称的下面(移到UI组件去了)
 * @param msg：消息对象
 */
-// function buildSessionMsg(msg) {
-//     var text = (msg.scene!='p2p'?msg.fromNick+":":""), type = msg.type;
-//     if (!/text|image|file|audio|video|geo|custom|notification/i.test(type)) return '';
-//     switch (type) {
-//         case 'text':
-//             text += _$escape(msg.text);
-//             text = buildEmoji(text);
-//             break;
-//         case 'image':
-//             text += '[图片]';
-//             break;
-//         case 'file':
-//             if (!/exe|bat/i.test(msg.file.ext)) {
-//                 text += '[文件]';
-//             } else {
-//                 text += '[非法文件，已被本站拦截]';
-//             }
-//             break;
-//         case 'audio':
-//             text += '[语音]';
-//             break;
-//         case 'video':
-//             text += '[视频]';
-//             break;
-//         case 'geo':
-//             text += '[位置]';
-//             break;
-//         case 'custom':
-//             var content = JSON.parse(msg.content);
-//             if(content.type===1){
-//                 text += '[猜拳]';
-//             }else if(content.type===2){
-//                 text +='[阅后即焚]';
-//             }else if(content.type===3){
-//                 text +='[贴图]';
-//             }else if(content.type===4){
-//                 text +='[白板]';
-//             }else{
-//                 text += '[自定义消息]';
-//             }
-//             break;
-//         case 'notification':
-//             text = '['+transNotification(msg)+']';
-//             break;
-//         default:
-//             text += '[未知消息类型]';
-//             break;
-//     }
-//     return text;
-// }
+function buildSessionMsg(msg) {
+    var text = (msg.scene!='p2p'?((msg.from ===userUID)?"你":getNick(msg.from))+":":""), type = msg.type;
+    if (!/text|image|file|audio|video|geo|custom|notification/i.test(type)) return '';
+    switch (type) {
+        case 'text':
+            text += _$escape(msg.text);
+            text = buildEmoji(text);
+            break;
+        case 'image':
+            text += '[图片]';
+            break;
+        case 'file':
+            if (!/exe|bat/i.test(msg.file.ext)) {
+                text += '[文件]';
+            } else {
+                text += '[非法文件，已被本站拦截]';
+            }
+            break;
+        case 'audio':
+            text += '[语音]';
+            break;
+        case 'video':
+            text += '[视频]';
+            break;
+        case 'geo':
+            text += '[位置]';
+            break;
+        case 'custom':
+            var content = JSON.parse(msg.content);
+            if(content.type===1){
+                text += '[猜拳]';
+            }else if(content.type===2){
+                text +='[阅后即焚]';
+            }else if(content.type===3){
+                text +='[贴图]';
+            }else if(content.type===4){
+                text +='[白板]';
+            }else{
+                text += '[自定义消息]';
+            }
+            break;
+        case 'notification':
+            text = '['+transNotification(msg)+']';
+            break;
+        default:
+            text += '[未知消息类型]';
+            break;
+    }
+    if(msg.status=== "fail"){
+        text = '<i class="icon icon-error"></i>'+text;
+    }
+    return text;
+}
 
 /**
  * 会话列表消息
@@ -285,7 +288,7 @@ var transTime = (function(){
     }
 })();
 /**
- * 时间戳转化为日期(用于左边面板)
+ * 时间戳转化为日期(用于左边会话面板)
  * @return {string} 转化后的日期
  */
 var transTime2 = (function(){
@@ -394,49 +397,120 @@ var dateFormat = (function(){
 function transNotification(item) {
     var type = item.attach.type,
         from = (item.from === userUID?true:false),
-        str;
+        str,
+        tName,
+        accounts,
+        member = [];
+
+    //从消息item拿得到team信息就从那边拿,msg那拿不到就本地拿
+    //这冗余代码就是为了处理群通知的文案高级群叫群，讨论组叫讨论组
+    var team = item.attach && item.attach.team;
+    if (!team) {
+        team = yunXin.cache.getTeamMapById(item.target);
+    }else{
+        if(!team.type){
+            team = yunXin.cache.getTeamMapById(item.target);  
+        }
+    }
+    if(team.type&&team.type==="normal"){
+        tName="讨论组";   
+    }else{
+        tName="群";
+    }   
+    /**--------------------正剧在下面------------------------*/
     switch (type) {
         case 'addTeamMembers':
-            var accounts = item.attach.accounts,
-                member=[];
+            accounts = item.attach.accounts;
             for(var i = 0;i<accounts.length;i++){
                 if(accounts[i]===userUID){
                     member.push("你");
                 }else{
-                    member.push(yunXin.cache.getUserById(accounts[i]).nick);
+                    member.push(getNick(accounts[i]));
                 }
                 
             }
             member =  member.join(",");
-            str = from?"你将"+member+"加群":member+"加入群";
+            str = from?"你将"+member+"加入"+tName:member+"加入"+tName;
             return str;
             break;
         case 'removeTeamMembers':
-            var accounts = item.attach.accounts,
-                member=[];
+            accounts = item.attach.accounts;
             for(var i = 0;i<accounts.length;i++){
                 if(accounts[i]===userUID){
                     member.push("你");
                 }else{
-                    member.push(yunXin.cache.getUserById(accounts[i]).nick);                    
+                    member.push(getNick(accounts[i]));                  
                 }
             }
             member =  member.join(",");
-            str = from?("你将"+member+"移除群"):(member+"被移除群");
+            str = from?("你将"+member+"移除"+tName):(member+"被移除"+tName);
             return str;
             break;
         case 'leaveTeam':
-            var member =  (item.from ===userUID)?"你":item.fromNick;
-            str = member+"退出了群";
+            var member =  (item.from ===userUID)?"你":getNick(item.from);
+            str = member+"退出了"+tName;
             return str;
             break;
         case 'updateTeam':
-            var user =  (item.from ===userUID)?"你":(item.fromNick||item.from);
-            str = user+"更新群名为"+ item.attach.team.name;
+            if(item.attach.team.joinMode){
+                switch (item.attach.team.joinMode){
+                    case "noVerify":
+                        str = "群身份验证模式更新为允许任何人加入";
+                        break;
+                    case "needVerify":
+                        str = "群身份验证模式更新为需要验证消息";
+                        break;
+                    case "rejectAll":
+                        str = "群身份验证模式更新为不允许任何人申请加入";
+                        break;
+                    default:
+                        str = '更新群消息';
+                        break;
+                }
+            }else if(item.attach.team.name){
+                var user =  (item.from ===userUID)?"你":getNick(item.from);
+                str = user+"更新"+tName+"名称为"+ item.attach.team.name;   
+            }else if(item.attach.team.intro){
+                var user =  (item.from ===userUID)?"你":getNick(item.from);
+                str = user+"更新群介绍为"+ item.attach.team.intro; 
+            }else{
+                str = '更新群消息';
+            }
+            return str;
+            break;
+        case 'acceptTeamInvite':
+            var member,
+                admin;
+            if(item.from === item.attach.account){
+                member = (item.from ===userUID)?"你":getNick(item.from);
+                str = member?member:item.from+"加入了群";
+            }else{
+                admin = (item.attach.account===userUID)?"你":getNick(item.attach.account);
+                member =  (item.from ===userUID)?"你":getNick(item.from);
+                str = member +'接受了'+admin+"的入群邀请";               
+            }
+            return str;
+            break;
+        case 'passTeamApply':
+            var member,
+                admin;
+            if(item.from === item.attach.account){
+                member = (item.from ===userUID)?"你":getNick(item.from);
+                str = member+"加入了群";
+            }else{
+                member = (item.attach.account===userUID)?"你":getNick(item.attach.account);
+                admin =  (item.from ===userUID)?"你":getNick(item.from);
+                str = admin +'通过了'+member +"的入群申请";               
+            }
+            return str;
+            break;
+        case 'dismissTeam':
+            var member =  (item.from ===userUID)?"你":getNick(item.from);
+            str = member+"解散了群";
             return str;
             break;
         default:
-            return '群消息';
+            return '通知消息';
             break;
 
     }
@@ -444,9 +518,8 @@ function transNotification(item) {
 
 /**
 * 移除定位会话圆点
-* 当群被解散，或者自己被踢出的时候，对应的聊天会话也要关闭，定位圆点要消失
-* @param teamId：群id
 */
+
 function removeChatVernier(account) {
     if (account == $('li.active').attr('data-account')) {
         $('#j-chatVernier span').css('top', '-20px');
@@ -460,11 +533,17 @@ function loadImg() {
 function getAvatar(url){
     var re=/^((http|https|ftp):\/\/)?(\w(\:\w)?@)?([0-9a-z_-]+\.)*?([a-z0-9-]+\.[a-z]{2,6}(\.[a-z]{2})?(\:[0-9]{2,6})?)((\/[^?#<>\/\\*":]*)+(\?[^#]*)?(#.*)?)?$/i;
     if(re.test(url)){
-        return url;
+        return url+"?imageView&thumbnail=80x80&quality=85";
     }else{
         return "images/default-icon.png"
     }
 }   
+
+//或者备注名或者昵称
+function getNick(account,cache){
+    cache = cache||yunXin.cache;
+    return cache.getFriendAlias(account)||(cache.getUserById(account)?cache.getUserById(account).nick:account);
+}
 
 
 

@@ -1,3 +1,6 @@
+/**
+ * SDK连接 功能相关
+ */
 
 var SDKBridge = function (ctr,data) {
 	var sdktoken = readCookie('sdktoken'),
@@ -7,40 +10,75 @@ var SDKBridge = function (ctr,data) {
      	window.location.href = '/webdemo/index.html';
     	return;
 	}
+	//缓存需要获取的用户信息账号
 	this.person = {};
+	//缓存需要获取的群组账号
+	this.team =[];
 	this.person[userUID] = true;
 	this.controller = ctr;
 	this.cache = data;
+	// 数据源(在不支持数据库时, SDK 需要开发者提供数据来完成下面的工作,SDK文档里有详细说明)
+ 	var dataSource = {
+        getUser: function(account) {
+            return that.cache.getUserById(account);
+        },
+        getSession: function(sessionId) {
+            return that.cache.findSession(sessionId);
+        },
+      	getMsg: function(msg) {
+            return that.nim.findMsg(that.cache.msgs[msg.sessionId], msg.idClient);
+        },
+        getSysMsg: function(sysMsg) {
+            return that.nim.findSysMsg(that.cache.sysMsgs, sysMsg.idServer);
+        }
+    };
 	this.nim = new NIM({
+		//控制台日志，上线时应该关掉
 		debug: true || { api: 'info', style: 'font-size:14px;color:blue;background-color:rgba(0,0,0,0.1)' },
+        // appKey: 'fe416640c8e8a72734219e1847ad2547',//测试
         appKey: '45c6af3c98409b18a84451215d0bdd6e',
         account: userUID,
         token: sdktoken,
+        //连接
         onconnect: onConnect.bind(this),
         ondisconnect: onDisconnect.bind(this),
         onerror: onError.bind(this),
-        onteams: onTeams.bind(this), 
-        onroamingmsgs: onRoamingMsgs.bind(this),
-        onofflinemsgs: onOfflineMsgs.bind(this),
-        onsessions: onSessions.bind(this),
-        onofflinesysmsgs: onOfflineSysMsgs.bind(this),
+       	onwillreconnect: onWillReconnect.bind(this),
+        // 多端登录变化
+        onloginportschange:onLoginPortsChange.bind(this),
+        // 群
+        onteams: onTeams.bind(this),
         onteammembers: onTeamMembers.bind(this),
+        //消息
+        onmsg: onMsg.bind(this), 
+        onroamingmsgs: saveMsgs.bind(this),
+        onofflinemsgs: saveMsgs.bind(this),
+        //会话
+        onsessions: onSessions.bind(this),
+        onupdatesession: onUpdatesession.bind(this),
+     	//同步完成
         onsyncteammembersdone: onSyncTeamMembersDone.bind(this),
         onsyncdone: onSyncDone.bind(this),
-        onmsg: onMsg.bind(this),
+       
+        //个人信息
         onmyinfo:onMyInfo.bind(this),
-        onsysmsg: onSysMsg.bind(this),
-        oncustommsg: onCustomMsg.bind(this),
-        oncreateteam: onCreateTeam.bind(this),
-        onloginportschange:onLoginPortsChange.bind(this),
-        onupdateteammember: onUpdateTeamMember.bind(this),
+        onupdatemyinfo:onMyInfo.bind(this),
+        //系统通知
+        onsysmsg: onSysMsg.bind(this,1),
+     	onofflinesysmsgs: onOfflineSysmsgs.bind(this),
+     	onupdatesysmsg:onSysMsg.bind(this,0),
+     	oncustomsysmsg:onCustomSysMsg.bind(this),
+     	onofflinecustomsysmsgs:onOfflineCustomSysMsgs.bind(this),
+        // 静音，黑名单，好友
         onmutelist:onMutelist.bind(this),
         onblacklist: onBlacklist.bind(this),
         onfriends:onFriends.bind(this),
         onsynccreateteam:onSyncCreateteam.bind(this),
         onsyncmarkinblacklist:onSyncMarkinBlacklist.bind(this),
         onsyncmarkinmutelist:onSyncMarkinMutelist.bind(this),
-        onsyncfriendaction:onSyncFriendAction.bind(this)
+        onsyncfriendaction:onSyncFriendAction.bind(this),
+        //辅助
+        dataSource: dataSource
 
     });
 	function onConnect() {
@@ -49,41 +87,51 @@ var SDKBridge = function (ctr,data) {
 		this.sysMsgDone = false;
 	    console&&console.log('连接成功');
 	};
+
 	function onKicked(obj) {
 	    this.iskicked = true;
 		
 	};
+
+	function onWillReconnect(obj){
+		// 此时说明 `SDK` 已经断开连接，请开发者在界面上提示用户连接已断开，而且正在重新建立连接
+		$('#j-errorNetwork').removeClass('hide');
+	};
+
 	function onError(error) {
 	    console.log('错误信息' + error);
-	    if(error.code ===302){
-	    	alert(error.message);
-	    	delCookie('uid');
-		    delCookie('sdktoken');
-		    window.location.href = '/webdemo/index.html'; 
-	    }
 	};
-	function onDisconnect(obj) {
+	function onDisconnect(error) {
+		// 此时说明 `SDK` 处于断开状态，开发者此时应该根据错误码提示相应的错误信息，并且跳转到登录页面
 		var that = this;
 		console.log('连接断开');
-		$('#j-errorNetwork').removeClass('hide');
-    	if(!!obj.kicked){
-			var map={
-				PC:"电脑版",
-				Web:"网页版",
-				Android:"手机版",
-				iOS:"手机版",
-				WindowsPhone:"手机版"
-			}
-			var str =obj.kicked.from;
-		    alert("你的帐号于"+dateFormat(+new Date(),"HH:mm")+"被"+(map[obj.kicked.from]||"其他端")+"踢出下线，请确定帐号信息安全!");
-		    delCookie('uid');
-		    delCookie('sdktoken');
-		    window.location.href = '/webdemo/index.html'; 		 
-	    }else{
-       		console.log('重连中');
-			setTimeout(function(){
-				that.nim.connect();
-			},2000)
+	    if (error) {
+	        switch (error.code) {
+	        // 账号或者密码错误, 请跳转到登录页面并提示错误
+	        case 302:
+		        alert(error.message);
+		    	delCookie('uid');
+			    delCookie('sdktoken');
+			    window.location.href = '/webdemo/index.html'; 
+	            break;
+	        // 被踢, 请提示错误后跳转到登录页面
+	        case 'kicked':
+		        var map={
+					PC:"电脑版",
+					Web:"网页版",
+					Android:"手机版",
+					iOS:"手机版",
+					WindowsPhone:"手机版"
+				};
+				var str =error.from;
+        		alert("你的帐号于"+dateFormat(+new Date(),"HH:mm")+"被"+(map[str]||"其他端")+"踢出下线，请确定帐号信息安全!");
+			    delCookie('uid');
+			    delCookie('sdktoken');
+			    window.location.href = '/webdemo/index.html'; 	
+	            break;
+	        default:
+	            break;
+	        }
 	    }
 	};
 	function onLoginPortsChange(loginPorts) {
@@ -91,58 +139,45 @@ var SDKBridge = function (ctr,data) {
      	this.controller.loginPorts(loginPorts);
 	};
 	function onTeams(teams) {
-		this.cache.setTeamList(teams);    
+		var teamlist = this.cache.getTeamlist();
+		teamlist = this.nim.mergeTeams(teamlist, teams);    
+		teamlist = this.nim.cutTeams(teamlist, teams.invalid);
+		this.cache.setTeamList(teamlist);
 	};
-	function onFriends(obj){
-		for(var i = 0;i<obj.length;i++){
-			this.person[obj[i].account] = true;
-			this.cache.addFriend(obj[i].account);
+	function onFriends(friends){
+		var friendlist = this.cache.getFriends();
+		friendlist = this.nim.mergeFriends(friendlist, friends);    
+		friendlist = this.nim.cutFriends(friendlist, friends.invalid);
+		this.cache.setFriends(friendlist);
+		for(var i = 0;i<friendlist.length;i++){
+			this.person[friendlist[i].account] = true;
 		}		
 	};
 	function onSessions(sessions){
-		this.cache.addSessions(sessions);
+		var old = this.cache.getSessions();
+		this.cache.setSessions(this.nim.mergeSessions(old, sessions));
+		for(var i = 0;i<sessions.length;i++){
+	    	if(sessions[i].scene==="p2p"){
+	    		this.person[sessions[i].to] = true;
+	    	}else{
+	    		this.team.push(sessions[i].to);
+	    	}
+		}
+	};
+	function onUpdatesession(session){
+		var old = this.cache.getSessions();
+		this.cache.setSessions(this.nim.mergeSessions(old, session));
+		this.controller.buildConversations();			
 	};
 
-	function onRoamingMsgs(msgs) {
-	    console.log('漫游消息', msgs);
+	function saveMsgs(msgs) {
+		msgs = msgs.msgs;
 	    this.cache.addMsgs(msgs);
-
 	    for(var i = 0;i<msgs.length;i++){
 	    	if(msgs[i].scene==="p2p"){
 	    		this.person[msgs[i].from!==userUID?msgs[i].from:msgs[i].to] = true;
-	    	}else{
-	    		if(msgs[i].type==="notification"){
-	    			if(msgs[i].attach.type ==="removeTeamMembers"||msgs[i].attach.type ==="addTeamMembers"){
-	    				var accounts = msgs[i].attach.accounts;
-                        for(var j=0;j<accounts.length;j++){
-                            this.person[accounts[j]] = true;
-                        }
-	    			}
-	    		}
 	    	}
 		}
-	};
-	function onOfflineMsgs(msgs) {
-	    console.log('离线消息', msgs);
-      	this.cache.addOfflineMsgs(msgs);
-
-  	 	for(var i = 0;i<msgs.length;i++){
-	    	if(msgs[i].scene==="p2p"){
-	    		this.person[msgs[i].from!==userUID?msgs[i].from:msgs[i].to] = true;
-	    	}else{
-	    		if(msgs[i].type==="notification"){
-	    			if(msgs[i].attach.type ==="removeTeamMembers"||msgs[i].attach.type ==="addTeamMembers"){
-	    				var accounts = msgs[i].attach.accounts;
-                        for(var j=0;j<accounts.length;j++){
-                            this.person[accounts[j]] = true;
-                        }
-	    			}
-	    		}
-	    	}
-		}
-	};
-	function onOfflineSysMsgs(msgs) {
-	    console.log('离线系统通知', msgs);
 	};
 	function onSyncDone() {
 		console.log('消息同步完成');	
@@ -150,7 +185,7 @@ var SDKBridge = function (ctr,data) {
  		this.sysMsgDone = true;
 	    //如果用户数据拉取完毕，UI开始呈现
 	    if(this.teamMemberDone){
-	    	ctr.doPersonInfo(this.person);
+	    	ctr.initInfo(this.person,this.team);
 	    }
 	};
 	function onSyncTeamMembersDone() {
@@ -159,66 +194,99 @@ var SDKBridge = function (ctr,data) {
 	    this.teamMemberDone = true;
 	    //如果用户消息等拉取完毕，UI开始呈现
 	    if(this.sysMsgDone){
-	    	ctr.doPersonInfo(this.person);
+	    	ctr.initInfo(this.person,this.team);
 	    }
 	};
 	function onTeamMembers(obj) {
+		this.cache.setTeamMembers(obj.teamId,obj.members);
 		var members = obj.members;
 	    for(var i = 0;i<members.length;i++){
     		this.person[members[i].account] = true;	
 		}
 	};
 	function onMsg(msg) {
+		//涉及UI太多放到main.js里去处理了
 	    this.controller.doMsg(msg);
 	};
-	function onSysMsg(msg) {
+	function onOfflineSysmsgs(sysMsgs){
+		var data = this.cache.getSysMsgs();
+		data =this.nim.mergeSysMsgs(data, sysMsgs).sort(function(a,b){
+			return b.time-a.time;
+		});
+		this.cache.setSysMsgs(data);
+		this.cache.addSysMsgCount(data.length);
+	}
+	function onSysMsg(newMsg,msg) {
 		var type = msg.type,
 			ctr = this.controller,
 			cache = this.cache;
-		switch (type) {
-            case 'deleteFriend':
-                cache.removeFriend(msg.from);
-                ctr.buildContacts();
-                break;
-            case 'addFriend':
-                cache.addFriend(msg.from);
-                if(!this.cache.getUserById(msg.from)){
-                    ctr.getUser([{uid:msg.from}],function(data){
-                        cache.updatePersonlist(data.list[0]);
-                        ctr.buildContacts();
-                    })
-                }else{
-                    ctr.buildContacts();   
-                }
-                break;
-            default:
-                console.log(msg);
-                break;
-        }
-	};
-	function onCustomSysMsg(msg) {
-	    console.log('收到一条自定义系统通知', msg);
-	};
-	function onCreateTeam(team) {
-	    console.log('你在其它端创建了一个群', team);
-	};
-	function onUpdateTeamMember(teamMember) {
-	    console.log('群成员信息更新了', teamMember);
+			data = cache.getSysMsgs();
+		data =this.nim.mergeSysMsgs(data, msg).sort(function(a,b){
+			return b.time-a.time;
+		});
+		this.cache.setSysMsgs(data);
+		if(msg.category!=="team"){
+			
+			switch (type) {
+	            case 'deleteFriend':
+	                cache.removeFriend(msg.from);
+	                ctr.buildContacts();
+	                break;
+	            case 'addFriend':
+	                if(!this.cache.getUserById(msg.from)){
+	                    this.getUser(msg.from,function(err,data){
+	                    	if(!err){
+		                    	cache.addFriend(data);
+		                        cache.updatePersonlist(data);
+		                        ctr.buildContacts();	
+	                    	}
+	                    })
+	                }else{
+	                	cache.addFriend(msg.friend);
+	                    ctr.buildContacts();   
+	                }
+	                break;
+	            default:
+	            	console.log("系统消息---->"+msg);
+	                break;
+	        }			
+		}else{
+			if(newMsg){
+				this.cache.addSysMsgCount(1);
+				ctr.showSysMsgCount();
+			}
+			ctr.buildSysNotice();
+		}
 	};
 
-	function onCustomMsg(){
-
+	function onCustomSysMsg(msg){
+		var ctr = this.controller;
+		this.cache.addCustomSysMsgs([msg]);
+		this.cache.addSysMsgCount(1);
+		ctr.showSysMsgCount();
+		ctr.buildCustomSysNotice();
+	};
+	function onOfflineCustomSysMsgs(msgs){
+		this.cache.addCustomSysMsgs(msgs);
+		this.cache.addSysMsgCount(msgs.length);
 	};
 	// 黑名单
-	function onBlacklist(data){
-		this.cache.setBlacklist(data);
+	function onBlacklist(blacklist){
+		var list = this.cache.getBlacklist();
+	 	list = this.nim.mergeRelations(list, blacklist);
+    	list = this.nim.cutRelations(list, blacklist.invalid);
+		this.cache.setBlacklist(list);
+		
 		for(var i = 0;i<data.length;i++){
 			this.person[data[i]] = true;
 		}
 	};
 	//静音
-	function onMutelist(data){
-		this.cache.setMutelist(data);
+	function onMutelist(mutelist){
+		var list = this.cache.getMutelist();
+		list = this.nim.mergeRelations(list, mutelist);
+    	list = this.nim.cutRelations(list, mutelist.invalid);
+		this.cache.setMutelist(list);
 		for(var i = 0;i<data.length;i++){
 			this.person[data[i]] = true;
 		}
@@ -228,9 +296,10 @@ var SDKBridge = function (ctr,data) {
 		this.cache.updatePersonlist(data);
 		this.controller.showMe();
 	};
+
 	function onSyncCreateteam(data){
 		this.cache.addTeam(data);
-		this.controller.buildGroups();
+		this.controller.buildTeams();
 	};
 	// 多端同步好友关系
 	function onSyncFriendAction(data){
@@ -239,7 +308,7 @@ var SDKBridge = function (ctr,data) {
 
 	function onSyncMarkinBlacklist(param){
 		if(param.isAdd){
-			this.cache.addToBlacklist(param.account);
+			this.cache.addToBlacklist(param.record);
 		}else {
 			this.cache.removeFromBlacklist(param.account);
 		}
@@ -249,11 +318,23 @@ var SDKBridge = function (ctr,data) {
 
 	function onSyncMarkinMutelist(param){
 		if(param.isAdd){
-			this.cache.addToMutelist(param.account);
+			this.cache.addToMutelist(param.record);
 		}else {
 			this.cache.removeFromMutelist(param.account);
 		}
 	};
+}
+
+/********** 这里通过原型链封装了sdk的方法，主要是为了方便快速阅读sdkAPI的使用 *********/
+
+
+/**
+ * 设置当前会话，当前会话未读数会被置为0，同时开发者会收到 onupdatesession回调
+ * @param {String} scene 
+ * @param {String} to    
+ */
+SDKBridge.prototype.setCurrSession = function(scene,to){
+	this.nim.setCurrSession(scene+"-"+to);
 }
 
 /**
@@ -328,7 +409,111 @@ SDKBridge.prototype.sendFileMessage = function (scene, to, fileInput , callback)
 SDKBridge.prototype.getHistoryMsgs = function(param){
 	this.nim.getHistoryMsgs (param);
 }
+/**
+ * 获取本地历史记录消息  
+ */
+SDKBridge.prototype.getLocalMsgs = function(scene,to,lastMsgId,done){
+	if(lastMsgId){
+		this.nim.getLocalMsgs ({
+			scene:scene,
+			to:to,
+			lastMsgIdClient:lastMsgId,
+			limit:20,
+			done:done
+		});
+	}else{
+		this.nim.getLocalMsgs ({
+			scene:scene,
+			to:to,
+			limit:20,
+			done:done
+		});
+	}
+	
+}
+SDKBridge.prototype.getLocalTeams = function(teamIds,done){
+	this.nim.getLocalTeams ({
+		teamIds:teamIds,
+		done:done
+	});
+}
+/**
+ * 获取本地系统消息记录
+ * @param  {Funciton} done 回调
+ * @return {void}       
+ */
+SDKBridge.prototype.getLocalSysMsgs = function(done){
+	this.nim.getLocalSysMsgs({
+		done:done
+	});
+}
 
+/**
+ * 获取删除本地系统消息记录
+ * @param  {Funciton} done 回调
+ * @return {void}       
+ */
+SDKBridge.prototype.deleteAllLocalSysMsgs = function(done){
+	this.nim.deleteAllLocalSysMsgs({
+        done: done
+    });
+}
+
+/**
+ * 通过入群申请
+ */
+SDKBridge.prototype.passTeamApply = function(teamId,from,idServer){
+	this.nim.passTeamApply({
+		teamId:teamId,
+		from:from,
+		idServer:idServer,
+		done:function(err,data){
+
+		}
+	});
+}
+
+/**
+ * 拒绝入群申请
+ */
+SDKBridge.prototype.rejectTeamApply = function(teamId,from,idServer){
+	this.nim.rejectTeamApply({
+		teamId:teamId,
+		from:from,
+		idServer:idServer,
+		done:function(err,data){
+			
+		}
+	});
+}
+
+/**
+ * 拒绝入群邀请
+ */
+SDKBridge.prototype.rejectTeamInvite = function(teamId,from,idServer){
+	this.nim.rejectTeamInvite({
+		teamId:teamId,
+		from:from,
+		idServer:idServer,
+		done:function(err,data){
+			debugger;
+		}
+	});
+}
+
+/**
+ * 接受入群邀请
+ */
+SDKBridge.prototype.acceptTeamInvite = function(teamId,from,idServer){
+	this.nim.acceptTeamInvite({
+		teamId:teamId,
+		from:from,
+		idServer:idServer,
+		done:function(err,data){
+			
+		}
+	});
+}
 /**
  * 踢人
  * @param  {int} type  设备端
@@ -345,6 +530,27 @@ SDKBridge.prototype.kick = function(type){
 	    }
 	});
 }
+// 获取群信息
+SDKBridge.prototype.getTeam = function(account,done){
+	this.nim.getTeam({
+		teamId: account,
+		done: done
+	});
+}
+//申请加入高级群
+SDKBridge.prototype.applyTeam = function(account){
+	this.nim.applyTeam({
+		teamId: account,
+		done: function(err,data){
+			if(err){
+				alert(err.message);
+			}else{
+				alert("入群申请已发出");
+			}
+		}
+	});
+}
+
 SDKBridge.prototype.createTeam = function(param){
 	this.nim.createTeam(param);
 }	
@@ -356,6 +562,9 @@ SDKBridge.prototype.updateTeam = function(param){
 }
 SDKBridge.prototype.leaveTeam = function(param){
 	this.nim.leaveTeam(param);
+}
+SDKBridge.prototype.dismissTeam = function(param){
+	this.nim.dismissTeam(param);
 }
 SDKBridge.prototype.addTeamMembers= function(param){
 	this.nim.addTeamMembers(param);
@@ -392,16 +601,10 @@ SDKBridge.prototype.deleteFriend = function(account,callback){
 /**
  * 静音
  */
-SDKBridge.prototype.addToMutelist = function(account,callback){
-	this.nim.addToMutelist({
+SDKBridge.prototype.markInMutelist = function(account,isAdd,callback){
+	this.nim.markInMutelist({
 	    account: account,
-	    done: callback
-	});
-}
-
-SDKBridge.prototype.removeFromMutelist = function(account,callback){
-	this.nim.removeFromMutelist({
-	    account: account,
+	    isAdd:isAdd,
 	    done: callback
 	});
 }
@@ -452,7 +655,13 @@ SDKBridge.prototype.updateMyAvatar = function(avatar,callback){
 		done: callback
 	});
 }
-
+SDKBridge.prototype.updateFriend = function(account,alias,callback){
+	this.nim.updateFriend({
+	    account: account,
+	    alias: alias,
+	    done: callback
+	});
+}
 // SDKBridge.prototype.thumbnailImage = function (options) {
 // 	return this.nim.thumbnailImage({
 // 		url:options.url,

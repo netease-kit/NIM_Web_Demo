@@ -186,8 +186,7 @@ html, body {
     overflow-y: auto;
     background-color: #fff;
     border-radius: 0 0 5px 5px;
-}
-
+} 
 .chat-vernier {
     position: absolute;
     margin-left: 6px;
@@ -199,9 +198,6 @@ html, body {
     height: 15px;
     border: 1px solid #ccc;
     background-color: #ccc;
-}
-.team {
-    border-bottom: 1px solid #eaeeef;
 }
 .team-info {
     position: absolute;
@@ -223,12 +219,10 @@ html, body {
     top: 17px;
     cursor: pointer;
 }
-.cloudRecord:hover,.team-info:hover {
+.cloudMsg:hover,.team-info:hover {
     background-color: #ececec;
 }
-.team-title {
-    padding: 5px 0 5px 5%;
-}
+
 .right-panel {
     margin-left: 292px;
     height: 620px;
@@ -252,6 +246,30 @@ html, body {
     -webkit-text-overflow: ellipsis;
     -moz-text-overflow: ellipsis;
     -ms-text-overflow: ellipsis;
+}
+.u-chat-notice{
+    z-index: 5;
+    background-color: #fbfcbe;
+    width: 710px;
+    height: 14px;
+    position: absolute;
+    top: 80px;
+    opacity: 0.8;
+    text-align: center;
+    padding: 20px 0;
+    font-size: 14px;    
+}
+.chat-mask{
+    z-index: 5;
+    background-color: #e5f4ff;
+    width: 710px;
+    height: 14px;
+    position: absolute;
+    bottom: 9px;
+    opacity: 0.8;
+    text-align: center;
+    padding: 20px 0;
+    font-size: 14px;  
 }
 .chat-content {
     position: absolute;
@@ -465,6 +483,13 @@ html, body {
     width: 710px;
     top: 100px;
     z-index: 2;
+    border-radius:5px;
+    -webkit-border-radius:5px;
+    -moz-border-radius:5px;
+}
+.cloud-msg-container .info-content{
+    border: none;
+    height: 520px;
 }
 .create-team-container {
     position: fixed;
@@ -504,6 +529,22 @@ html, body {
 	margin: 0;
 	vertical-align: middle;
 	float: none;
+}
+.m-sysMsg{
+    position: relative;
+}
+.m-sysMsg .count{
+    position: absolute;
+    bottom: 20px;
+    right: 9px;
+    background-color: #f24c3d;
+    display: inline-block;
+    font-size: 12px;
+    color: #fff;
+    border-radius: 10px;
+    text-align: center;
+    padding: 0 5px;
+    width: 20px;
 }
 .m-devices{
     height: 40px;
@@ -702,18 +743,39 @@ html, body {
 .m-dialog.blacklist .btns .back,.m-dialog.blacklist .btns .blacklist{
     display: inline-block;
 } 
+/*搜高级群 在群里*/
+.m-dialog.inTeam .info{
+    display: block;
+}
+.m-dialog.inTeam .ipt,.m-dialog.inTeam .btns .search,.m-dialog.inTeam .btns .cancel{
+    display: none;
+}
+.m-dialog.inTeam .btns .chat,.m-dialog.inTeam .btns .back{
+    display: inline-block;
+}
+/*搜高级群 在不群里*/
+.m-dialog.notInTeam .info{
+    display: block;
+}
+.m-dialog.notInTeam .btns .add,.m-dialog.notInTeam .btns .back{
+    display: inline-block;
+}
+.m-dialog.notInTeam .ipt,.m-dialog.notInTeam .btns .search,.m-dialog.notInTeam .btns .cancel{
+    display: none;
+}
 /*好友名片*/
 .m-card{
     width: 400px;
-    height: 614px;
+    height: 590px;
     background-color: #fff;
     position: absolute;
     top: 50%;
     left:50%;
     margin-left: -200px;
-    margin-top: -307px;
+    margin-top: -295px;
     z-index: 50;
 }
+
 .m-card-1{
     height: 550px;
     margin-top: -275px;
@@ -725,6 +787,9 @@ html, body {
     display: none;
 }
 .m-card.notFriend .del{
+    display: none;
+}
+.m-card.notFriend .alias{
     display: none;
 }
 .m-card.notFriend .add{
@@ -823,10 +888,11 @@ html, body {
 .m-card .infos .items{
     position: relative;
     padding-left: 50px;
+    height: 22px;
     line-height: 14px;
     font-size: 14px;
     padding: 4px 0 4px 50px;
-    margin-top: 14px;
+    margin-top: 10px;
 }
 .m-card .infos .item{
     position: absolute;
@@ -845,18 +911,19 @@ html, body {
     word-break:break-all;
 }
 .m-card .u-icon{
-    width: 100px;
-    height: 100px;
+    width: 80px;
+    height: 80px;
     float: left;
     border-radius: 50%;
 }
 .m-card .desc{
     float: left;
     margin-left: 15px;
-    margin-top: 30px;
+    margin-top: 14px;
 }
 .m-card .desc p{
-    font-size: 20px;
+    height: 16px;
+    line-height: 16px;
     color: #3a4a59;
 }
 .m-card .desc .gender{
@@ -864,16 +931,35 @@ html, body {
 }
 .m-card .desc .nick{
     display: inline-block;
+    font-size: 16px;
+    max-width: 200px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 .m-card .desc span{
     display: inline-block;
     overflow: hidden;
-    font-size: 14px;
+    font-size: 12px;
     color: #6b8299;
     text-overflow: ellipsis;
     white-space: nowrap;
     width: 200px;
    
+}
+.m-card .alias .item{
+    top:10px;
+}
+
+.m-card .alias .save{
+    width: 60px;
+    font-size: 12px;
+    height: 16px;
+    padding: 5px 10px;
+    border-radius: 4px;
+    margin-left: 24px;    
+    background-color: #0888ff;
+    color:#fff;
 }
 .m-card ul{
     padding: 10px 30px;
@@ -923,17 +1009,160 @@ html, body {
     opacity: 0.5;
     cursor: no-drop;
 }
-/*.m-card.blacklist .btns .add{
-    background-color: #eee;
-    opacity: 0.5;
-    cursor: no-drop;
+.m-notice{
+    position: fixed;
+    width: 680px;
+    height: 580px;
+    top: 50%;
+    left: 50%;
+    margin-top: -290px;
+    margin-left: -340px;
+    background-color: #fff;
+    border: 1px solid #ececec;
+    z-index: 9;
 }
-.m-card.blacklist .btns .chat{
-    background-color: #add5ee;
-    opacity: 0.5;
-    border: 1px solid #add5ee; 
-    cursor: no-drop;
-}*/
+.m-notice .title{
+    font-size: 16px;
+    height: 50px;
+    line-height: 50px;
+    color: #3a4a59;
+    background-color: #edecee;
+    padding: 0 15px;
+}
+.m-notice .content{
+    height: 470px;
+    overflow-y: auto;
+}
+.m-notice .tab li{
+    position: relative;
+    text-align: center;
+    float: left;
+    display: inline-block;
+    font-size: 14px;
+    line-height: 44px;
+    width: 50%;
+    background-color: #f3faff;
+    cursor: pointer;
+}
+.m-notice .rmAll{
+    position: absolute;
+    top: 15px;
+    right: 45px;
+    width: 22px;
+    height: 22px;
+    background: url("../images/delete.png")  no-repeat;
+    cursor: pointer;
+}
+.m-notice .tab .crt{
+    background-color: #e5f4ff;
+    border-bottom: 2px solid #6b8299;
+
+}
+.m-notice .item{
+    clear:both;
+    border-bottom:1px solid #eaeeef;
+    overflow:hidden;
+    height:61px;
+    padding: 10px 20px;
+    box-sizing:border-box;
+    -webkit-box-sizing:border-box;
+    -moz-box-sizing:border-box;
+}
+.m-notice .item .action{
+    float: right;
+    font-size: 12px;
+}
+.m-notice .action a{
+    margin-left: 5px;
+}
+.m-notice .item img{
+    float: left;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    -ms-border-radius: 50%;
+}
+.m-notice .text {
+    margin-left: 60px;
+    padding:3px 0;
+    position: relative;
+    height: 45px;
+    overflow: hidden
+}
+.m-notice .text span, .m-notice .first-msg {
+    width: 60%;
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -webkit-text-overflow: ellipsis;
+    -moz-text-overflow: ellipsis;
+    -ms-text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.m-notice .text .time{
+    position: absolute;
+    right:0;
+    top:5px;
+    font-size: 12px;
+    color: #999;
+}
+.m-notice .text .nick {
+    line-height: 61px;
+    height:61px;
+    font-size: 13px;
+    color:#999;
+    margin: -11px 0;
+}
+.m-notice .text .nick, .m-notice .text .message {
+    position: relative;
+    color:#666;
+}
+.m-notice .text .nick span, .m-notice .text .message span {
+    display: inline-block;
+    width: 80%;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    -webkit-text-overflow: ellipsis;
+    -moz-text-overflow: ellipsis;
+    -ms-text-overflow: ellipsis;
+    overflow: hidden;
+}
+.m-notice .text .nick time {
+    position: absolute;
+    right: 0;
+    top: 0;
+    color:#aaa;
+}
+.m-notice .text .first-msg {
+    display: inline-block;
+    width: 80%;
+    color:#6b8299;
+    font-size: 12px;
+    height: 20px;
+    line-height: 20px;
+}
+.m-notice .text p{
+    height: 20px;
+}
+
+.m-notice .text .message span {
+    width: 80%;
+}
+.m-notice .text .count {
+    position: absolute;
+    background-color: #f24c3d;
+    display: inline-block;
+    font-size: 12px;
+    color: #fff;
+    border-radius: 10px;
+    right: 0;
+    top: 24px;
+    text-align: center;
+    padding: 0 5px;
+    width: 20px;
+}
 .m-blacklist{
     position: fixed;
     width: 680px;
@@ -1148,4 +1377,6 @@ width: 40px;
 }
 .f-cb:after{display:block;clear:both;visibility:hidden;height:0;overflow:hidden;content:".";}
 .f-cb{zoom:1;}
+.f-fl{float: left;}
+.f-fr{float: right;}
 .ui-datepicker{display: none;}

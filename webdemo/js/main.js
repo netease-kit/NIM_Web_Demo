@@ -1,3 +1,7 @@
+/**
+ * 主要业务逻辑相关
+ */
+
 var userUID = readCookie("uid");
 var yunXin = {
     init: function () {
@@ -7,12 +11,12 @@ var yunXin = {
         this.mysdk = new SDKBridge(this,this.cache);
         myTeam.init(this.cache,this.mysdk);
         notification.init(this.cache,this.mysdk);
-
+        this.firstLoadSysMsg = true;
         this.addEvent();
     },
     initUI:function(){
         this.buildConversations();
-        this.showMe();
+        this.showSysMsgCount();
     },
     initNode: function () {
         this.$logout = $('#j-logout');
@@ -49,6 +53,10 @@ var yunXin = {
         //用户信息
         this.$personCard = $('#personCard');
 
+        //消息中心
+        this.$notice = $('#notice');
+
+        //黑名单
         this.$blacklist = $('#blacklist');
 
         this.$teamInfo = $('#j-teamInfo');
@@ -107,6 +115,7 @@ var yunXin = {
         this.$addFriendBox.delegate('.j-account','keydown',this.inputAddFriend.bind(this)); 
 
         this.$personCard.delegate('.j-close', 'click', this.hideInfoBox.bind(this));
+        this.$personCard.delegate('.j-saveAlias', 'click', this.addFriendAlias.bind(this));
         this.$personCard.delegate('.j-add', 'click', this.addFriendInBox.bind(this));
         this.$personCard.delegate('.j-del', 'click', this.removeFriend.bind(this));
         this.$personCard.delegate('.j-chat', 'click', this.doChat.bind(this));
@@ -124,6 +133,14 @@ var yunXin = {
         $("#j-cloudMsgContainer").delegate('.j-mbox','click',this.playAudio);
         $("#j-chatContent").delegate('.j-mbox','click',this.playAudio);
 
+        //消息中心
+        $("#showNotice").on('click',this.clickNotice.bind(this));
+        this.$notice.delegate('.j-close', 'click', this.hideNotice.bind(this));
+        this.$notice.delegate('.j-reject', 'click', this.rejectNotice);
+        this.$notice.delegate('.j-apply', 'click', this.acceptNotice);
+        this.$notice.delegate('.j-rmAllSysNotice', 'click', this.rmAllSysNotice.bind(this));
+        this.$notice.delegate('.tab li', 'click', this.changeNotice);
+
         //我的信息
         $("#showMyInfo").on('click',this.showMyInfo.bind(this));
         this.$myInfo.delegate('.j-close', 'click', this.hideMyInfoBox.bind(this));
@@ -140,18 +157,46 @@ var yunXin = {
     },
 
     //获取用户信息
-    doPersonInfo:function(obj){
-        var array = Object.keys(obj);
-        this.mysdk.getUsers(array,this.cbDoPersonInfo.bind(this));       
+    initInfo:function(obj,team){
+        this.lockPerson = true;
+        this.lockTeam = true;
+        var array = Object.keys(obj),
+            teamArray=[];
+        for (var i = team.length - 1; i >= 0; i--) {
+            if(!this.cache.hasTeam(team[i])){
+                teamArray.push(team[i]);
+            }
+        };
+        if(teamArray.length>0){
+            this.mysdk.getLocalTeams(teamArray,this.cbInitLocakTeamInfo.bind(this));                
+        }else{
+            this.lockTeam = false;
+        }
+        this.mysdk.getUsers(array,this.cbInitInfo.bind(this)); 
     },
-    cbDoPersonInfo:function(error,data){
+
+    cbInitInfo:function(error,data){
         if(!error){
             this.cache.setPersonlist(data);
-            this.initUI();
+            this.lockPerson = false;
+            if(this.lockTeam===false){
+                this.initUI();   
+            }
         }else{
             alert("获取用户信息失败")
         }
         
+    },
+    cbInitLocakTeamInfo:function(err,data){
+        if(!err){
+            this.cache.addTeamMap(data.teams);
+            this.lockTeam = false;
+            if(this.lockPerson===false){
+                this.initUI();   
+            }
+        }else{
+            alert("获取本地群组失败")
+        }
     },
     //左栏上方自己的信息
     showMe:function(){
@@ -163,6 +208,7 @@ var yunXin = {
         var user = this.cache.getUserById(userUID);
         var $node = this.$myInfo.data({info:user});
         $node.find(".u-icon").attr('src', getAvatar(user.avatar));
+        $node.find(".j-nick").text(user.nick);
         $node.find(".j-nickname").text(user.nick);
         var avatarSrc="";
         if(user.gender&&user.gender!=="unknown"){
@@ -219,6 +265,10 @@ var yunXin = {
         var birth = $node.find(".e-birth").val().trim();
         var tel = $node.find(".e-tel").val().trim();
         var email = $node.find(".e-email").val().trim();
+        if(email&&!/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/.test(email)){
+             alert("email格式不正确");
+            return;
+        }
         var sign  = $node.find(".e-sign").val().trim();
         this.mysdk.updateMyInfo(nick,gender,birth,tel,email,sign,this.cbSaveMyInfo.bind(this));
     },
@@ -428,7 +478,8 @@ var yunXin = {
             var isFriend = this.cache.isFriend(account);
             if(!isFriend){
                 this.friendData = data;
-            }this.$addFriendBox.removeClass('blacklist');
+            }
+            this.$addFriendBox.removeClass('blacklist');
             this.$addFriendBox.addClass(isFriend?"friend":"noFriend");    
         }
     },
@@ -442,7 +493,7 @@ var yunXin = {
         if(!error){
             this.$addFriendBox.find(".tip").html("添加好友成功！");
             this.$addFriendBox.attr('class',"m-dialog done");
-            this.cache.addFriend(params.account);
+            this.cache.addFriend(params.friend);
             this.cache.updatePersonlist(this.friendData);
             this.buildContacts();
         }else{
@@ -513,7 +564,8 @@ var yunXin = {
         var inBlacklist = this.cache.inBlacklist(user.account);
         var $node = this.$personCard.data({account:user.account,inMutelist:inMutelist?true:false,inBlacklist:inBlacklist?true:false});
         $node.find(".u-icon").attr('src', getAvatar(user.avatar));
-        $node.find(".j-nickname").text(user.nick);
+        $node.find(".j-nickname").text("昵称："+user.nick);
+        $node.find(".j-nick").text(getNick(user.account));
         var avatarSrc ="";
         if(user.gender&&user.gender!=="unknown"){
             avatarSrc = 'images/'+user.gender+'.png'
@@ -534,8 +586,11 @@ var yunXin = {
         }else{
             $node.addClass('blacklist');
         }
-         if(!isFriend){
+        if(!isFriend){
             $node.addClass("notFriend");
+        }else{
+            var alias = this.cache.getFriendAlias(user.account);
+            $node.find(".e-alias").val(alias);
         }
         $node.removeClass('hide');
         this.$mask.removeClass('hide');
@@ -557,6 +612,27 @@ var yunXin = {
         this.$personCard.find(".blacklist .u-switch").removeClass('off');
         
     },
+    // 好友备注
+    addFriendAlias:function(){
+        var account = this.$personCard.data("account");
+        var alias = this.$personCard.find(".e-alias").val().trim();
+        this.mysdk.updateFriend(account,alias,this.cbAddFriendAlias.bind(this));
+    },
+    cbAddFriendAlias:function(err,data){
+        if(!err){
+            alert("修改备注成功");
+            this.$personCard.find(".e-alias").val(data.alias);
+            this.cache.updateFriendAlias(data.account,data.alias);
+            this.$personCard.find(".j-nick").text(getNick(data.account));
+            if ($('#j-chatEditor').data('to') === data.account) { 
+                this.$nickName.text(getNick(data.account));
+            }    
+            this.buildConversations();
+            this.buildContacts();
+        }else{
+            alert("修改备注失败");
+        }
+    },
     addFriendInBox:function(){
         // if(this.$personCard.is(".blacklist")){
         //     return;
@@ -567,7 +643,7 @@ var yunXin = {
     cbAddFriendInBox:function(error, params){
         if(!error){
            this.hideInfoBox();
-           this.cache.addFriend(params.account);
+           this.cache.addFriend(params.friend);
            this.buildContacts();
        }else{
             alert("添加好友失败")
@@ -584,6 +660,9 @@ var yunXin = {
        if(!error){
            this.hideInfoBox();
            this.cache.removeFriend(params.account);
+            if ($('#j-chatEditor').data('to') === params.account) { 
+                this.$nickName.text(getNick(params.account));
+            }   
            this.buildContacts();
        }else{
         alert("删除好友失败")
@@ -614,17 +693,14 @@ var yunXin = {
             return;
         }
         var account = this.$personCard.data("account"),
-            status = this.$personCard.data("inMutelist");
-        if(status){
-            this.mysdk.removeFromMutelist(account,this.cbDoMutelist.bind(this))
-        }else{
-            this.mysdk.addToMutelist(account,this.cbDoMutelist.bind(this))
-        }   
+            status = !this.$personCard.data("inMutelist");
+        this.mysdk.markInMutelist(account,status,this.cbDoMutelist.bind(this))
+
     },
     cbDoMutelist:function(err,data){
         if(!err){
             if(data.isAdd){
-                this.cache.addToMutelist(data.account);
+                this.cache.addToMutelist(data.record);
                 this.$personCard.data("inMutelist",true);
             }else{
                 this.cache.removeFromMutelist(data.account);
@@ -643,7 +719,7 @@ var yunXin = {
     cbDoBlacklist:function(err,data){
         if(!err){
             if(data.isAdd){
-                this.cache.addToBlacklist(data.account);
+                this.cache.addToBlacklist(data.record);
                 this.$personCard.data("inBlacklist",true);
                 this.$personCard.addClass("blacklist");
             }else{
@@ -664,6 +740,137 @@ var yunXin = {
      */
     sendToMyPhone:function(){
         this.openChatBox(userUID,"p2p");
+    },
+
+    /**
+     * 消息中心
+     */
+    showSysMsgCount:function(){
+        var $node = $("#showNotice .count");
+        var count = this.cache.getSysMsgCount();
+        if(this.$notice.hasClass("hide")){
+            if(count>0){
+                $node.removeClass("hide").text(count);
+            }else{
+                $node.addClass("hide").text(count);
+            }
+        }else{
+            this.cache.setSysMsgCount(0);
+        }
+    },
+    clickNotice:function(){
+        var that = this;
+        this.cache.setSysMsgCount(0);
+        this.showSysMsgCount();
+        if(this.firstLoadSysMsg){
+            this.mysdk.getLocalSysMsgs(function(error, obj){
+                if(!error){
+                    if(obj.sysMsgs.length>0){
+                        that.cache.setSysMsgs(obj.sysMsgs); 
+                    }
+                    that.firstLoadSysMsg = false;
+                    that.showNotice();
+                }else{
+                    alert("获取系统消息失败");
+                }
+            });
+        }else{
+            this.showNotice();
+        }
+        
+    },
+    showNotice:function(){
+        this.buildSysNotice();
+        this.buildCustomSysNotice();
+        this.$notice.removeClass('hide');
+        this.$mask.removeClass("hide");
+        document.documentElement.style.overflow='hidden';
+    },
+    buildSysNotice: function(){
+        var data = this.cache.getSysMsgs(),
+            array = [],
+            that = this;
+        //确保用户信息存在缓存中
+        for(var i=0;i<data.length;i++){
+            if(!this.cache.getUserById(data[i].from)){
+                array.push(data[i].from);
+            }
+        }
+        if(array.length>0){
+            this.mysdk.getUsers(array,function(err,data){
+                for (var i = data.length - 1; i >= 0; i--) {
+                    that.cache.setPersonlist(data[i]);
+                };
+            })
+        }
+        var html = appUI.buildSysMsgs(data,this.cache);
+        this.$notice.find('.j-sysMsg').html(html);
+    },
+    buildCustomSysNotice:function(){
+        var data = this.cache.getCustomSysMsgs();
+        var html = appUI.buildCustomSysMsgs(data,this.cache);
+        this.$notice.find('.j-customSysMsg').html(html);
+    },
+    hideNotice:function() {
+        this.$notice.addClass('hide');
+        this.$mask.addClass("hide");
+        document.documentElement.style.overflow='';
+    },
+    changeNotice:function(){
+        var $node = yunXin.$notice;
+        $node.find(".tab li").removeClass("crt");
+        $(this).addClass("crt");
+        if($(this).attr("data-value")==="sys"){
+            $node.find(".j-sysMsg").removeClass("hide");
+            $node.find(".j-customSysMsg").addClass("hide");
+        }else{
+            $node.find(".j-sysMsg").addClass("hide");
+            $node.find(".j-customSysMsg").removeClass("hide");
+        }
+    },
+    acceptNotice:function() {
+        var $this = $(this),
+            $node = $this.parent(),
+            teamId = $node.attr("data-id"),
+            from = $node.attr("data-from"),
+            type = $node.attr("data-type"),
+            idServer = $node.attr("data-idServer");
+        if(type ==="teamInvite"){
+            yunXin.mysdk.acceptTeamInvite(teamId,from,idServer);
+        }else{
+            yunXin.mysdk.passTeamApply(teamId,from,idServer);     
+        }      
+        
+    },       
+    rejectNotice:function() {
+        var $this = $(this),
+            $node = $this.parent(),
+            teamId = $node.attr("data-id"),
+            from = $node.attr("data-from"),
+            type = $node.attr("data-type"),
+            idServer = $node.attr("data-idServer");
+        if(type ==="teamInvite"){
+            yunXin.mysdk.rejectTeamInvite(teamId,from,idServer);      
+        }else{
+            yunXin.mysdk.rejectTeamApply(teamId,from,idServer); 
+        }
+    },
+    rmAllSysNotice:function(){
+        var that = this;
+        var type = this.$notice.find(".tab .crt").attr("data-value");
+       if(type ==="sys"){
+            this.mysdk.deleteAllLocalSysMsgs(function(err,obj){
+                if(err){
+                    alert("删除失败");
+                }else{
+                   that.cache.setSysMsgs([]);
+                   that.buildSysNotice();
+                }
+            })
+       }else{
+        this.cache.deleteCustomSysMsgs();
+        this.buildCustomSysNotice();
+       }
     },
     /**
      * 显示黑名单列表
@@ -700,6 +907,13 @@ var yunXin = {
      */
     showCloudMsg: function() {
         var that = this;
+        if(this.$chatEditor.data("type")==="team"){
+            var teamId = this.$teamInfo.data("team-id");
+            var teamInfo = that.cache.getTeamById(teamId);
+            if(!teamInfo){
+                return;
+            }      
+        }
         this.$cloudMsgContainer.load('/webdemo/cloud-msg.html', function() {
             that.$cloudMsgContainer.removeClass('hide');
             var id = that.$chatEditor.data('to'),
@@ -796,7 +1010,6 @@ var yunXin = {
             alert("不能传空文件");
             return;
         }
-        // document.getElementById('j-uploadForm').reset();
         this.mysdk.sendFileMessage(scene, to, fileInput,this.sendMsgDone.bind(this));
     },
 
@@ -818,7 +1031,8 @@ var yunXin = {
             var options = {
                 data:data,
                 onclickavatar:this.showInfo.bind(this),
-                onclickitem:this.openChatBox.bind(this)
+                onclickitem:this.openChatBox.bind(this),
+                infoprovider:this.infoProvider.bind(this)
 
             } 
             this.friends = new NIMUIKit.FriendList(options);
@@ -829,23 +1043,85 @@ var yunXin = {
         this.doPoint();
     },
 
+    //获取好友备注名或者昵称
+    getNick:function(account){
+        // 使用util中的工具方法
+       return getNick(account,this.cache);
+    },
+    /**
+     * 列表想内容提供方法（用于ui组件）
+     * @param  {Object} data 数据
+     * @param  {String} type 类型
+     * @return {Object} info 需要呈现的数据
+     */
+    infoProvider:function(data,type){
+        var info = {};
+        switch(type){
+            case "session":   
+                var msg = data.lastMsg,
+                    scene = msg.scene;
+                info.scene = msg.scene;
+                info.account = msg.target;
+                info.target = msg.scene+"-"+msg.target;
+                info.time =  transTime2(msg.time);
+                info.crtSession = this.crtSession;
+                info.unread = data.unread>99?"99+":data.unread;
+                info.text = buildSessionMsg(msg);
+                if(scene==="p2p"){
+                    //点对点
+                    if(msg.target === userUID){
+                        info.nick = "我的手机";
+                        info.avatar = "images/myPhone.png";
+                    }else{
+                        var userInfo = this.cache.getUserById(msg.target);
+                        info.nick = this.getNick(msg.target);
+                        info.avatar = getAvatar(userInfo.avatar);     
+                    }
+
+                }else{
+                    //群组
+                    var teamInfo = this.cache.getTeamById(msg.target);
+                    if(teamInfo){
+                        info.nick = teamInfo.name;
+                        info.avatar = "images/"+teamInfo.type+".png";
+                    }else{
+                        info.nick = msg.target;
+                        info.avatar = "images/normal.png";
+                    }   
+                }
+            break;
+            case "friend":
+                info.target = "p2p-"+data.account;
+                info.account = data.account;
+                info.nick = this.getNick(info.account);
+                info.avatar = getAvatar(data.avatar);    
+                info.crtSession = this.crtSession;  
+            break;
+            case "team":
+                info.type = data.type;
+                info.nick = data.name;
+                info.target = "team-"+data.teamId;
+                info.teamId = data.teamId;
+                info.avatar = info.type==="normal"?"images/normal.png":"images/advanced.png";    
+                info.crtSession = this.crtSession;  
+            break;
+        }
+        return info;
+    },
     /**
      * 最近联系人显示
      * @return {void}
      */
 	buildConversations: function() {
         var data = {
-            account:userUID,
-            msgs:this.cache.getSessionsMsg(),
-            unreadmsgs:this.cache.getUnreadMsg(),
-            userinfo:this.cache.getPersonlist(),
-            teamInfo:this.cache.getTeamMap()
+            sessions:this.cache.getSessions()
         }
         if(!this.sessions){
             var options = {
                 data:data,
                 onclickavatar:this.showInfo.bind(this),
-                onclickitem:this.openChatBox.bind(this)
+                onclickitem:this.openChatBox.bind(this),
+                infoprovider:this.infoProvider.bind(this),
 
             } 
             this.sessions = new NIMUIKit.SessionList(options);
@@ -861,11 +1137,12 @@ var yunXin = {
      */
     buildTeams: function() {
         var data = {
-            teams:this.cache.getTeamList()
+            teams:this.cache.getTeamlist()
         }
         if(!this.teams){
             var options = {
                 data:data,
+                infoprovider:this.infoProvider.bind(this),
                 onclickavatar:this.clickTeamAvatar.bind(this),
                 onclickitem:this.openChatBox.bind(this)
 
@@ -930,25 +1207,12 @@ var yunXin = {
     * @param msg：消息主体，类型分为文本、文件、图片、地理位置、语音、视频、自定义消息，通知等
     */
     sendMsgDone: function (error, msg) {
-        if (error) {  // 断网时，将发消息人设为自己，设置status作为标志
-            msg.from = userUID;
-            msg.status = -1;
-            msg.time = +new Date();
-            msg.message = error;
-        }
-        //下个版本SDK会加上这些字段
-        msg.fromClientType = "Web";
-        msg.fromNick = this.cache.getUserById(msg.from).nick;
         this.cache.addMsgs(msg);
         this.$messageText.val('');
         this.$chatContent.find('.no-msg').remove();
         var msgHtml = appUI.updateChatContentUI(msg,this.cache);
         this.$chatContent.append(msgHtml).scrollTop(99999);
-        if(!error){
-        // 避免二次上传同一文件，无法检测onchange事件造成无法上传
-            document.getElementById('j-uploadForm').reset();
-            this.buildConversations();
-        }
+        $('#j-uploadForm').get(0).reset();
     },
 
     inputMessage: function (e) {
@@ -966,74 +1230,101 @@ var yunXin = {
     /**
      * 点击左边面板，打开聊天框
      */
-    openChatBox: function (account,type) {
+    openChatBox: function (account,scene) {
         var info;
+        this.mysdk.setCurrSession(scene,account);
+        this.crtSession = scene+"-"+account;
         //根据帐号跟消息类型获取消息数据
-        if(type=="p2p"){
+        if(scene=="p2p"){
             info = this.cache.getUserById(account);
         }else{
             info = this.cache.getTeamById(account);
         }
-        //设置未读消息为已读
-        this.cache.setUnreadMsg(account,0);
-
         //隐藏其他窗口
         $('#j-teamInfoContainer').addClass('hide');
         this.$devices.addClass('hide');
         this.$cloudMsgContainer.addClass('hide');
+        //退群的特殊UI
+        this.$rightPanel.find(".u-chat-notice").addClass("hide");
+        this.$rightPanel.find(".chat-mask").addClass("hide");
 
         //设置聊天面板
-        if (type === 'p2p') {
+        if (scene === 'p2p') {
             if(info.account == userUID){
-                this.$nickName.html("我的手机");
+                this.$nickName.text("我的手机");
                 this.$chatTitle.find('img').attr('src', "images/myPhone.png"); 
             }else{
-                this.$nickName.html(info.nick);
+                this.$nickName.text(this.getNick(account));
                 this.$chatTitle.find('img').attr('src', getAvatar(info.avatar)); 
             }
         }else{
-            this.$chatTitle.find('img').attr('src', "images/" + info.type + ".png"); 
-            this.$nickName.html(info.name);
+            if(info){
+                this.$chatTitle.find('img').attr('src', "images/" + info.type + ".png"); 
+                this.$nickName.text(info.name); 
+            }else{
+                this.$rightPanel.find(".u-chat-notice").removeClass("hide");
+                this.$rightPanel.find(".chat-mask").removeClass("hide");
+                this.$chatTitle.find('img').attr('src', "images/normal.png"); 
+                this.$nickName.text(account); 
+            }
         }
         //显示面板
         this.$rightPanel.removeClass('hide'); 
         this.$messageText.val('');
 
         //群信息
-        if (type === 'p2p') {
+        if (scene === 'p2p') {
             this.$teamInfo.addClass('hide').data({
                 teamId: '',
                 gtype: ''
             });
         } else {
-            account = parseInt(account);
             this.$teamInfo.removeClass('hide').data({
                 teamId: account,
-                gtype: info.type
+                gtype: info?info.type:"normal"
             });
         }
         //会话信息
         this.$chatEditor.data({
             to: account,
-            type: type
+            type: scene
         }); 
-        
-        // 根据uid取聊天记录
-        this.getHistoryMsgs(account); 
         this.doPoint();
+        // 根据或取聊天记录
+        this.getHistoryMsgs(scene,account); 
     },
 
     /**
      * 获取当前会话消息
-     * @param  {String} to 会话的对象
      * @return {void}
      */
-    getHistoryMsgs: function (to) {
-        var temp = appUI.buildChatContentUI(to,this.cache);
+    getHistoryMsgs: function (scene,account) {
+        var id = scene+"-"+account;
+        var sessions = this.cache.findSession(id);
+        var msgs = this.cache.getMsgs(id);
+        if(!!sessions){
+            if(sessions.unread>=msgs.length){
+                var msgid = (msgs.length>0)?msgs[0].idClient:false;
+                this.mysdk.getLocalMsgs(scene,account,msgid,this.getLocalMsgsDone.bind(this));
+                return;
+            }
+        }
+        var temp = appUI.buildChatContentUI(id,this.cache);
         this.$chatContent.html(temp);
         this.$chatContent.scrollTop(9999);
     },
 
+    getLocalMsgsDone:function(err,data){
+        if(!err){
+            this.cache.addMsgsByReverse(data.msgs);
+            var id = data.scene +"-"+data.to;
+            var temp = appUI.buildChatContentUI(id,this.cache);
+            this.$chatContent.html(temp);
+            this.$chatContent.scrollTop(9999);
+        }else{
+            alert("获取历史消息失败");
+        }
+    },
     /**
      * 处理收到的消息 
      * @param  {Object} msg 
@@ -1053,19 +1344,12 @@ var yunXin = {
         //非群通知消息处理
         if (/text|image|file|audio|video|geo|custom/i.test(msg.type)) {
             this.cache.addMsgs(msg); 
-            if ($('#j-chatEditor').data('to') !== who) { 
-                //条件1为多端同步的消息不计数  2.发给我的手机
-                if(msg.from!==userUID||(msg.from==userUID&&msg.fromClientType!=="Web")){
-                    this.cache.addUnreadMsg(msg);
-                }
-            }
             var account = (msg.scene==="p2p"?who:msg.from);
             //用户信息本地没有缓存，需存储
             if(!this.cache.getUserById(account)){
                 this.mysdk.getUser(account,function(err,data){
                     if(!err){
                         that.cache.updatePersonlist(data);
-                        that.buildConversations(); 
                         updateContentUI();
                     }
                 })      
@@ -1075,46 +1359,10 @@ var yunXin = {
             } 
         }else{ 
             // 群消息处理
-            if (msg.attach && msg.attach.type) {
-                //自己退群特殊处理
-                notification.messageHandler(msg);
-                if(msg.from===userUID&&msg.attach.type==="leaveTeam"){    
-                    return;
-                }else{  
-                    notification.messageHandler(msg);
-                    if(msg.attach.type==="addTeamMembers"||msg.attach.type==="removeTeamMembers"){
-                        var accounts = msg.attach.accounts,
-                            array=[],
-                            that=this;
-                        for(var i=0;i<accounts.length;i++){
-                            if(!this.cache.getUserById(accounts[i])){
-                                array.push(accounts[i])
-                            }
-                        }
-                        if(array.length>0){
-                            this.mysdk.getUsers(array,function(err,data){
-                                for (var i = data.length - 1; i >= 0; i--) {
-                                    that.cache.updatePersonlist(data[i]);
-                                };
-                                //蛋疼的异步处理，必须确保用户消息缓存在本地，再进行UI展示
-                                that.cache.addMsgs(msg);
-                                that.buildConversations(); 
-                                updateContentUI(); 
-                            })
-                        }else{
-                            this.cache.addMsgs(msg);
-                            this.buildConversations();  
-                            updateContentUI();
-                        }
-                    }else{
-                        this.cache.addMsgs(msg);
-                        this.buildConversations();  
-                        updateContentUI();
-                    }   
-                }
-            }    
+            notification.messageHandler(msg,updateContentUI);
         }
     },
+
     /**
      * 切换左边面板上方tab
      */
@@ -1135,6 +1383,7 @@ var yunXin = {
             yunXin.buildTeams();
         }
     },
+
     logout: function () {
         delCookie('uid');
         delCookie('sdktoken');
@@ -1202,7 +1451,7 @@ var yunXin = {
                 this.buildContacts();
                 break;
             case 'addFriend':
-                this.cache.addFriend(data.account);
+                this.cache.addFriend(data.friend);
                 if(!this.cache.getUserById(data.account)){
                     this.mysdk.getUser(account,function(err,data){
                         if(!err){

@@ -1,43 +1,75 @@
+/**
+ * 群通知处理
+ */
+
 var notification = {
 	init:function(cache,sdk){
-		this.sdk = sdk;
+		this.mysdk = sdk;
 		this.cache = cache;
 	},
-	messageHandler: function(msg) {
+	messageHandler: function(msg,callback) {
 		var type = msg.attach.type, team = msg.attach.team;
 		switch (type) {
 			case 'addTeamMembers':		// 添加成员
-				this.addMember(team);
+				this.addMember(msg,callback);
 				break;
 			case 'removeTeamMembers':	// 移除成员
-				this.removeMember(team, msg);
+				this.removeMember(msg,callback);
 				break;
 			case 'leaveTeam':		// 离开群
-				this.leaveTeam(team, msg);
+				this.leaveTeam(msg,callback);
 				break;
 			case 'updateTeam':		// 更新群
-				this.updateTeam(team, msg);
+				this.updateTeam(msg,callback);
 				break;
-			case 'acceptInvite':	// 接受入群邀请
-				this.acceptInvite(team,msg);
+			case 'acceptTeamInvite':	// 接受入群邀请
+				this.acceptTeamInvite(msg,callback);
 				break;
-			case 'passApply':		// 群主/管理员 通过加群邀请
-				this.passApply(team);
+			case 'passTeamApply':		// 群主/管理员 通过加群邀请
+				this.passTeamApply(msg,callback);
+				break;
+			case 'dismissTeam':
+				this.dismissTeam(msg,callback);
 				break;
 			default:				// 其他
 				console.log("type-->" + type);
+				this.cache.addMsgs(msg);
+        		callback();
 				break;
 		}
 	},
 
 	/**
 	* 添加成员
-	* @param team: 群（普通/高级）对象
 	*/
-	addMember: function(team) {
-		if(!this.cache.hasTeam(team.teamId)){
-			this.cache.addTeam(team);
-		}
+	addMember: function(msg,callback) {
+		var team = msg.attach.team;
+		this.cache.addTeam(team);
+		// this.cache.addTeamMember(team.teamId,)
+	 	var accounts = msg.attach.accounts,
+            array=[],
+            that=this;
+        for(var i=0;i<accounts.length;i++){
+            if(!this.cache.getUserById(accounts[i])){
+                array.push(accounts[i])
+            }
+        }
+        if(array.length>0){
+            this.mysdk.getUsers(array,function(err,data){
+                for (var i = data.length - 1; i >= 0; i--) {
+                    that.cache.updatePersonlist(data[i]);
+                };
+                //蛋疼的异步处理，必须确保用户消息缓存在本地，再进行UI展示
+                that.cache.addMsgs(msg);
+                //再次重绘
+                yunXin.buildConversations();
+                callback(); 
+            })
+        }else{
+            this.cache.addMsgs(msg);
+            callback();
+        }
+		
 	},
 
 	/**
@@ -45,86 +77,111 @@ var notification = {
 	* @param team: 群（普通/高级）对象
 	* @param msg: 消息对象
 	*/
-	removeMember: function(team, msg) {  
-		var teamId = team.teamId,
-			removeAccounts = msg.attach.accounts;
-		if (removeAccounts.indexOf(userUID) != -1) { 
-			this.cache.rmMsgs(teamId);
-		}
+	removeMember: function(msg,callback) {  
+		var accounts = msg.attach.accounts,
+            array=[],
+            kickme = false,
+            that = this;
+        for(var i=0;i<accounts.length;i++){
+            if(!this.cache.getUserById(accounts[i])){
+                array.push(accounts[i])
+            }
+            if (accounts[i]===userUID) {
+            	kickme = true;
+            };
+        }
+        if(array.length>0){
+            this.mysdk.getUsers(array,function(err,data){
+                for (var i = data.length - 1; i >= 0; i--) {
+                    that.cache.updatePersonlist(data[i]);
+                };
+                //蛋疼的异步处理，必须确保用户消息缓存在本地，再进行UI展示
+                that.cache.addMsgs(msg);
+                
+                if(kickme){
+        			that.cache.removeTeamById(msg.to);
+        		}
+        		//再次重绘
+                yunXin.buildConversations();
+                callback(); 
+            })
+        }else{
+        	if(kickme){
+        		this.cache.removeTeamById(msg.to);
+        	}
+            this.cache.addMsgs(msg);
+            callback();
+        }
 	},
 
 	/**
-	* 主动退群
-	* @param team: 群（普通/高级）对象
-	* @param msg: 消息对象
+	* 退群
 	*/
-	leaveTeam: function(team, msg) {   
-		this.leave(team, msg);
-
-	},
-
-	/**
-	* @param team: 群（普通/高级）对象
-	* @param msg: 消息对象
-	* 在被移除或主动退群，要做：
-	* 1. 如果存在最近会话，移除会话；
-	* 2. 如果正在对话时，关闭聊天窗口；
-	* 3. 移除群列表里面的对应群；
-	*/
-	leave: function(team, msg) {
+	leaveTeam: function(msg,callback) {
 		if(msg.from===userUID){
 			// 从漫游消息中删除
-			var teamId = team.teamId,
-				teamType = this.cache.getTeamById(teamId).type,
-				$conversations = $('#j-loadConversations ul'),
-				$teams = $('#j-teams .teams');
-			this.cache.rmMsgs(teamId);
+			var teamId = msg.to;
 			this.cache.removeTeamById(teamId);
-			yunXin.buildConversations();
 			yunXin.buildTeams();
 			if($('#j-chatEditor').data('to') === msg.to) { 
 				$('#j-chatEditor').data({to:""});
 				$('#j-rightPanel').addClass('hide');
 			}
-		}		
+
+		}
+		this.cache.addMsgs(msg);
+	 	callback();	
 	},
 
 	/**
 	* 更新群名字
-	* @param team: 群（普通/高级）对象
-	* @param msg: 消息对象
 	*/
-	updateTeam: function(team, msg) {  // 更新群名字
+	updateTeam: function(msg,callback) {
+		var team = msg.attach.team;
 		var teamName = team.name;
-		$('#j-teams [data-uid="' + msg.to + '"] .nick span').text(teamName);
 		if($('#j-chatEditor').data('to') === msg.to){
 			$('#j-nickName').text(teamName);
 		}
-		this.cache.setTeamName(msg.to,teamName);
+		this.cache.updateTeam(msg.to,team);
+		this.cache.addMsgs(msg); 
+        yunXin.buildTeams();
+        callback();
 	},
 
 	/**
 	* 用户接受入群邀请
-	* @param team: 群（普通/高级）对象
 	*/
-	acceptInvite: function(team, msg) {
-		var members = getMembersById(team.teamId);
-		if (msg.from === userUID) {
-			teamList.push(team);
+	acceptTeamInvite: function(msg,callback) {
+		if(msg.from===userUID){
+			this.cache.addTeam(msg.attach.team);
+			yunXin.buildTeams();
+			yunXin.buildConversations();
 		}
-		mysdk.nim.getTeamMembers({
-			teamId: team.teamId,
-			done: function(error, obj) {
-				if (!error) {  
-				}
-			}
-		});
+        this.cache.addMsgs(msg);
+        callback();
 	},
 
 	/**
 	* 群主/管理员 同意入群邀请
 	*/
-	passApply: function(team) {
-		
+	passTeamApply: function(msg,callback) {
+		if(msg.from===msg.attach.account||msg.attach.account===userUID){
+			this.cache.addTeam(msg.attach.team);
+			yunXin.buildTeams();
+			yunXin.buildConversations();
+		}
+	 	this.cache.addMsgs(msg);
+        callback();
+	},
+
+	/**
+	 * 解散群
+	 */
+	dismissTeam:function(msg,callback) {
+		this.cache.addMsgs(msg);
+		var teamId = msg.target;
+		this.cache.removeTeamById(teamId);
+		yunXin.buildTeams();
+        callback();
 	}
 };

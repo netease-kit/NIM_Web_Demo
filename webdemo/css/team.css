@@ -15,9 +15,10 @@
     font-size: 16px;
 }
 .info-content {
-    height: 500px;
+    height: 400px;
     padding: 12px 20px;
     overflow: scroll;
+    border-bottom: 1px solid #ddd;
 }
 .info-content ul li {
     float: left;
@@ -47,8 +48,8 @@
     margin-right: 0;
 }
 .add-item .icon-plus {
-    background-position: -32px -111px;
-    margin-right: 5px;
+    background-position: -32px -113px;
+    margin-right: 3px;
     width: 26px;
     height: 26px;
 }
@@ -172,17 +173,18 @@
     border-top: 1px solid #ddd;
 }
 .info-footer {
-    height: 50px;
-    line-height: 50px;
+    height: 120px;
     color:#aaa;
     padding: 0 15px;
     position: absolute;
     bottom: 0;
     width: 100%;
-    border-top: 1px solid #ddd;
     left: 0;
     font-size: 12px;
     background-color: #fff;
+    border: 5px;
+    -webkit-border-radius:5px;
+    -moz-border-radius:5px;
 }
 .icon-write {
     background-position: -62px -114px;
@@ -192,37 +194,33 @@
 }
 .info-footer .name {
     color:#3a4a59;
-    max-width: 50%;
-    height: 24px;
-    line-height: 36px;
-    display: inline-block;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    -webkit-text-overflow: ellipsis;
-    -moz-text-overflow: ellipsis;
-    -ms-text-overflow: ellipsis;
-    white-space: nowrap;
+    line-height: 24px;
 }
-.info-footer input {
+.info-footer .ipt {
     display: none;
     border-width:0;
     border-color:#ddd;
     border-style: solid;
     padding: 5px 10px;
 }
-.info-footer .exit-team {
+.info-footer .exit-team,.info-footer .dismiss-team{
     position: absolute;
     right: 10px;
-    top: 0;
+    bottom: 20px;
     color:#0888ff;
 }
 .info-footer .wrap.active {
+    display: inline-block;
     border: 1px solid #ddd;
-    padding: 8px 0;
+    padding:0;
 }
 .info-footer .wrap .groupName{
     width:200px;
     display:inline-block;
+    overflow: hidden;
+    height: 24px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 .info-footer .wrap.active input{
     display: inline-block;
@@ -235,4 +233,16 @@
 }
 .info-footer .owner:hover .icon {
     visibility: visible;
+}
+.info-footer .items{
+    line-height: 24px;
+}
+.info-footer .info{
+    height: 24px;
+    line-height: 24px;
+}
+.info-footer .items .item{
+    width: 100px;
+    font-size: 14px;
+    color: #666;
 }
