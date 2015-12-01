@@ -154,7 +154,7 @@ var Cache = (function(){
 			this.addMsg(msgs);
 			return;
 		}
-		for (var i = msgs.length - 1; i >= 0; i--) {
+		for (var i = 0; i <msgs.length; i++) {
 			if(msgs[i].scene==="team"){
 				user = msgs[i].to;
 				if(!this.msgs["team-"+user]){
