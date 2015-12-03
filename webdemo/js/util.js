@@ -187,7 +187,6 @@ function getMessage(msg) {
     var str = '',
         url = msg.file ? _$escape(msg.file.url) : '',
         sentStr = (msg.from!==userUID)?"收到":"发送";
-    url += msg.file ? '?download=' + encodeURI(_$escape(msg.file.name)): '';
     switch (msg.type) {
         case 'text':
             var re = /(http:\/\/[\w.\/]+)(?![^<]+>)/gi; // 识别链接
@@ -213,6 +212,7 @@ function getMessage(msg) {
                     msg.file.url = _$escape(msg.file.url);
                     str = '<a class="f-maxWid" href="' + msg.file.url + '?imageView" target="_blank"><img data-src="' + msg.file.url + '" src="' + msg.file.url + '?imageView&thumbnail=200x0&quality=85"/></a>';
                 } else if (!/exe|bat/i.test(msg.file.ext)) {
+                    url += msg.file ? '?download=' + encodeURI(_$escape(msg.file.name)): '';
                     str = '<a href="' + url + '" target="_blank" class="download-file f-maxWid"><span class="icon icon-file2"></span>' +_$escape(msg.file.name) + '</a>';
                 } else {
                     str = '<p>[非法文件，已被本站拦截]</p>';
