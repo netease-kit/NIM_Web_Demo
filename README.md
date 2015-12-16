@@ -10,7 +10,7 @@ demo地址https://github.com/netease-im/NIM_Web_Demo
 2. `node app`
 3. 在浏览器中访问 http://127.0.0.1:8888/webdemo/index.html
 
-**注：必须启服务预览demo文件（node服务只是一个例子，并非必须**
+**注：必须启服务预览demo文件（node服务只是一个例子，并非必须)**
 
 ## 源码结构
 * sdk.js：初始化SDK，以及封装SDK相关功能的方法
