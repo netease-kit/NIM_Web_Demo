@@ -322,15 +322,19 @@ var myTeam = {
 				}
 				for(var i = 0;i<members.length;i++){
 					if(!that.getUserById(members[i].account)){
-						array.push({uid:members[i].account})
+						array.push(members[i].account)
 					};
 				}
 				if(array.length>0){
-					yunXin.mysdk.getUsers(array,function(data){
-						for(var j = 0;j<data.list.length;j++){
-							that.cache.updatePersonlist(data.list[j]);
+					yunXin.mysdk.getUsers(array,function(err,data){
+						if (!err) {
+							for(var j = 0;j<data.length;j++){
+								that.cache.updatePersonlist(data[j]);
+							}
+							showUI();
+						}else{
+							alert(err);	
 						}
-						showUI();
 					})
 				}else{
 					showUI();
