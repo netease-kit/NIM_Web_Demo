@@ -70,6 +70,9 @@ var Login = {
 
 	requestLogin: function(account, pwd) {
 		setCookie('uid',account.toLocaleLowerCase());
+		//demo中得appKey需要加密
+		//其他的不需要处理
+		//setCookie('sdktoken',pwd);
 		setCookie('sdktoken',MD5(pwd));
 		window.location.href = '/webdemo/main.html';
 			
