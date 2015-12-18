@@ -223,7 +223,6 @@ var SDKBridge = function (ctr,data) {
 		this.cache.addSysMsgCount(count);
 	}
 	function onSysMsg(newMsg,msg) {
-		debugger
 		var type = msg.type,
 			ctr = this.controller,
 			cache = this.cache;
@@ -502,7 +501,6 @@ SDKBridge.prototype.rejectTeamInvite = function(teamId,from,idServer){
 		from:from,
 		idServer:idServer,
 		done:function(err,data){
-			debugger;
 		}
 	});
 }
