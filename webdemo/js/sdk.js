@@ -214,9 +214,16 @@ var SDKBridge = function (ctr,data) {
 			return b.time-a.time;
 		});
 		this.cache.setSysMsgs(data);
-		this.cache.addSysMsgCount(data.length);
+		var count = 0;
+		for (var i = data.length - 1; i >= 0; i--) {
+			if(data[i].category==="team"){
+				count++
+			}
+		};
+		this.cache.addSysMsgCount(count);
 	}
 	function onSysMsg(newMsg,msg) {
+		debugger
 		var type = msg.type,
 			ctr = this.controller,
 			cache = this.cache;
@@ -258,7 +265,6 @@ var SDKBridge = function (ctr,data) {
 			ctr.buildSysNotice();
 		}
 	};
-
 	function onCustomSysMsg(msg){
 		var ctr = this.controller;
 		this.cache.addCustomSysMsgs([msg]);

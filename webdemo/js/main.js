@@ -789,7 +789,8 @@ var yunXin = {
     buildSysNotice: function(){
         var data = this.cache.getSysMsgs(),
             array = [],
-            that = this;
+            that = this,
+            html;
         //确保用户信息存在缓存中
         for(var i=0;i<data.length;i++){
             if(!this.cache.getUserById(data[i].from)){
@@ -797,14 +798,15 @@ var yunXin = {
             }
         }
         if(array.length>0){
-            this.mysdk.getUsers(array,function(err,data){
-                for (var i = data.length - 1; i >= 0; i--) {
-                    that.cache.setPersonlist(data[i]);
-                };
+            this.mysdk.getUsers(array,function(err,params){
+                that.cache.setPersonlist(params);
+                html = appUI.buildSysMsgs(data,that.cache);
+                that.$notice.find('.j-sysMsg').html(html);
             })
+        }else{
+            html = appUI.buildSysMsgs(data,this.cache);
+            this.$notice.find('.j-sysMsg').html(html);    
         }
-        var html = appUI.buildSysMsgs(data,this.cache);
-        this.$notice.find('.j-sysMsg').html(html);
     },
     buildCustomSysNotice:function(){
         var data = this.cache.getCustomSysMsgs();
