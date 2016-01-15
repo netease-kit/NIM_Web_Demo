@@ -265,6 +265,11 @@ var SDKBridge = function (ctr,data) {
 		}
 	};
 	function onCustomSysMsg(msg){
+		//多端同步 正在输入自定义消息类型需要过滤
+		var id = JSON.parse(msg.content).id;
+		if(id===1){
+			return;
+		}
 		var ctr = this.controller;
 		this.cache.addCustomSysMsgs([msg]);
 		this.cache.addSysMsgCount(1);
