@@ -26,14 +26,14 @@
     box-sizing: border-box;
     cursor: pointer;
 }
-.m-panel .panel_item:hover {
-    background-color: #f5f5f5;
-}
 .m-panel .panel_item.active {
     background-color: #f5f5f5;
 }
 .m-panel .panel_item.active .count {
     display: none;
+}
+.m-panel .panel_item:hover {
+    background-color: #f5f5f5;
 }
 .m-panel .panel_avatar {
     float: left;
@@ -73,7 +73,7 @@
 }
 .m-panel .panel_text .panel_nick, .m-panel .panel_text .panel_lastMsg {
     display: inline-block;
-    width: 80%;
+    width: 60%;
     font-size: 14px;
     line-height: 20px;
     overflow: hidden;

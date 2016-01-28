@@ -35,7 +35,6 @@ var SDKBridge = function (ctr,data) {
 	this.nim = new NIM({
 		//控制台日志，上线时应该关掉
 		debug: true || { api: 'info', style: 'font-size:14px;color:blue;background-color:rgba(0,0,0,0.1)' },
-        // appKey: 'fe416640c8e8a72734219e1847ad2547',//测试
         appKey: '45c6af3c98409b18a84451215d0bdd6e',
         account: userUID,
         token: sdktoken,
@@ -214,13 +213,7 @@ var SDKBridge = function (ctr,data) {
 			return b.time-a.time;
 		});
 		this.cache.setSysMsgs(data);
-		var count = 0;
-		for (var i = data.length - 1; i >= 0; i--) {
-			if(data[i].category==="team"){
-				count++
-			}
-		};
-		this.cache.addSysMsgCount(count);
+		this.cache.addSysMsgCount(data.length);
 	}
 	function onSysMsg(newMsg,msg) {
 		var type = msg.type,
@@ -264,6 +257,7 @@ var SDKBridge = function (ctr,data) {
 			ctr.buildSysNotice();
 		}
 	};
+
 	function onCustomSysMsg(msg){
 		//多端同步 正在输入自定义消息类型需要过滤
 		var id = JSON.parse(msg.content).id;
@@ -506,6 +500,7 @@ SDKBridge.prototype.rejectTeamInvite = function(teamId,from,idServer){
 		from:from,
 		idServer:idServer,
 		done:function(err,data){
+			debugger;
 		}
 	});
 }

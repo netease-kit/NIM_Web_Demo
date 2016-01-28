@@ -1,0 +1,21 @@
+{
+    "es3": true,
+    "strict": true,
+    "globalstrict": true,
+    "browser":true,
+    "curly": true,
+    "forin": true,
+    "eqeqeq": true,
+    "eqnull": true,
+    "undef": true,
+    "unused": true,
+    "noarg": true,
+    "globals": {
+        "__comment": "true means read-write, false means read-only",
+        "window": true,
+        "console": false,
+        "JSON": false,
+        "module": true,
+        "require": false
+    }
+}

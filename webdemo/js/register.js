@@ -60,7 +60,6 @@ var register = {
 			contentType: 'application/x-www-form-urlencoded',
 		 	beforeSend: function (req) {
                 req.setRequestHeader('appkey', '45c6af3c98409b18a84451215d0bdd6e');
-                // req.setRequestHeader('appkey', 'fe416640c8e8a72734219e1847ad2547');
             },
 			success: function(data) {
 				if (data.res === 200) {	

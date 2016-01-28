@@ -26,9 +26,9 @@
 				</div>
 				<div class="m-devices hide">正在使用云信web版</div>
 				<div class="panel" id="j-switchPanel">
-					<a href="javascript:;" class="box-sizing tc" data-type="conversations"><span class="icon icon-chat cur"></span></a>
-					<a href="javascript:;" class="box-sizing tc " data-type="contacts"><span class="icon icon-list"></span></a>
-					<a href="javascript:;" class="box-sizing tc" data-type="teams"><span class="icon icon-team"></span></a>
+					<a href="javascript:;" class="box-sizing tc m-unread panel_tab" data-type="conversations"><span class="icon icon-chat cur"></span><b class="u-unread hide">0</b></a>
+					<a href="javascript:;" class="box-sizing tc panel_tab" data-type="contacts"><span class="icon icon-list"></span></a>
+					<a href="javascript:;" class="box-sizing tc panel_tab" data-type="teams"><span class="icon icon-team"></span></a>
 				</div>
 				<div class="friends" id="j-loadConversations" data-type="conversations">		<!-- 最近联系人 -->
 					<div class="list">
@@ -424,18 +424,20 @@
 		</div>
 	</div>	
 	<div id="j-mask" class="mask hide"></div>
+ 	<a href="./chatroom/list.html" target="_blank"><div class="u-goChartRoom"></div></a>
 	<!-- js-->
 	<script src="js/jquery-1.7.1.min.js"></script>
 	<script src="js/3rd/jquery-ui-datepicker.js"></script>
-	<script src="js/NIM_Web_SDK_v1.7.2.js"></script>
+	<script src="js/Web_SDK_Base_v2.0.0.js"></script>
+	<script src="js/Web_SDK_NIM_v2.0.0.js"></script>
 	<script src="js/emoji.js"></script>
-	<script src="js/util.js?v=1.7"></script>
-	<script src="js/cache.js?v=1.7"></script>
-	<script src="js/ui.js?v=1.7"></script>
-	<script src="js/sdk.js?v=1.7"></script>
-	<script src="js/notification.js?v=1.7"></script>
-	<script src="js/team.js?v=1.7"></script>
-	<script src="js/widget/uiKit.js?v=1.7"></script>
-	<script src="js/main.js?v=1.7"></script>
+	<script src="js/util.js?v=2"></script>
+	<script src="js/cache.js?v=2"></script>
+	<script src="js/ui.js?v=2"></script>
+	<script src="js/sdk.js?v=2"></script>
+	<script src="js/notification.js?v=2"></script>
+	<script src="js/team.js?v=2"></script>
+	<script src="js/widget/uiKit.js?v=2"></script>
+	<script src="js/main.js?v=2"></script>
 </body>
 </html>

@@ -31,15 +31,10 @@ html, body {
     background: url(../images/icons.png) no-repeat -67px -170px;
     content:' ';
     position: absolute;
-    top: 27px;
+    top: 22px;
     left: 35px;
 }
-.icon-list.cur:after {
-    left: 122px
-}
-.icon-team.cur:after {
-    left: 208px
-}
+
 .icon-pic {
     background-position: 0 -79px;
     width: 25px;
@@ -161,6 +156,9 @@ html, body {
     float: left;
     width: 33.3%;
     margin: 5px 0;
+}
+.panel .panel_tab{
+    position: relative;
 }
 .search-input {
     border: 1px solid #ddd;
@@ -1315,6 +1313,21 @@ width: 40px;
     margin-left: 15px;
     margin-right: 0px; 
 }
+
+.m-unread .u-unread{
+    position: absolute;
+    top: 2px;
+    left:55px;
+    font-size: 12px;
+    display: block;
+    background-color: #f24c3d;
+    text-align: center;
+    line-height: 16px;
+    height: 16px;
+    padding: 0 5px;
+    color: #fff;
+    border-radius: 10px;
+}
 .u-switch .on,.u-switch .off{
     display: inline-block;
     float: left;
@@ -1355,6 +1368,7 @@ width: 40px;
     color: #aaaaaa;
     line-height: 30px;
 }
+
 .u-audio{width:164px;position: relative;height: 20px;cursor: pointer;}
 .u-audio b{position:absolute;top: 1px;color:#fff;font-size:10px;font-family:arial,"simsun";}
 .u-audio.right b{left:8px;}
@@ -1370,6 +1384,15 @@ width: 40px;
     width: 13px;
     height: 13px;
     cursor: pointer;
+}
+.u-goChartRoom{
+    position: absolute;
+    top: 90px;
+    right: 100px;
+    width: 88px;
+    height: 88px;
+    text-align: center;
+    background: url("../images/chartroom.png") no-repeat;
 }
 .f-maxWid{
     max-width: 290px;

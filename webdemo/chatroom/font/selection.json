@@ -1,0 +1,101 @@
+{
+	"IcoMoonType": "selection",
+	"icons": [
+		{
+			"icon": {
+				"paths": [
+					"M469.333 1024c0 0-469.333-295.509-469.333-554.667 0-259.243 210.091-469.333 469.333-469.333 259.157 0 469.333 210.091 469.333 469.333 0 259.157-469.333 554.667-469.333 554.667zM682.667 426.667h-170.667v-170.667h-85.333v170.667h-170.667v85.333h170.667v170.667h85.333v-170.667h170.667v-85.333z"
+				],
+				"attrs": [
+					{
+						"fill": "rgb(255, 255, 255)"
+					}
+				],
+				"isMulticolor": false,
+				"width": 939,
+				"grid": 0,
+				"tags": [
+					"申请直播间"
+				]
+			},
+			"attrs": [
+				{
+					"fill": "rgb(255, 255, 255)"
+				}
+			],
+			"properties": {
+				"order": 1,
+				"id": 0,
+				"prevSize": 32,
+				"code": 59648,
+				"name": "uniE900"
+			},
+			"setIdx": 0,
+			"setId": 1,
+			"iconIdx": 0
+		},
+		{
+			"icon": {
+				"paths": [
+					"M930.909 465.455v558.545h-279.273v-279.273c0-51.386-41.705-93.091-93.091-93.091h-93.091c-51.386 0-93.091 41.705-93.091 93.091v279.273h-279.273v-558.545h-93.091l512-465.455 512 465.455h-93.091z"
+				],
+				"attrs": [
+					{
+						"fill": "rgb(123, 135, 148)"
+					}
+				],
+				"isMulticolor": false,
+				"grid": 0,
+				"tags": [
+					"房间管理"
+				]
+			},
+			"attrs": [
+				{
+					"fill": "rgb(123, 135, 148)"
+				}
+			],
+			"properties": {
+				"order": 2,
+				"id": 0,
+				"prevSize": 32,
+				"code": 59649,
+				"name": "uniE901"
+			},
+			"setIdx": 1,
+			"setId": 0,
+			"iconIdx": 0
+		}
+	],
+	"height": 1024,
+	"metadata": {
+		"name": "icomoon"
+	},
+	"preferences": {
+		"showGlyphs": true,
+		"showCodes": true,
+		"showQuickUse": true,
+		"showQuickUse2": true,
+		"showSVGs": true,
+		"fontPref": {
+			"prefix": "icon-",
+			"metadata": {
+				"fontFamily": "icomoon"
+			},
+			"metrics": {
+				"emSize": 1024,
+				"baseline": 6.25,
+				"whitespace": 50
+			},
+			"embed": false
+		},
+		"imagePref": {
+			"prefix": "icon-",
+			"png": true,
+			"useClassSelector": true,
+			"color": 0,
+			"bgColor": 16777215
+		},
+		"historySize": 100
+	}
+}

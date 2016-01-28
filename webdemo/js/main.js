@@ -12,6 +12,7 @@ var yunXin = {
         myTeam.init(this.cache,this.mysdk);
         notification.init(this.cache,this.mysdk);
         this.firstLoadSysMsg = true;
+        this.totalUnread =0;
         this.addEvent();
     },
     initUI:function(){
@@ -203,6 +204,8 @@ var yunXin = {
         var user = this.cache.getUserById(userUID);
         this.$userName.text(user.nick);
         this.$userPic.attr('src', getAvatar(user.avatar));
+        setCookie('nickName',user.nick);
+        setCookie('avatar',user.avatar);
     },
     showMyInfo:function(){
         var user = this.cache.getUserById(userUID);
@@ -789,8 +792,7 @@ var yunXin = {
     buildSysNotice: function(){
         var data = this.cache.getSysMsgs(),
             array = [],
-            that = this,
-            html;
+            that = this;
         //确保用户信息存在缓存中
         for(var i=0;i<data.length;i++){
             if(!this.cache.getUserById(data[i].from)){
@@ -798,15 +800,14 @@ var yunXin = {
             }
         }
         if(array.length>0){
-            this.mysdk.getUsers(array,function(err,params){
-                that.cache.setPersonlist(params);
-                html = appUI.buildSysMsgs(data,that.cache);
-                that.$notice.find('.j-sysMsg').html(html);
+            this.mysdk.getUsers(array,function(err,data){
+                for (var i = data.length - 1; i >= 0; i--) {
+                    that.cache.setPersonlist(data[i]);
+                };
             })
-        }else{
-            html = appUI.buildSysMsgs(data,this.cache);
-            this.$notice.find('.j-sysMsg').html(html);    
         }
+        var html = appUI.buildSysMsgs(data,this.cache);
+        this.$notice.find('.j-sysMsg').html(html);
     },
     buildCustomSysNotice:function(){
         var data = this.cache.getCustomSysMsgs();
@@ -1130,7 +1131,8 @@ var yunXin = {
             this.sessions.inject(this.$conversations.get(0));
         }else{
             this.sessions.update(data);
-        }           		
+        }  
+        this.showUnread();         		
         this.doPoint();
 	},
     /**
@@ -1153,7 +1155,7 @@ var yunXin = {
             this.teams.inject($('#j-teams').get(0));
         }else{
             this.teams.update(data);
-        }                   
+        }                  
         this.doPoint();
     },
     /**
@@ -1190,14 +1192,34 @@ var yunXin = {
             this.$chatVernier.addClass("hide"); 
         }
     },
-
+    // 导航上加未读数
+    showUnread:function(){
+        var counts = $("#j-conversations .panel_count");
+        this.totalUnread = 0;
+        if(counts.length!==0){
+            if(this.totalUnread !=="99+"){
+                for (var i = counts.length - 1; i >= 0; i--) {
+                    if($(counts[i]).text()==="99+"){
+                        this.totalUnread = "99+";
+                        break;
+                    }
+                    this.totalUnread +=parseInt($(counts[i]).text(),10);
+                }
+            }
+        }
+        var $node = $(".m-unread .u-unread");
+        $node.text(this.totalUnread);
+        this.totalUnread?$node.removeClass("hide"):$node.addClass("hide");
+    },
     sendTextMessage: function () {
         var scene = this.$chatEditor.data('type'),
             to = this.$chatEditor.data('to'),
             text = this.$messageText.val().trim();
         if ( !! to && !! text) {
-            if (text.length > 500 && text.length === 0) {
-                alert('消息内容不能为空，且长度最大为500字符');
+           if (text.length > 500) {
+                alert('消息长度最大为500字符');
+            }else if(text.length===0){
+                return;
             } else {
                 this.mysdk.sendTextMessage(scene, to, text, this.sendMsgDone.bind(this));
             }
