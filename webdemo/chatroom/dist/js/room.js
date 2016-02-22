@@ -351,7 +351,7 @@ var page = {
 				html += this.buildChatMemberUI(item);	
 			}else if(item.type==="manager"){
 				html1 += this.buildChatMemberUI(item);	
-			}else if(item.type==="normal"){
+			}else if(item.type==="common"){
 				html2 += this.buildChatMemberUI(item);	
 			}else{
 				html3 += this.buildChatMemberUI(item);	
@@ -453,7 +453,7 @@ var page = {
 					$ownerList.append(this.buildChatMemberUI(item));	
 				}else if(item.type==="manager"){
 					$managerList.append(this.buildChatMemberUI(item));	
-				}else if(item.type==="normal"){
+				}else if(item.type==="common"){
 					$normalList.append(this.buildChatMemberUI(item));	
 				}else{
 					$guestList.append(this.buildChatMemberUI(item));

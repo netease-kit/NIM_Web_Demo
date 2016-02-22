@@ -228,13 +228,13 @@ LinkRoomFn.markChatroomManager = function(account,isAdd,callback){
  * @param  {Function} callback 回调
  * @return {void}           
  */
-LinkRoomFn.markChatroomMemberLevel = function(account,level,callback){
-    this.room.ChatroomMemberLevel({
-        account: account,
-        level:level,
-        done: callback
-    });    
-}
+// LinkRoomFn.markChatroomCommonMember = function(account,level,callback){
+//     this.room.markChatroomCommonMember({
+//         account: account,
+//         level:level,
+//         done: callback
+//     });    
+// }
 /**
  * 处理菜单命令
  * @param  {Int} type    类型

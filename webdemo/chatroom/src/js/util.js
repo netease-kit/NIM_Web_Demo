@@ -89,11 +89,11 @@ var util ={
             case 'removeManager':
                 text = (data.attach.toNick[0]||data.attach.to[0])+"被解除管理员身份";
                 break;
-            case 'addLevel':
-                text = "addLevel";
+            case 'addCommon':
+                text = "addCommon";
                 break;
-            case 'removeLevel':
-                text = "removeLevel";
+            case 'removeCommon':
+                text = "removeCommon";
                 break;
             case 'kickMember':
                 text = data.attach.toNick[0]+"被管理员踢出房间";
@@ -114,7 +114,7 @@ var util ={
             case "guest":
                 type = -2;
                 break;
-            case "normal":
+            case "common":
                 type = 0;
                 break;
             case "owner":
@@ -140,7 +140,7 @@ var util ={
                 type ="guest";
                 break;
             case 0:
-                type ="normal";
+                type ="common";
                 break;
             case 1:
                 type ="owner";
