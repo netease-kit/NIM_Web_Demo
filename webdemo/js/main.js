@@ -1433,7 +1433,7 @@ var yunXin = {
                 btn = $(this).children(".j-play");
             node.addClass("play");
             setTimeout(function(){node.removeClass("play");},parseInt(btn.attr("data-dur")))
-            new window.Audio(btn.attr("data-src")+"&audioTrans&type=mp3").play();
+            new window.Audio(btn.attr("data-src")+"?audioTrans&type=mp3").play();
         }
     },
     /**
