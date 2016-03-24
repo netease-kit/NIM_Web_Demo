@@ -19,7 +19,7 @@ var appUI = {
                         msgHtml += this.makeTimeTag(transTime(message.time));
                     }
                 }
-                msgHtml+=this.makeChatContent(message,user); 	        
+                msgHtml += this.makeChatContent(message,user); 	        
             }
         }
         return msgHtml;
@@ -58,18 +58,24 @@ var appUI = {
 				from = message.from,
                 avatar = user.avatar,
 				showNick = message.scene === 'team' && from !== userUID,
-			msgHtml = ['<div data-time="'+ message.time +'" data-id="'+ message.idClient +'" data-idServer="'+ message.idServer +'" class="item item-' + buildSender(message) + '">',
-						'<img class="img j-img" src="'+getAvatar(avatar)+'" data-account="' + from + '"/>',
-						showNick?'<p class="nick">' + getNick(from) + '</p>':'',
-						'<div class="msg msg-text">',
-							'<div class="box">',
-								'<div class="cnt">',
-									getMessage(message),
-								'</div>',
-							'</div>',
-						'</div>',
-						message.status === "fail"?'<span class="error"><i class="icon icon-error"></i>发送失败</span>':'',
-					'</div>'].join('');    
+                msgHtml;
+            if(type==="tip"){
+                msgHtml ='<p class="u-notice tc item" data-time="'+ message.time +'" data-id="'+ message.idClient +'" data-idServer="'+ message.idServer +'"><span class="radius5px">'+getMessage(message)+'</span></p>'; 
+            }else{
+    			msgHtml = ['<div data-time="'+ message.time +'" data-id="'+ message.idClient +'" id="'+ message.idClient +'" data-idServer="'+ message.idServer +'" class="item item-' + buildSender(message) + '">',
+    						'<img class="img j-img" src="'+getAvatar(avatar)+'" data-account="' + from + '"/>',
+    						showNick?'<p class="nick">' + getNick(from) + '</p>':'',
+    						'<div class="msg msg-text">',
+    							'<div class="box">',
+    								'<div class="cnt">',
+    									getMessage(message),
+    								'</div>',
+    							'</div>',
+    						'</div>',
+    						message.status === "fail"?'<span class="error"><i class="icon icon-error"></i>发送失败</span>':'',
+                           '<span class="readMsg"><i></i>已读</span>',
+    					'</div>'].join('');           
+            }
         }
         return msgHtml;
 			

@@ -1,9 +1,11 @@
 /**
  * 聊天室连接相关
  */
+
 var LinkRoom = function (ctr,data) {
     var that = this,
         info = data;
+    //debug
     Chatroom.setDebug(true);
     this.data = {};
     this.data.person={};
@@ -50,8 +52,8 @@ var LinkRoom = function (ctr,data) {
                 that.getHistoryMsgs(cbGetHistoryMsgs.bind(that));
                 that.ctr.initReady(msg);
             },
-            onmsg:function(msg){
-                that.ctr.buildChat(msg);
+            onmsgs:function(msgs){
+                that.ctr.buildChat(msgs,'msgs');
             },
             onerror: function(error, obj){
                 $("#linkStatus").text("连接已断开").removeClass("hide");
@@ -96,7 +98,7 @@ var LinkRoom = function (ctr,data) {
 
     var cbGetHistoryMsgs = function(err,data){
         if(!err){
-           that.ctr.buildChat(data.msgs);
+           that.ctr.buildChat(data.msgs,'historyMsgs');
         }else{
             alert(err);
         }
@@ -113,7 +115,6 @@ var LinkRoomFn = LinkRoom.prototype;
 LinkRoomFn.sendText = function(text,callback){
     var type = util.parseMemberType(this.data.person[this.account]);
     this.room.sendText({
-        fromNick:this.nick,
         custom:JSON.stringify({type:type}),
         text:text,
         done:callback
@@ -130,7 +131,6 @@ LinkRoomFn.sendText = function(text,callback){
 LinkRoomFn.sendCustomMessage = function (content , callback) {
     var type = util.parseMemberType(this.data.person[this.account]);
     this.room.sendCustomMsg({
-        fromNick:this.nick,
         custom:JSON.stringify({type:type}),
         content: JSON.stringify(content),
         done: callback

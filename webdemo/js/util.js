@@ -126,7 +126,7 @@ Array.union = function(a, b){
 */
 function buildSessionMsg(msg) {
     var text = (msg.scene!='p2p'?((msg.from ===userUID)?"你":getNick(msg.from))+":":""), type = msg.type;
-    if (!/text|image|file|audio|video|geo|custom|notification/i.test(type)) return '';
+    if (!/text|image|file|audio|video|geo|custom|tip|notification/i.test(type)) return '';
     switch (type) {
         case 'text':
             text += _$escape(msg.text);
@@ -150,6 +150,9 @@ function buildSessionMsg(msg) {
             break;
         case 'geo':
             text += '[位置]';
+            break;
+        case 'tip':
+            text +='[提醒消息]';
             break;
         case 'custom':
             var content = JSON.parse(msg.content);
@@ -218,6 +221,9 @@ function getMessage(msg) {
                     str = '<p>[非法文件，已被本站拦截]</p>';
                 }               
             }
+            break;
+        case 'tip':
+                str="这是一条提醒消息";
             break;
         case 'video':
             // str = '<a href="' + url + '" target="_blank" class="download-file"><span class="icon icon-file2"></span>[你收到了一条视频消息]</a>';

@@ -143,7 +143,7 @@ var page = {
 			if(err){
 				alert(err.message);
 			}else{
-				this.buildChat(data);
+				this.buildChat([data],"msgs");
 			}
 		}.bind(this))
 	},
@@ -228,34 +228,39 @@ var page = {
 					alert(err.message);
 				}else{
 					this.$editText.val("");
-					this.buildChat(data);
+					this.buildChat([data],"msgs");
 				}
 			}.bind(this))
         }
 	},
 	// 聊天页面绘制
-	buildChat:function(data){
+	buildChat:function(data,type){
 		var html="",
 			item,
 			prepend = false;
-		if($.type(data)!=="array"){
-			item = data;
-			if(this.$chat.find('.item[data-id="'+item.idClient+'"]').length){
-				return;
-			}
-			if(item.type!=="notification"){
-				html = this.buildMsgUI(item);		
-			}else{
-				//对于系统通知，更新下用户信息的状态
-				if(item.attach.type==="blackMember"||item.attach.type==="unblackMember"||item.attach.type==="gagMember"||item.attach.type==="ungagMember"||item.attach.type==="addManager"||item.attach.type==="removeManager"){
-					this.updatePersonInfo(data.attach.to[0]);	
+		data.sort(function(a,b){
+			return a.time - b.time;
+		});
+		if(type==="msgs"){
+			for (var i = 0;i < data.length;i++) {
+				item = data[i];
+				if(this.$chat.find('.item[data-id="'+item.idClient+'"]').length){
+					continue;
 				}
-				html = this.buildSysMsgUI(item);
+				if(item.type!=="notification"){
+					html = this.buildMsgUI(item);		
+				}else{
+					//对于系统通知，更新下用户信息的状态
+					if(item.attach.type==="blackMember"||item.attach.type==="unblackMember"||item.attach.type==="gagMember"||item.attach.type==="ungagMember"||item.attach.type==="addManager"||item.attach.type==="removeManager"){
+						this.updatePersonInfo(data.attach.to[0]);	
+					}
+					html += this.buildSysMsgUI(item);
+				}
 			}
 			this.$chat.append(html);
 		}else{
-			//数组格式就是历史消息了（倒序）
-			for (var i = data.length-1;i>=0;i--) {
+			// 历史消息
+			for (var i = 0;i < data.length;i++) {
 				item = data[i];
 				if(this.$chat.find('.item[data-id="'+item.idClient+'"]').length){
 					continue;

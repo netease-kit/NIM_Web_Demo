@@ -1115,7 +1115,7 @@ var yunXin = {
      * 最近联系人显示
      * @return {void}
      */
-	buildConversations: function() {
+	buildConversations: function(id) {
         var data = {
             sessions:this.cache.getSessions()
         }
@@ -1131,9 +1131,12 @@ var yunXin = {
             this.sessions.inject(this.$conversations.get(0));
         }else{
             this.sessions.update(data);
-        }  
+        }
+        //导航上加未读示例  
         this.showUnread();         		
         this.doPoint();
+        //已读回执处理
+        this.markMsgRead(id);
 	},
     /**
      * 我的群组显示
@@ -1326,6 +1329,8 @@ var yunXin = {
         var id = scene+"-"+account;
         var sessions = this.cache.findSession(id);
         var msgs = this.cache.getMsgs(id);
+        //标记已读回执
+        this.sendMsgRead(account,scene);
         if(!!sessions){
             if(sessions.unread>=msgs.length){
                 var msgid = (msgs.length>0)?msgs[0].idClient:false;
@@ -1336,6 +1341,8 @@ var yunXin = {
         var temp = appUI.buildChatContentUI(id,this.cache);
         this.$chatContent.html(temp);
         this.$chatContent.scrollTop(9999);
+        //已读回执UI处理
+        this.markMsgRead(id);
     },
 
     getLocalMsgsDone:function(err,data){
@@ -1345,8 +1352,41 @@ var yunXin = {
             var temp = appUI.buildChatContentUI(id,this.cache);
             this.$chatContent.html(temp);
             this.$chatContent.scrollTop(9999);
+            this.markMsgRead(id);
         }else{
             alert("获取历史消息失败");
+        }
+    },
+    //发送已读回执
+    sendMsgRead:function(account,scene){
+        if(scene==="p2p"){
+            var id = scene+"-"+account;
+            var sessions = this.cache.findSession(id);
+            this.mysdk.sendMsgReceipt(sessions.lastInMsg,function(err,data){
+                if(err){
+                    console.log(err);
+                }
+            });
+        }
+    },    
+    //UI上标记消息已读
+    markMsgRead:function(id){
+
+        if(!id||this.crtSession!==id){
+            return;
+        }
+        var msgs = this.cache.getMsgs(id);
+        for (var i = msgs.length-1;i>=0; i--) {
+                var message = msgs[i];
+                // 目前不支持群已读回执
+                if(message.scene==="team"){
+                    return;
+                }
+                if(nim.isMsgRemoteRead(message)){
+                    $(".item.item-me.read").removeClass("read");
+                    $("#"+message.idClient).addClass("read");
+                    break;
+                }       
         }
     },
     /**
@@ -1360,13 +1400,14 @@ var yunXin = {
             updateContentUI = function(){
                 //如果当前消息对象的会话面板打开
                 if ($('#j-chatEditor').data('to') === who) { 
+                    that.sendMsgRead(who,msg.scene);
                     var msgHtml = appUI.updateChatContentUI(msg,that.cache);
                     that.$chatContent.find('.no-msg').remove();
                     that.$chatContent.append(msgHtml).scrollTop(99999);
                 }    
             };
         //非群通知消息处理
-        if (/text|image|file|audio|video|geo|custom/i.test(msg.type)) {
+        if (/text|image|file|audio|video|geo|custom|tip/i.test(msg.type)) {
             this.cache.addMsgs(msg); 
             var account = (msg.scene==="p2p"?who:msg.from);
             //用户信息本地没有缓存，需存储

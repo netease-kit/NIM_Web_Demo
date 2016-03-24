@@ -17,24 +17,10 @@ var SDKBridge = function (ctr,data) {
 	this.person[userUID] = true;
 	this.controller = ctr;
 	this.cache = data;
-	// 数据源(在不支持数据库时, SDK 需要开发者提供数据来完成下面的工作,SDK文档里有详细说明)
- 	var dataSource = {
-        getUser: function(account) {
-            return that.cache.getUserById(account);
-        },
-        getSession: function(sessionId) {
-            return that.cache.findSession(sessionId);
-        },
-      	getMsg: function(msg) {
-            return that.nim.findMsg(that.cache.msgs[msg.sessionId], msg.idClient);
-        },
-        getSysMsg: function(sysMsg) {
-            return that.nim.findSysMsg(that.cache.sysMsgs, sysMsg.idServer);
-        }
-    };
-	this.nim = new NIM({
+	window.nim = this.nim = new NIM({
 		//控制台日志，上线时应该关掉
 		debug: true || { api: 'info', style: 'font-size:14px;color:blue;background-color:rgba(0,0,0,0.1)' },
+        // appKey: 'fe416640c8e8a72734219e1847ad2547',//测试
         appKey: '45c6af3c98409b18a84451215d0bdd6e',
         account: userUID,
         token: sdktoken,
@@ -75,10 +61,7 @@ var SDKBridge = function (ctr,data) {
         onsynccreateteam:onSyncCreateteam.bind(this),
         onsyncmarkinblacklist:onSyncMarkinBlacklist.bind(this),
         onsyncmarkinmutelist:onSyncMarkinMutelist.bind(this),
-        onsyncfriendaction:onSyncFriendAction.bind(this),
-        //辅助
-        dataSource: dataSource
-
+        onsyncfriendaction:onSyncFriendAction.bind(this)
     });
 	function onConnect() {
 		$('#j-errorNetwork').addClass('hide');
@@ -164,9 +147,10 @@ var SDKBridge = function (ctr,data) {
 		}
 	};
 	function onUpdatesession(session){
+		var id = session.id||"";
 		var old = this.cache.getSessions();
 		this.cache.setSessions(this.nim.mergeSessions(old, session));
-		this.controller.buildConversations();			
+		this.controller.buildConversations(id);			
 	};
 
 	function saveMsgs(msgs) {
@@ -261,7 +245,7 @@ var SDKBridge = function (ctr,data) {
 	function onCustomSysMsg(msg){
 		//多端同步 正在输入自定义消息类型需要过滤
 		var id = JSON.parse(msg.content).id;
-		if(id===1){
+		if(id==1){
 			return;
 		}
 		var ctr = this.controller;
@@ -690,5 +674,14 @@ SDKBridge.prototype.previewImage = function(option){
 	        console.log('上传进度文本: ' + obj.percentageText);
 	    },
 	    done: option.callback
+	});
+}
+/**
+ * 已读回执
+ */
+SDKBridge.prototype.sendMsgReceipt = function(msg,done){
+	this.nim.sendMsgReceipt({
+	    msg:msg,
+	    done: done
 	});
 }

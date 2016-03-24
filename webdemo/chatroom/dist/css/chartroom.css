@@ -90,14 +90,6 @@ a, a:hover{
 	margin-top: 54px;
 	margin-left: -10px;
 }
-.m-list:before, .m-list:after{
-	display: table;
-	content: "";
-	line-height: 0;
-}
-.m-list:after{
-	clear: both;
-}
 .m-list .item{
 	float: left;
 	margin-left: 10px;
@@ -171,6 +163,14 @@ a, a:hover{
 	color: #fff;
 	line-height: 20px;
 }
+.m-list:before, .m-list:after{
+	display: table;
+	content: "";
+	line-height: 0;
+}
+.m-list:after{
+	clear: both;
+}
 .u-btn{
 	padding: 5px 10px;
 	color: #fff;
@@ -189,14 +189,6 @@ a, a:hover{
 	box-sizing: border-box;
 	border-radius: 5px;
 	zoom: 1;
-}
-.m-room:before, .m-room:after{
-	display: table;
-	content: "";
-	line-height: 0;
-}
-.m-room:after{
-	clear: both;
 }
 .m-room .g-left{
 	float: left;
@@ -281,14 +273,6 @@ a, a:hover{
 	cursor: pointer;
 	zoom: 1;
 }
-.m-room .tab:before, .m-room .tab:after{
-	display: table;
-	content: "";
-	line-height: 0;
-}
-.m-room .tab:after{
-	clear: both;
-}
 .m-room .tab li{
 	float: left;
 	width: 50%;
@@ -299,6 +283,14 @@ a, a:hover{
 .m-room .tab li.crt{
 	background-color: #fff;
 	border-bottom: 2px solid #238efa;
+}
+.m-room .tab:before, .m-room .tab:after{
+	display: table;
+	content: "";
+	line-height: 0;
+}
+.m-room .tab:after{
+	clear: both;
 }
 .m-room .hide{
 	display: none;
@@ -311,9 +303,6 @@ a, a:hover{
 	background-color: #fff;
 	overflow-y: scroll;
 }
-.m-room .chat::-webkit-scrollbar:background-color{
-	background-color: #a0a9af;
-}
 .m-room .chat .item{
 	box-sizing: border-box;
 	margin-bottom: 4px;
@@ -324,10 +313,6 @@ a, a:hover{
 	color: #88939b;
 	font-size: 12px;
 	line-height: 18px;
-}
-.m-room .chat .nick.roles{
-	position: relative;
-	padding-left: 34px;
 }
 .m-room .chat .nick .role{
 	position: absolute;
@@ -343,17 +328,9 @@ a, a:hover{
 .m-room .chat .nick .role-owner{
 	background-position: 0px -54px;
 }
-.m-room .chat.owner .nick{
-	cursor: pointer;
-}
-.m-room .chat.owner .nick.owner, .m-room .chat.owner .nick.me{
-	cursor: default;
-}
-.m-room .chat.manager .nick{
-	cursor: pointer;
-}
-.m-room .chat.manager .nick.owner, .m-room .chat.manager .nick.manager, .m-room .chat.manager .nick.me{
-	cursor: default;
+.m-room .chat .nick.roles{
+	position: relative;
+	padding-left: 34px;
 }
 .m-room .chat .emoji{
 	width: 18px;
@@ -371,6 +348,21 @@ a, a:hover{
 .m-room .chat .text.sys{
 	color: red;
 }
+.m-room .chat::-webkit-scrollbar:background-color{
+	background-color: #a0a9af;
+}
+.m-room .chat.owner .nick{
+	cursor: pointer;
+}
+.m-room .chat.owner .nick.owner, .m-room .chat.owner .nick.me{
+	cursor: default;
+}
+.m-room .chat.manager .nick{
+	cursor: pointer;
+}
+.m-room .chat.manager .nick.owner, .m-room .chat.manager .nick.manager, .m-room .chat.manager .nick.me{
+	cursor: default;
+}
 .m-room .member{
 	width: 100%;
 	box-sizing: border-box;
@@ -386,9 +378,6 @@ a, a:hover{
 	height: 35px;
 	padding: 5px 10px 5px 45px;
 	overflow: hidden;
-}
-.m-room .member .item:hover{
-	background-color: #eff8ff;
 }
 .m-room .member .item .avatar{
 	float: left;
@@ -422,6 +411,9 @@ a, a:hover{
 }
 .m-room .member .item .role-owner{
 	background-position: 0px -54px;
+}
+.m-room .member .item:hover{
+	background-color: #eff8ff;
 }
 .m-room .member .more{
 	width: 100%;
@@ -457,14 +449,6 @@ a, a:hover{
 	box-sizing: border-box;
 	zoom: 1;
 }
-.m-room .sendBtn:before, .m-room .sendBtn:after{
-	display: table;
-	content: "";
-	line-height: 0;
-}
-.m-room .sendBtn:after{
-	clear: both;
-}
 .m-room .sendBtn .btn{
 	float: right;
 	margin-left: 12px;
@@ -478,6 +462,22 @@ a, a:hover{
 	width: 25px;
 	height: 25px;
 	background: url(../../images/icon.png) no-repeat 0 -27px;
+}
+.m-room .sendBtn:before, .m-room .sendBtn:after{
+	display: table;
+	content: "";
+	line-height: 0;
+}
+.m-room .sendBtn:after{
+	clear: both;
+}
+.m-room:before, .m-room:after{
+	display: table;
+	content: "";
+	line-height: 0;
+}
+.m-room:after{
+	clear: both;
 }
 .m-menu{
 	position: absolute;
@@ -532,14 +532,6 @@ a, a:hover{
 	overflow: hidden;
 	zoom: 1;
 }
-.m-manager:before, .m-manager:after{
-	display: table;
-	content: "";
-	line-height: 0;
-}
-.m-manager:after{
-	clear: both;
-}
 .m-manager .tt{
 	height: 38px;
 	line-height: 38px;
@@ -580,6 +572,14 @@ a, a:hover{
 	position: relative;
 	width: 770px;
 	height: 100%;
+}
+.m-manager:before, .m-manager:after{
+	display: table;
+	content: "";
+	line-height: 0;
+}
+.m-manager:after{
+	clear: both;
 }
 @font-face{
 	font-family: 'icomoon';
@@ -756,12 +756,6 @@ body a:hover{
 	color:#909ead;
 	cursor: pointer;
 }
-.m-head .action:hover{
-	color:#238efa;
-}
-.m-head .action:hover .icon{
-	background-position:-17px 0;
-}
 .m-head .action .icon{
 	position: absolute;
 	top:15px;
@@ -769,6 +763,12 @@ body a:hover{
 	width: 15px;
 	height: 20px;
 	background: url(../../images/icon.png) no-repeat 0 0;
+}
+.m-head .action:hover{
+	color: #238efa;
+}
+.m-head .action:hover .icon{
+	background-position: -17px 0;
 }
 .m-head .info{
 	float: right;

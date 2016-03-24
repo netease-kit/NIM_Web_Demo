@@ -78,6 +78,18 @@ html, body {
     line-height: 37px;
     float: right;
 }
+.item .readMsg{
+    display: none;
+    color: #6b8299;
+    font-size: 12px;
+    padding: 5px 5px;
+    text-align: right;
+    line-height: 37px;
+    float: right;
+}
+.item.read .readMsg{
+    display: block;
+}
 .wrapper {
     position: relative;
     overflow: hidden;
