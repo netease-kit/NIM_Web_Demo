@@ -683,7 +683,7 @@ var yunXin = {
            this.openChatBox(account,"p2p");
            return;
         }
-        var $li = $container.find(".m-panel li[data-account]="+account);
+        var $li = $container.find('.m-panel li[data-account="'+account+'"]');
         if($li.length>0){
             $li.find(".count").addClass("hide");
             $li.find(".count").text(0);
