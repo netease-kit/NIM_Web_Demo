@@ -10,5 +10,7 @@ http.createServer(function(req,res){
         res.writeHead(200);
         res.end(data);
     });
-}).listen(8888,"http://10.240.135.103");
-console.log('Server running at http://10.240.135.103:8888/');
+}).listen(8888);
+console.log('Server running at http://localhost:8888/');
+console.log('please visit:');
+console.log('http://localhost:8888/webdemo/index.html');
