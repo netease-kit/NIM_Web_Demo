@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>云信 Web Demo</title>
+	<link rel="stylesheet" href="css/base.css"/>
+	<link rel="stylesheet" href="css/animate.css"/>
+	<link rel="stylesheet" href="css/index.css?v=1"/>
+	<link rel="icon" href="images/icon.ico" type="image/x-icon"/>
+</head>
+<body>
+	<div class="bad-network hide tc radius5px" id="j-errorNetwork">已与服务器断开，请检查网络连接</div>
+	<div class="wrapper radius10px" id="j-wrapper">
+		<form action="/" method="post">
+			<div class="row tc">
+				<span class="icon icon-account"></span>
+				<input type="text" class="radius5px box-sizing" id="j-account" autofocus="autofocus" autocomplete="on" placeholder="请输入帐号"/>
+			</div>
+			<div class="row tc">
+				<span class="icon icon-pwd"></span>
+				<input type="password" class="radius5px box-sizing" id="j-secret" placeholder="请输入密码"/>
+			</div>
+			<div class="row">
+				<div class="error-msg hide" id="j-errorMsg">密码错误</div>
+			</div>
+			<div class="row tc">
+				<button type="button" class="btn btn-login" id="j-loginBtn">登录</button>
+			</div>
+		</form>
+		<div class="u-redirect"><a href="./register.html">注册</a></div>
+	</div>
+	<div id="footer" class="footer tc">
+		<p class="hide">为了更好地体验本Demo，建议您使用IE10、Chrome、FireFox、Safari、360等主流浏览器。</p>
+		<p>&copy;1997 - 2016 网易公司版权所有</p>
+	</div>
+	<script src="../3rd/jquery-1.11.3.min.js"></script>
+	<script src="js/config.js"></script>
+	<script src="js/md5.js"></script>
+	<script src="js/util.js"></script>
+	<script src="js/login.js"></script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>云信webdemo聊天室</title>
+	<link rel="stylesheet" href="./dist/css/chartroom.css"/>
+</head>
+<body>
+	<div class="m-head">
+		<div class="g-doc">
+			<div class="logo item">聊天室demo</div>
+			<div class="nav item">
+				<a href="./list.html">首页</a>
+			</div>
+			<div class="info item">
+				<img src="./images/default-icon.png" alt="头像" id="avatar">
+				<a href="./roomManage.html" id="nickName">未登录</a>
+			</div>
+			<div class="action item"><a href="./anchor.html"><b class="icon"></b>我要当主播</a></div>
+		</div>
+	</div>
+	<div class="g-doc">
+		<div class="m-list" id="roomlist">
+		</div>
+	</div>
+	<div id="fun" class="fun"></div>
+	<script src="../js/config.js"></script>
+	<script src="./dist/js/title.js"></script>
+	<script src="./dist/js/util.js"></script>
+	<script src="../../3rd/jquery-1.11.3.min.js"></script>
+	<script>
+		$(document).ready(function() {
+			$.ajax({
+			  	url: CONFIG.url+"/api/chatroom/homeList",
+			  	contentType:"application/json",
+			  	beforeSend: function (req) {
+	            	req.setRequestHeader('appkey', CONFIG.appkey);
+	        	}
+			}).done(function(data) {
+				if(data.res===200){
+					var list = data.msg.list,
+						item,
+						total,
+						html ="";
+					for (var i = 0; i < list.length; i++) {
+						item = list[i];
+						if(item.onlineusercount > 10000){
+							var value = new Number(item.onlineusercount/10000);
+							total = value.toFixed(1)+"万";
+						}else{
+							total = item.onlineusercount;
+						}
+						html += ['<div class="item j-item" data-id="'+item.roomid+'">',
+									'<div class="snapshot">',
+										'<img class="pic" src="./images/image'+i+'.png">',
+										'<div class="play">',
+											'<img class="btn" src="images/play.png">',
+										'</div>',
+									'</div>',
+									'<div class="title">',
+										'<a href="">'+item.name+'</a>',
+									'</div>',
+									'<div class="online">在线人数：<span>'+total+'人</span></div>',
+									'<div class="status">正在直播</div>',
+								'</div>'].join("");
+					}
+					$("#roomlist").html(html);
+					var $items = $("#roomlist .j-item");
+					$items.on("click",function(evt){
+						var id = evt.currentTarget.getAttribute("data-id");
+						window.open("./room.html?id="+id);
+					});	
+					var type = util.readCookie("kickReason");
+					console.log(type);
+					if(type){
+						util.delCookie("kickReason");
+						alert(type);				
+					}
+				}else{
+					alert("获取聊天室列表失败");
+				}
+			});
+		})
+	</script>
+</body>
+</html>
