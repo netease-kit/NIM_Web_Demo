@@ -413,7 +413,7 @@ var Cache = (function(){
 	}
 	Cache.prototype.getTeamMemberInfo = function(account,id){
 		var obj = this.teamMembers[id];
-		if(obj){
+		if(obj&&obj.members){
 			for (var i = obj.members.length - 1; i >= 0; i--) {
 				if (obj.members[i].account === account) {
 					return obj.members[i]

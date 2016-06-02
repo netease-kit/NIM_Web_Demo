@@ -276,13 +276,13 @@ var myTeam = {
 				inviteMode = teamInfo.inviteMode||"",
 				updateTeamMode = teamInfo.updateTeamMode||"",
 				myTeamInfo = that.cache.getTeamMemberInfo(userUID,teamId),
-				members = [],
 				html = '',
 				$userList = $('#j-userList'),
 				$teamId = that.$teamInfoContainer.find(".j-teamId"),
 				$teamAvatar = that.$teamInfoContainer.find(".j-teamAvatar"),
 				$teamName = $('#j-teamName'),
 				$teamDesc = $('#j-desc');
+			var members = that.cache.getTeamMembers(teamId).members;
 			if(type==="advanced"){
 				//其本信息
 				that.$teamInfoContainer.removeClass("normal").find('.j-advanced').removeClass("hide");
@@ -319,56 +319,64 @@ var myTeam = {
 				$teamDesc.addClass('owner');
 				$teamAvatar[0].src = "images/normal.png";
 			}
-			
-			members = that.cache.getTeamMembers(teamId).members;
 			$teamName.find('.name').text(teamName);
 			$teamId.text(teamId);
-			var showMember = function(members){
-				that.sortMembers(members);  // 需要把群主放在第一个位置
+			var showMember = function(){		
 				var array=[];
-				var showUI = function(){
-					if (type === 'normal' || myTeamInfo.type!=="normal" || inviteMode==="all") { // 是群主
-						html += '<li class="first add-item tc radius-circle" data-team-type="' + type + '" data-team-id="' + teamId + '"><i class="icon icon-plus"></i><p></p></li>';
-					}
-					for (var i = 0, l = members.length; i < l; ++i) {
-						var member = members[i],
-							uid = member.account || member.uid,
-							avatar = getAvatar(that.getUserById(uid)?that.getUserById(uid).avatar:""),
-							nick = getNick(uid);
-						html += '<li data-uid="' + uid + '"><a href="javascript:;"><img src="'+avatar+'"/>';
-						if (member.type === 'owner') {
-							html += '<i class="icon radius-circle icon-user"></i>';
-						} else {
-							html += '<span class="hover" data-nick="' + nick + '" data-team-name="' + teamName + '" data-uid="' + uid + '" data-team-id="' + teamId + '">移除</span>';
-						}
-						html += '</a><p class="text">' + nick + '</p></li>';
-					}
-					$userList.html(html);
-					if (myTeamInfo.type!=="normal") {
-						$userList.addClass('owner');
-					}
-				}
 				for(var i = 0;i<members.length;i++){
 					if(!that.getUserById(members[i].account)){
 						array.push(members[i].account)
 					};
 				}
 				if(array.length>0){
-					yunXin.mysdk.getUsers(array,function(err,data){
-						if(!err){
-							for(var j = 0;j<data.length;j++){
-								that.cache.updatePersonlist(data[j]);
-							}
-							showUI();
-						}else{
-							alert("获取用户信息失败");
-						}
-					})
+					getInfo(array);
 				}else{
 					showUI();
 				}
 			}
-			showMember(members)
+			var showUI = function(){
+				that.sortMembers(members);
+				if (type === 'normal' || myTeamInfo.type!=="normal" || inviteMode==="all") { // 是群主
+					html += '<li class="first add-item tc radius-circle" data-team-type="' + type + '" data-team-id="' + teamId + '"><i class="icon icon-plus"></i><p></p></li>';
+				}
+				for (var i = 0, l = members.length; i < l; ++i) {
+					var member = members[i],
+						uid = member.account || member.uid,
+						avatar = getAvatar(that.getUserById(uid)?that.getUserById(uid).avatar:""),
+						nick = getNick(uid);
+					html += '<li data-uid="' + uid + '"><a href="javascript:;"><img src="'+avatar+'"/>';
+					if (member.type === 'owner') {
+						html += '<i class="icon radius-circle icon-user"></i>';
+					} else {
+						html += '<span class="hover" data-nick="' + nick + '" data-team-name="' + teamName + '" data-uid="' + uid + '" data-team-id="' + teamId + '">移除</span>';
+					}
+					html += '</a><p class="text">' + nick + '</p></li>';
+				}
+				$userList.html(html);
+				if (myTeamInfo.type!=="normal") {
+					$userList.addClass('owner');
+				}
+			}
+			var getInfo = function (array) {
+				// 一次最多拉去150个用户信息
+				var arr1 = array.slice(0,150);
+				var arr2 = array.slice(150);
+				yunXin.mysdk.getUsers(arr1,function(err,data){
+					if(!err){
+						for(var j = 0;j<data.length;j++){
+							that.cache.updatePersonlist(data[j]);
+						}
+						if(arr2.length>0){
+							getInfo(arr2);
+						}else{
+							showUI();
+						}
+					}else{
+						alert("获取用户信息失败");
+					}
+				})
+			}
+			showMember()
 			that.$teamInfoContainer.removeClass('hide');
 		});
 	},
