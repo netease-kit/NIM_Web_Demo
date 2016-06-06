@@ -248,7 +248,7 @@ var page = {
 					continue;
 				}
 				if(item.type!=="notification"){
-					html = this.buildMsgUI(item);		
+					html += this.buildMsgUI(item);		
 				}else{
 					//对于系统通知，更新下用户信息的状态
 					if(item.attach.type==="blackMember"||item.attach.type==="unblackMember"||item.attach.type==="gagMember"||item.attach.type==="ungagMember"||item.attach.type==="addManager"||item.attach.type==="removeManager"){
