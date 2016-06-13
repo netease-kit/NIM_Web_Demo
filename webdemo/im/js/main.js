@@ -1475,7 +1475,7 @@ var yunXin = {
         if(scene==="p2p"){
             var id = scene+"-"+account;
             var sessions = this.cache.findSession(id);
-            this.mysdk.sendMsgReceipt(sessions.lastInMsg,function(err,data){
+            this.mysdk.sendMsgReceipt(sessions.lastMsg,function(err,data){
                 if(err){
                     console.log(err);
                 }
