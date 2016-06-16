@@ -631,7 +631,8 @@ var yunXin = {
         $node.find(".j-nick").text(getNick(user.account));
         var avatarSrc ="";
         if(user.gender&&user.gender!=="unknown"){
-            avatarSrc = 'images/'+user.gender+'.png'
+            avatarSrc = 'images/'+user.gender+'.png';
+            $node.find(".j-gender").removeClass("hide");
         }else{
             $node.find(".j-gender").addClass("hide");
         }
