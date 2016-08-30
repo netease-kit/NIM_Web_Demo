@@ -3,10 +3,10 @@ html, body {
     color: #3a4a59;
     font: 14px/1.5 Helvetica, Arial, Tahoma'微软雅黑';
 }
-.icon-chat {
+.icon-session {
     background-position: -35px 0;
 }
-.icon-list {
+.icon-friend {
     background-position: -35px -25px;
 }
 .icon-team {
@@ -15,16 +15,16 @@ html, body {
 .icon-team-info {
     background-position: -63px -25px;
 }
-.icon-list.cur {
+.panel_tab.cur .icon-friend {
     background-position: 0 -25px;
 }
-.icon-chat.cur {
+.panel_tab.cur .icon-session{
     background-position: 0 0;
 }
-.icon-team.cur {
+.panel_tab.cur .icon-team{
     background-position: 0 -50px;
 }
-.icon.cur:after {
+.panel_tab.cur .icon:after {
     display: inline-block;
     width: 38px;
     height: 8px;
@@ -34,7 +34,6 @@ html, body {
     top: 22px;
     left: 35px;
 }
-
 .icon-pic {
     background-position: 0 -79px;
     width: 25px;
@@ -186,10 +185,10 @@ html, body {
     box-shadow: 0 2px 6px #313131;
     background-color: #fff;
 }
-.friends {
+.left-panel .item{
     height: 504px;
 }
-.friends .list{
+.left-panel .item .list{
     height: 100%;
     width: 100%;
     position: relative;
@@ -256,6 +255,9 @@ html, body {
     -webkit-text-overflow: ellipsis;
     -moz-text-overflow: ellipsis;
     -ms-text-overflow: ellipsis;
+}
+.chat-box .error {
+    cursor: pointer;
 }
 .u-chat-notice{
     z-index: 5;
@@ -1415,3 +1417,279 @@ width: 40px;
 .f-fl{float: left;}
 .f-fr{float: right;}
 .ui-datepicker{display: none;}
+.back-btn {
+    width: 68px;
+    height: 34px;
+    line-height: 34px;
+    background-color: #f5f5f5;
+    color:#88939b;
+    font-size: 12px;
+    border: 1px solid #ced4d9;
+    position: absolute;
+    left: 15px;
+    top: 13px;
+}
+.info-box .title {
+    line-height: 60px;
+    font-size: 16px;
+}
+.info-content {
+    height: 300px;
+    padding: 12px 20px;
+    overflow: scroll;
+    border-bottom: 1px solid #ddd;
+}
+.info-content ul li {
+    float: left;
+    margin: 5px 25px;
+    width: 60px;
+    position: relative;
+    text-align: center;
+    display: inline-block;
+}
+.info-content ul a .hover {
+    display: none;
+}
+.info-content .owner a:hover .hover {
+    display: inline-block;
+}
+.info-content ul .first {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 2px dashed #ccc;
+    line-height: 60px;
+    cursor: pointer;
+}
+.info-content ul .first:hover {
+    background-color: #f5f5f5;
+}
+.info-content ul .last {
+    margin-right: 0;
+}
+.add-item .icon-plus {
+    background-position: -32px -113px;
+    margin-right: 3px;
+    width: 26px;
+    height: 26px;
+}
+.icon-user {
+    background-position: -65px -142px;
+    position: absolute;
+    bottom: 36px;
+    right: 8px;
+    border: 1px solid #fff;
+}
+.icon-radio {
+    position: relative;
+    background-position: -85px -50px;
+}
+.icon-radio.cur {
+    background-position: -63px -50px;
+}
+.icon-radio.cur2 {
+    background-position: -84px 0;
+}
+.info-content ul li img {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+}
+.info-content ul li p {
+    line-height: 24px;
+    text-align: center;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+.team-wrapper {
+    height: 445px
+}
+.team-box .title {
+    height: 50px;
+    line-height: 50px;
+    padding: 0 10px;
+}
+.user-list {
+    height: 450px;
+    width: 448px;
+    border-right: 1px solid #ececec;
+    float: left;
+}
+.added-list {
+    height: 450px;
+}
+.user-list img,.added-list img{
+   border-radius: 50%;
+}
+.user-list ul, .added-list ul {
+    overflow-y: auto;
+    padding: 15px;
+    height: 100%;
+}
+.user-list ul {
+    float: left;
+}
+.user-list ul li {
+    width: 148px;
+    float: left;
+    line-height: 40px;
+    margin-bottom:10px;
+    cursor: pointer;
+}
+.user-list  li img {
+    vertical-align: middle;
+    margin: 0 8px;
+    width: 40px;
+    height: 40px;
+}
+.user-list ul .name{
+    display: inline-block;
+    width: 75px;
+    height: 40px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+.added-list {
+    margin-left: 448px;
+}
+.added-list ul li {
+    float: left;
+    width: 50%;
+    position: relative;
+    text-align: center;
+    margin-bottom: 10px;
+}
+.added-list ul .name{
+    display: inline-block;
+    width: 80px;
+    height: 20px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: middle;
+    overflow: hidden;
+}
+.hover {
+    position: absolute;
+    width: 56px;
+    height: 56px;
+    background-color: rgba(0, 0, 0, .75);
+    border-radius: 50%;
+    line-height: 56px;
+    color: #f24c3d;
+    top: 0;
+    left: 50%;
+    margin-left: -28px;
+}
+.box-footer {
+    position: absolute;
+    bottom: 0;
+    background-color: #fff;
+    width: 100%;
+    padding: 22px 0;
+    border-top: 1px solid #ddd;
+}
+.info-footer {
+    height: 216px;
+    color:#aaa;
+    padding: 0 30px;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    left: 0;
+    font-size: 12px;
+    background-color: #fff;
+    border: 5px;
+    -webkit-border-radius:5px;
+    -moz-border-radius:5px;
+}
+.icon-write {
+    background-position: -62px -114px;
+    width: 20px;
+    height: 20px;
+    margin: 0 5px;
+}
+.info-footer .name {
+    color:#3a4a59;
+    line-height: 24px;
+}
+.info-footer img.active{
+    cursor: pointer;
+}
+.info-footer .ipt {
+    display: none;
+    border-width:0;
+    border-color:#ddd;
+    border-style: solid;
+    padding: 5px 10px;
+}
+.info-footer .exit-team,.info-footer .dismiss-team{
+    position: absolute;
+    right: 30px;
+    bottom: 16px;
+    color:#0888ff;
+}
+.info-footer .wrap.active {
+    display: inline-block;
+    border: 1px solid #ddd;
+    padding:0;
+}
+.info-footer .wrap .groupName{
+    width:200px;
+    display:inline-block;
+    overflow: hidden;
+    height: 24px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+.info-footer .wrap.active input{
+    display: inline-block;
+}
+.info-footer .wrap.active .groupName{
+    display: none;
+}
+.info-footer .wrap a .icon {
+    visibility: hidden;
+}
+.info-footer .owner:hover .icon {
+    visibility: visible;
+}
+.info-footer .items{
+    line-height: 24px;
+}
+.info-footer .items-1{
+    line-height: 40px;
+}
+.info-footer .info{
+    height: 24px;
+    line-height: 24px;
+}
+.info-footer .items .item{
+    margin-right: 30px;
+    font-size: 14px;
+    color: #666;
+}
+.info-footer .items .item-1{
+    margin-right: 0;
+    width: 140px;
+}
+.info-footer .items .item-2{
+    margin-right: 16px;
+}
+.info-footer .items .radio{
+    margin-right: 5px;
+    vertical-align: middle;
+}
+.info-footer .items .radio-info{
+    margin-right: 30px;
+}
+.team-info-container.normal .info-content{
+    height: 410px;
+}
+.team-info-container.normal .info-footer{
+    height: 94px;
+}

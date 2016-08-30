@@ -19,22 +19,20 @@ demo地址https://github.com/netease-im/NIM_Web_Demo
 
 ### 源码结构
 
-依赖SDK文件 Web_SDK_Base.js, Web_SDK_MIN.js(版本号这里略去了)
-* sdk.js：初始化SDK，以及封装SDK相关功能的方法
+依赖SDK文件 Web_SDK_Base.js, Web_SDK_MIN.js(版本号这里略去了)，此外demo依赖jQuery ,并使用了部分JQueryUI插件
+* link.js：初始化SDK，以及封装SDK相关功能的方法
 
 * cache.js：负责业务数据层相关操作（数据包括消息对象，好友列表，回话列表，群等）
 
-* main.js：负责主要的聊天业务逻辑，以及一些提供核心辅助功能（多端登陆，好友，黑名单功能等等）
-
-* team.js:处理与群有关的业务逻辑
-
-* notification.js:处理消息通知相关的业务逻辑
+* main.js：功能入口
+* module/*.js  webdemo各个模块文件的目录 其实base.js是入口文件  其他功能模块文件按需加载即可
 
 * util.js：包含一些公用的工具方法
 
 * ui.js：处理页面数据渲染（开发者可以自行选取模板来处理）
 
 * login.js,register.js：登陆，注册相关逻辑处理
+
 * widget/uiKit.js [云信的ui组件库](https://github.com/netease-im/NIM_Web_UIKit)，开发这可以使用该组件来快速开发工程
 
 ### 功能点指引
@@ -67,12 +65,12 @@ sysMsgs,customSysMsgs :系统消息 ，自定义系统消息
 
 
 #### 消息处理
-main.js的doMsg方法处理sdk的onmsg方法回调。如果消息的类型为群通知，则转交给noticication.js来处理。在收到消息后，调用cache.js的addMsg方法，缓存数据，最后刷新会话、聊天UI。
+message.js的doMsg方法处理sdk的onmsg方法回调。如果消息的类型为群通知，则转交给noticication.js来处理。在收到消息后，调用cache.js的addMsg方法，缓存数据，最后刷新会话、聊天UI。
 
 流程如下：收到消息 ---> 消息存储 ---> UI渲染
 
 #### 发送消息处理
-main.js里sendTextMsg,uploadFile方法提供发送文本，文件功能。发送后通过sendMsgDone回调方法来处理发送后的业务逻辑，同消息处理。
+message.js里sendTextMsg,uploadFile方法提供发送文本，文件功能。发送后通过sendMsgDone回调方法来处理发送后的业务逻辑，同消息处理。
 
 ## 聊天室功能
 
@@ -109,5 +107,3 @@ main.js里sendTextMsg,uploadFile方法提供发送文本，文件功能。发送
 网易云信demo实现了一个IM软件的所有基础功能，开发者可直接以demo为基础，自定义相关样式，开发自己的IM软件，也可以参考demo中[sdk API](http://dev.netease.im/doc/web/index.html)使用方式自行开发。
 
 注：云信只提供消息通道，并不包含用户资料逻辑。开发者需要在管理后台或通过服务器接口将用户账号和token同步到云信服务器。
-
-

@@ -17,7 +17,7 @@ var SDKBridge = function (ctr,data) {
 	this.person[userUID] = true;
 	this.controller = ctr;
 	this.cache = data;
-	window.nim = this.nim = new NIM({
+	window.nim = ctr.nim = this.nim = new NIM({
 		//控制台日志，上线时应该关掉
 		debug: true || { api: 'info', style: 'font-size:14px;color:blue;background-color:rgba(0,0,0,0.1)' },
         appKey: CONFIG.appkey,
@@ -33,7 +33,7 @@ var SDKBridge = function (ctr,data) {
         // 群
         onteams: onTeams.bind(this),
         syncTeamMembers: false,//全成员先不同步了
-        onupdateteammember: onUpdateTeamMember.bind(this),
+        // onupdateteammember: onUpdateTeamMember.bind(this),
         // onteammembers: onTeamMembers.bind(this),
         //消息
         onmsg: onMsg.bind(this), 
@@ -65,7 +65,7 @@ var SDKBridge = function (ctr,data) {
         onsyncfriendaction:onSyncFriendAction.bind(this)
     });
 	function onConnect() {
-		$('#j-errorNetwork').addClass('hide');
+		$('errorNetwork').addClass('hide');
 		this.teamMemberDone = false;
 		this.sysMsgDone = false;
 	    console&&console.log('连接成功');
@@ -78,7 +78,7 @@ var SDKBridge = function (ctr,data) {
 
 	function onWillReconnect(obj){
 		// 此时说明 `SDK` 已经断开连接，请开发者在界面上提示用户连接已断开，而且正在重新建立连接
-		$('#j-errorNetwork').removeClass('hide');
+		$('errorNetwork').removeClass('hide');
 	};
 
 	function onError(error) {
@@ -145,6 +145,9 @@ var SDKBridge = function (ctr,data) {
 	    	}else{
 	    		this.team.push(sessions[i].to);
 	    		var arr = getAllAccount(sessions[i].lastMsg);
+	    		if(!arr){
+	    			continue;
+	    		}
 	    		for(var j = arr.length -1; j >= 0; j--){
 	    			this.person[arr[j]] = true;
 	    		}
@@ -156,7 +159,7 @@ var SDKBridge = function (ctr,data) {
 		var id = session.id||"";
 		var old = this.cache.getSessions();
 		this.cache.setSessions(this.nim.mergeSessions(old, session));
-		this.controller.buildConversations(id);			
+		this.controller.buildSessions(id);			
 	};
 
 	function saveMsgs(msgs) {
@@ -173,10 +176,6 @@ var SDKBridge = function (ctr,data) {
 		console.log('消息同步完成');	
  		var ctr = this.controller;
 	    ctr.initInfo(this.person,this.team);
-	};
-
-	function onUpdateTeamMember (data) {
-		debugger
 	};
 	// function onSyncTeamMembersDone() {
 	// 	console.log('群成员同步完成');
@@ -214,21 +213,24 @@ var SDKBridge = function (ctr,data) {
 		this.cache.setSysMsgs(array);
 		this.cache.addSysMsgCount(array.length);
 	}
-	function onSysMsg(newMsg,msg) {
+	function onSysMsg(newMsg, msg) {
 		var type = msg.type,
 			ctr = this.controller,
 			cache = this.cache;
 			data = cache.getSysMsgs();
+		if(msg.type==="deleteMsg"){
+			ctr.backoutMsg(msg.idClient, msg)
+			return
+		}
 		data =this.nim.mergeSysMsgs(data, msg).sort(function(a,b){
 			return b.time-a.time;
 		});
 		this.cache.setSysMsgs(data);
 		if(msg.category!=="team"){
-			
 			switch (type) {
 	            case 'deleteFriend':
 	                cache.removeFriend(msg.from);
-	                ctr.buildContacts();
+	                ctr.buildFriends();
 	                break;
 	            case 'addFriend':
 	                if(!this.cache.getUserById(msg.from)){
@@ -236,12 +238,12 @@ var SDKBridge = function (ctr,data) {
 	                    	if(!err){
 		                    	cache.addFriend(data);
 		                        cache.updatePersonlist(data);
-		                        ctr.buildContacts();	
+		                        ctr.buildFriends();	
 	                    	}
 	                    })
 	                }else{
 	                	cache.addFriend(msg.friend);
-	                    ctr.buildContacts();   
+	                    ctr.buildFriends();   
 	                }
 	                break;
 	            default:
@@ -280,8 +282,8 @@ var SDKBridge = function (ctr,data) {
     	list = this.nim.cutRelations(list, blacklist.invalid);
 		this.cache.setBlacklist(list);
 		
-		for(var i = 0;i<data.length;i++){
-			this.person[data[i]] = true;
+		for(var i = 0;i<list.length;i++){
+			this.person[list[i]] = true;
 		}
 	};
 	//静音
@@ -290,8 +292,8 @@ var SDKBridge = function (ctr,data) {
 		list = this.nim.mergeRelations(list, mutelist);
     	list = this.nim.cutRelations(list, mutelist.invalid);
 		this.cache.setMutelist(list);
-		for(var i = 0;i<data.length;i++){
-			this.person[data[i]] = true;
+		for(var i = 0;i<list.length;i++){
+			this.person[list[i]] = true;
 		}
 	};
 
@@ -306,7 +308,30 @@ var SDKBridge = function (ctr,data) {
 	};
 	// 多端同步好友关系
 	function onSyncFriendAction(data){
-		ctr.doSyncFriendAction(data);
+		var that =  this,
+            type = data.type;
+        switch (type) {
+            case 'deleteFriend':
+                this.cache.removeFriend(data.account);
+                this.controller.buildFriends();
+                break;
+            case 'addFriend':
+                this.cache.addFriend(data.friend);
+                if(!this.cache.getUserById(data.account)){
+                    this.getUser(account,function(err,data){
+                        if(!err){
+                            that.cache.updatePersonlist(data);
+                            that.controller.buildFriends();      
+                        }
+                    })
+                }else{
+                    this.controller.buildFriends();   
+                }
+                break;
+            default:
+                console.log(data);
+                break;
+        }
 	};
 
 	function onSyncMarkinBlacklist(param){
@@ -315,8 +340,8 @@ var SDKBridge = function (ctr,data) {
 		}else {
 			this.cache.removeFromBlacklist(param.account);
 		}
-		this.controller.buildConversations();
-        this.controller.buildContacts();     
+		this.controller.buildSessions();
+        this.controller.buildFriends();     
 	};
 
 	function onSyncMarkinMutelist(param){
@@ -395,9 +420,11 @@ SDKBridge.prototype.sendFileMessage = function (scene, to, fileInput , callback)
         uploaderror: function () {
             console && console.log('上传失败');
         },
-        uploaddone: function (file) {
-            console && console.log('上传完成，服务器处理中...');
-        },
+     	uploaddone: function(error, file) {
+	        console.log(error);
+	        console.log(file);
+	        console.log('上传' + (!error?'成功':'失败'));
+	    },
         beforesend: function (msgId) {
             console && console.log('正在发送消息, id=' + msgId);
         },
@@ -499,7 +526,6 @@ SDKBridge.prototype.rejectTeamInvite = function(teamId,from,idServer){
 		from:from,
 		idServer:idServer,
 		done:function(err,data){
-			debugger;
 		}
 	});
 }
@@ -640,13 +666,33 @@ SDKBridge.prototype.markInBlacklist = function(account,isAdd,callback){
 
 
 /**
- * 获取用户信息（如果用户信息让SDK托管）
+ * 获取用户信息（如果用户信息让SDK托管）上层限制每次拉取150条
  */
-SDKBridge.prototype.getUsers = function(accounts,callback){
-	this.nim.getUsers({
-		accounts: accounts,
-		done: callback
-	});
+SDKBridge.prototype.getUsers = function(accounts, callback){
+	var arr1 = accounts.slice(0,150)
+	var arr2 = accounts.slice(150)
+	var datas = []
+	var that = this
+	var getInfo = function () {
+		that.nim.getUsers({
+			accounts: arr1,
+			done: function(err,data){
+				if (err) {
+					callback(err)
+				} else {
+					datas = datas.concat(data)
+					if(arr2.length > 0){
+						arr1 = arr2.slice(0, 150)
+						arr2 = arr2.slice(150)
+						getInfo()
+					}else{
+						callback(err,datas)
+					}
+				}
+			}			
+		})
+	}
+	getInfo()
 };
 SDKBridge.prototype.getUser = function(account,callback){
 	this.nim.getUser({
@@ -710,6 +756,15 @@ SDKBridge.prototype.previewImage = function(option){
  */
 SDKBridge.prototype.sendMsgReceipt = function(msg,done){
 	this.nim.sendMsgReceipt({
+	    msg:msg,
+	    done: done
+	});
+}
+/**
+ * 消息重发
+ */
+SDKBridge.prototype.resendMsg = function(msg, done){
+	this.nim.resendMsg({
 	    msg:msg,
 	    done: done
 	});

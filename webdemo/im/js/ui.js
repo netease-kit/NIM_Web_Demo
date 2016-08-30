@@ -29,7 +29,7 @@ var appUI = {
      * 更新当前会话聊天面板UI
      */
     updateChatContentUI:function(msg,cache){
-	 	var lastItem =$("#j-chatContent .item").last(),
+	 	var lastItem =$("#chatContent .item").last(),
         	msgHtml="",
         	user =cache.getUserById(msg.from);
         if(lastItem.length==0){
@@ -60,19 +60,21 @@ var appUI = {
 				showNick = message.scene === 'team' && from !== userUID,
                 msgHtml;
             if(type==="tip"){
-                msgHtml ='<p class="u-notice tc item" data-time="'+ message.time +'" data-id="'+ message.idClient +'" data-idServer="'+ message.idServer +'"><span class="radius5px">'+getMessage(message)+'</span></p>'; 
+                msgHtml = ['<div data-time="'+ message.time +'" data-id="'+ message.idClient +'" id="'+ message.idClient +'" data-idServer="'+ message.idServer +'">',
+                                '<p class="u-notice tc item '+ (from == userUID&&message.idServer ? "j-msgTip":"") +'" data-time="'+ message.time +'" data-id="'+ message.idClient +'" data-idServer="'+ message.idServer +'"><span class="radius5px">'+getMessage(message)+'</span></p>',
+                            '</div>'].join('');
             }else{
     			msgHtml = ['<div data-time="'+ message.time +'" data-id="'+ message.idClient +'" id="'+ message.idClient +'" data-idServer="'+ message.idServer +'" class="item item-' + buildSender(message) + '">',
     						'<img class="img j-img" src="'+getAvatar(avatar)+'" data-account="' + from + '"/>',
     						showNick?'<p class="nick">' + getNick(from) + '</p>':'',
-    						'<div class="msg msg-text">',
+    						'<div class="msg msg-text j-msg">',
     							'<div class="box">',
     								'<div class="cnt">',
     									getMessage(message),
     								'</div>',
     							'</div>',
     						'</div>',
-    						message.status === "fail"?'<span class="error"><i class="icon icon-error"></i>发送失败</span>':'',
+    						message.status === "fail"?'<span class="error j-resend" data-session="'+ message.sessionId +'" data-id="'+ message.idClient +'"><i class="icon icon-error"></i>发送失败,点击重发</span>':'',
                            '<span class="readMsg"><i></i>已读</span>',
     					'</div>'].join('');           
             }
@@ -106,7 +108,7 @@ var appUI = {
      * 群成员列表
      */
     buildTeamMemberList:function(list){
-        return ['<li data-icon="' + list.avatar + '" data-uid="' + list.account + '" data-account="' + list.nick + '">',
+        return ['<li data-icon="' + list.avatar + '" data-account="' + list.account + '" data-account="' + list.nick + '">',
                     '<i class="icon icon-radio"></i>',
                     '<img src="'+getAvatar(list.avatar)+'">',
                     '<span class="name">' + getNick(list.account) + '</span>',

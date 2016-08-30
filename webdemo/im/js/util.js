@@ -152,7 +152,7 @@ function buildSessionMsg(msg) {
             text += '[位置]';
             break;
         case 'tip':
-            text +='[提醒消息]';
+            text = '[提醒消息]';
             break;
         case 'custom':
             var content = JSON.parse(msg.content);
@@ -222,8 +222,8 @@ function getMessage(msg) {
                 }               
             }
             break;
-        case 'tip':
-                str="这是一条提醒消息";
+        case 'tip':            
+                str = msg.tip;
             break;
         case 'video':
             // str = '<a href="' + url + '" target="_blank" class="download-file"><span class="icon icon-file2"></span>[你收到了一条视频消息]</a>';
@@ -482,7 +482,7 @@ function transNotification(item) {
             }else if(item.attach.team.inviteMode){
                 str = item.attach.team.inviteMode==='manager'?'邀请他人权限为管理员':'邀请他人权限为所有人';
             }else if(item.attach.team.beInviteMode){
-                str = item.attach.team.beInviteMode==='noVerify'?'被邀请他人权限为需要验证':'被邀请他人权限为不需要验证';
+                str = item.attach.team.beInviteMode==='noVerify'?'被邀请他人权限为不需要验证':'被邀请他人权限为需要验证';
             }else if(item.attach.team.updateTeamMode){
                  str = item.attach.team.updateTeamMode==='manager'?'群资料修改权限为管理员':'群资料修改权限为所有人';
             }else if(item.attach.team.avatar){
@@ -548,12 +548,12 @@ function transNotification(item) {
 
 function removeChatVernier(account) {
     if (account == $('li.active').attr('data-account')) {
-        $('#j-chatVernier span').css('top', '-20px');
+        $('#chatVernier span').css('top', '-20px');
     }
 }
 
 function loadImg() {
-    $('#j-chatContent').scrollTop(99999);
+    $('#chatContent').scrollTop(99999);
 }
 
 function getAvatar(url){

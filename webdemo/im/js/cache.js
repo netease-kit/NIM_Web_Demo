@@ -211,7 +211,42 @@ var Cache = (function(){
 			}
 		};
 	};
-
+	//查消息 session-id idClient
+	Cache.prototype.findMsg = function(sid, cid) {
+		var list = this.msgs[sid];
+		for (var i = list.length - 1; i >= 0; i--) {
+			if(list[i].idClient === cid){
+				return list[i];
+			}
+		};
+		return false
+	}
+	//设置消息用于重发状态变化 session-id idClient 消息
+	Cache.prototype.setMsg = function(sid, cid, msg) {
+		var list = this.msgs[sid];
+		for (var i = list.length - 1; i >= 0; i--) {
+			if(list[i].idClient === cid){
+				list.splice(i,1);
+				list.push(msg);
+				return;
+			}
+		};
+	}
+	//回撤消息,回撤的消息用tip替换
+	Cache.prototype.backoutMsg = function (sid, cid, msg) {
+		var list = this.msgs[sid];
+		if(!list){
+			this.msgs[sid] = [msg]
+			return;
+		}
+		for (var i = list.length - 1; i >= 0; i--) {
+			if(list[i].idClient === cid){
+				list[i] = msg;
+				return;
+			}
+		}
+		this.msgs[sid].push(msg)
+	}
 	//系统消息
 	Cache.prototype.setSysMsgs = function(data){
 		this.sysMsgs= data;
