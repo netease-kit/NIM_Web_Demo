@@ -3,7 +3,6 @@ var http = require("http"),
 	fs = require("fs");
 http.createServer(function(req,res){
 	console.log(pathname);
-	// var dirname  = __dirname;
 	var pathname = url.parse(req.url).pathname;
 	console.log(pathname);
  	fs.readFile("."+pathname, function readData(err, data) {
