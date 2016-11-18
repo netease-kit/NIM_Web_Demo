@@ -64,7 +64,7 @@ YX.fn.addTeamMembersNotification = function(msg,callback) {
             //蛋疼的异步处理，必须确保用户消息缓存在本地，再进行UI展示
             that.cache.addMsgs(msg)
             //再次重绘
-           	this.buildSessions()
+           	that.buildSessions()
             callback() 
         })
     }else{
@@ -102,11 +102,11 @@ YX.fn.removeMembersNotification = function(msg,callback) {
             that.cache.addMsgs(msg)
             
             if(kickme){
-    			that.cache.removeTeamById(msg.to)
-    		}
-    		//再次重绘
-           	this.buildSessions()
-        	callback() 
+				that.cache.removeTeamById(msg.to)
+			}
+			//再次重绘
+			that.buildSessions()
+			callback() 
         })
     }else{
     	if(kickme){

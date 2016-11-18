@@ -419,7 +419,6 @@ html, body {
 }
 .arrow {
     background: url(../images/msg.png) no-repeat 9999px 9999px;
-    _background: url(../images/msg-8.png) no-repeat 9999px 9999px;
 }
 .chat-box .title {
     position: absolute;
