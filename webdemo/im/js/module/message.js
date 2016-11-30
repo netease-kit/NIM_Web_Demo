@@ -249,7 +249,6 @@ YX.fn.doChatUI = function (id) {
 }
 
 YX.fn.getLocalMsgsDone = function(err,data){
-    debugger
     if(!err){
         this.cache.addMsgsByReverse(data.msgs)
         var id = data.sessionId
