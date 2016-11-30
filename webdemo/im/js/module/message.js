@@ -232,8 +232,8 @@ YX.fn.getHistoryMsgs = function (scene,account) {
     this.sendMsgRead(account, scene)
     if(!!sessions){
         if(sessions.unread>=msgs.length){
-            var msgid = (msgs.length>0)?msgs[0].idClient:false
-            this.mysdk.getLocalMsgs(scene,account,msgid,this.getLocalMsgsDone.bind(this))
+            var end = (msgs.length>0)?msgs[0].time:false
+            this.mysdk.getLocalMsgs(id,end,this.getLocalMsgsDone.bind(this))
             return
         }
     }
@@ -249,9 +249,10 @@ YX.fn.doChatUI = function (id) {
 }
 
 YX.fn.getLocalMsgsDone = function(err,data){
+    debugger
     if(!err){
         this.cache.addMsgsByReverse(data.msgs)
-        var id = data.scene + "-" + data.to
+        var id = data.sessionId
         var array = getAllAccount(data.msgs)
         var that = this
         this.checkUserInfo(array, function() {

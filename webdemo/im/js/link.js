@@ -17,7 +17,7 @@ var SDKBridge = function (ctr,data) {
 	this.person[userUID] = true;
 	this.controller = ctr;
 	this.cache = data;
-	window.nim = ctr.nim = this.nim = new NIM({
+	window.nim = ctr.nim = this.nim = new SDK.NIM({
 		//控制台日志，上线时应该关掉
 		debug: true || { api: 'info', style: 'font-size:14px;color:blue;background-color:rgba(0,0,0,0.1)' },
         appKey: CONFIG.appkey,
@@ -442,19 +442,17 @@ SDKBridge.prototype.getHistoryMsgs = function(param){
 /**
  * 获取本地历史记录消息  
  */
-SDKBridge.prototype.getLocalMsgs = function(scene,to,lastMsgId,done){
-	if(lastMsgId){
+SDKBridge.prototype.getLocalMsgs = function(sessionId,end,done){
+	if(end){
 		this.nim.getLocalMsgs ({
-			scene:scene,
-			to:to,
-			lastMsgIdClient:lastMsgId,
+			sessionId:sessionId,
+			end:end,
 			limit:20,
 			done:done
 		});
 	}else{
 		this.nim.getLocalMsgs ({
-			scene:scene,
-			to:to,
+			sessionId:sessionId,
 			limit:20,
 			done:done
 		});

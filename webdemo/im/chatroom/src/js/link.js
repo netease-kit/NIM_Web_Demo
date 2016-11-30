@@ -5,8 +5,6 @@
 var LinkRoom = function (ctr,data) {
     var that = this,
         info = data;
-    //debug
-    Chatroom.setDebug(true);
     this.data = {};
     this.data.person={};
     this.nick = info.chatroomNick;
@@ -35,7 +33,7 @@ var LinkRoom = function (ctr,data) {
     })
     //连接link
     var doLink = function(data){
-        that.room = new Chatroom({
+        that.room = new SDK.Chatroom({
             appKey: data.appKey,
             account: data.account,
             token: data.token,

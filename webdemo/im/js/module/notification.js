@@ -102,11 +102,11 @@ YX.fn.removeMembersNotification = function(msg,callback) {
             that.cache.addMsgs(msg)
             
             if(kickme){
-				that.cache.removeTeamById(msg.to)
-			}
-			//再次重绘
-			that.buildSessions()
-			callback() 
+    			that.cache.removeTeamById(msg.to)
+    		}
+    		//再次重绘
+           	that.buildSessions()
+        	callback() 
         })
     }else{
     	if(kickme){
