@@ -418,7 +418,7 @@ function transNotification(item) {
             team = yunXin.cache.getTeamMapById(item.target);  
         }
     }
-    if(team.type&&team.type==="normal"){
+    if(team&&team.type&&team.type==="normal"){
         tName="讨论组";   
     }else{
         tName="群";

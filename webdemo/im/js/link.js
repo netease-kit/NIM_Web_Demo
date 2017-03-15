@@ -219,7 +219,7 @@ var SDKBridge = function (ctr,data) {
 			cache = this.cache;
 			data = cache.getSysMsgs();
 		if(msg.type==="deleteMsg"){
-			ctr.backoutMsg(msg.idClient, msg)
+			ctr.backoutMsg(msg.deletedIdClient, msg)
 			return
 		}
 		data =this.nim.mergeSysMsgs(data, msg).sort(function(a,b){
