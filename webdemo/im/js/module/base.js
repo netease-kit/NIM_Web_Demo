@@ -4,6 +4,7 @@ var YX = function (accid) {
     this.initModule()
     this.cache = new Cache()
     this.mysdk = new SDKBridge(this, this.cache)
+    this.myNetcall = new NetcallBridge(this)
     this.firstLoadSysMsg = true
     this.totalUnread = 0
 }
@@ -130,6 +131,9 @@ YX.fn.openChatBox = function (account, scene) {
     this.$rightPanel.removeClass('hide') 
     this.$messageText.val('')
 
+    // 让netcall.js感知到打开聊天框的操作，做一些UI层的控制
+    this.myNetcall && this.myNetcall.whenOpenChatBox(scene, account);
+
     //根据帐号跟消息类型获取消息数据
     if(scene=="p2p"){
         info = this.cache.getUserById(account)
@@ -137,15 +141,18 @@ YX.fn.openChatBox = function (account, scene) {
             this.$nickName.text("我的手机")
             this.$chatTitle.find('img').attr('src', "images/myPhone.png") 
         }else{
-            this.$nickName.text(this.getNick(account))
+            var multiPortStatus = this.cache.getMultiPortStatus(account)
+            this.$nickName.text(this.getNick(account) + ' ' + (multiPortStatus || '离线'))
             this.$chatTitle.find('img').attr('src', getAvatar(info.avatar)) 
         }
         // 群资料入口隐藏
         this.$teamInfo && this.$teamInfo.addClass('hide')
+
     }else{
     	//群聊
         info = this.cache.getTeamById(account)
         this.$teamInfo && this.$teamInfo.removeClass('hide')
+
         if(info){
             if(info.avatar){
                 this.$chatTitle.find('img').attr('src', info.avatar+"?imageView&thumbnail=80x80&quality=85") 
@@ -165,6 +172,7 @@ YX.fn.openChatBox = function (account, scene) {
     // 根据或取聊天记录
     this.getHistoryMsgs(scene,account) 
 }
+
  /**
  * 切换左边面板上方tab
  */
@@ -221,6 +229,19 @@ YX.fn.getNick = function (account) {
     return getNick(account, this.cache)
 }
 
+/*YX.fn.getLastCanShowMsgForInfoProvider = function(lastMsg){
+    if (!lastMsg) return;
+    var sessionId = lastMsg.sessionId;
+    var msgs = this.cache.getMsgs(sessionId);
+    var msg;
+    for(var i = msgs.length - 1; i >= 0; i--) {
+        msg = msgs[i];
+        if(msg && (!msg.attach || msg.attach.netcallType === undefined)) {
+            break;
+        }
+    }
+    return msg;
+}*/
 /**
  * 列表想内容提供方法（用于ui组件）
  * @param  {Object} data 数据
@@ -317,6 +338,7 @@ YX.fn.hideLogoutDialog = function () {
 	this.$logoutDialog.addClass('hide')
 	this.$mask.addClass('hide')
 }
+
 /**********************************************
  * 多端登录管理      
  ********************************************/

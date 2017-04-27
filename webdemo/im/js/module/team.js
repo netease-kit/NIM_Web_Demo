@@ -111,10 +111,10 @@ YX.fn.showTeamView = function(type,teamType) {
 		}
 		$addUserUl.html(tmp)
 		if (type !== 0) {
-			teamId = $addIcon.data('team-id')
-			that.mysdk.getTeamMembers({
-				teamId: teamId,
-				done: function(error, obj) {
+			var teamId = that.crtSessionAccount
+			that.mysdk.getTeamMembers(
+				teamId,
+				function(error, obj) {
 					if(error){
 						return
 					}
@@ -125,7 +125,7 @@ YX.fn.showTeamView = function(type,teamType) {
 						$addUserUl.find('[data-account="' + account + '"] i').addClass('cur2')
 					}
 				}
-			})
+			)
 			//用来区分是否创群
 			that.addTeamMemberTag = true
 		} else {

@@ -32,6 +32,7 @@ YX.fn.friend = function () {
 YX.fn.buildFriends = function () {
     var data = {
         friends:this.cache.getFriendslistOnShow(),
+        personSubscribes: this.cache.getPersonSubscribes(),
         account:userUID
     }
     if(!this.friends){
@@ -113,6 +114,8 @@ YX.fn.cbAddFriend = function(error, params) {
         this.cache.addFriend(params.friend)
         this.cache.updatePersonlist(this.friendData)
         this.buildFriends()
+        // 订阅好友登录事件
+        this.mysdk.subscribeMultiPortEvent([params.account])
     }else{
         this.$addFriendBox.find(".tip").html("该帐号不存在，请检查你输入的帐号是否正确")
         this.$addFriendBox.attr('class',"m-dialog done")          

@@ -256,12 +256,23 @@ function getMessage(msg) {
                 str = '<img class="chartlet" onload="loadImg()" src="./images/'+catalog+'/' +chartlet+'.png">';
             }else if(content.type==4){
                 str = sentStr+'一条[白板]消息,请到手机或电脑客户端查看';      
-            }else{
+            }else {
                 str = sentStr+'一条[自定义]消息，请到手机或电脑客户端查看';
             }
             break;
         default:
-            str = sentStr+'一条[未知消息类型]消息';
+            if(msg && msg.attach && msg.attach.netcallType !== undefined) {
+                var netcallType = msg.attach.netcallType;
+                var netcallTypeText = netcallType === Netcall.NETCALL_TYPE_VIDEO ? '视频' : '音频';
+                if(msg.attach && msg.attach.type === "netcallBill"){
+                    str = '通话' + (msg.flow === "in" ? "接听" : "拨打") + "时长 " +  getNetcallDurationText(msg.attach.duration);
+                } else if(msg.attach && msg.attach.type === "netcallMiss"){
+                    str = "未接听";
+                }
+            } else {
+                str = sentStr+'一条[未知消息类型]消息';
+            }
+
             break;
     }
     return str;
@@ -399,6 +410,23 @@ var dateFormat = (function(){
     };
 })();
 
+function getNetcallDurationText(allSeconds) {
+    var result = "";
+    var hours,minutes,seconds;
+    if (allSeconds >= 3600) {
+        hours = parseInt(allSeconds/3600);
+        result += ("00" + hours).slice(-2) + " : ";
+    }
+    if(allSeconds >= 60) {
+        minutes = parseInt(allSeconds % 3600 / 60);
+        result += ("00" + minutes).slice(-2) + " : ";
+    } else {
+        result += "00 : ";
+    }
+    seconds = parseInt(allSeconds % 3600 %60);
+    result += ("00" + seconds).slice(-2);
+    return result;
+};
 
 function transNotification(item) {
     var type = item.attach.type,
@@ -418,11 +446,35 @@ function transNotification(item) {
             team = yunXin.cache.getTeamMapById(item.target);  
         }
     }
-    if(team&&team.type&&team.type==="normal"){
+    if(team && team.type && team.type==="normal"){
         tName="讨论组";   
-    }else{
+    }else if(team) {
         tName="群";
-    }   
+    } else { // 既不是群，也不是讨论组， p2p 音视频通话相关消息
+        var netcallType = item.attach.netcallType;
+        var netcallTypeText = netcallType === Netcall.NETCALL_TYPE_VIDEO ? '视频' : '音频';
+        console.log(item);
+        switch (type) {
+            case 'netcallMiss':
+                return '未接听';
+                break;
+            case 'netcallBill':
+                return "通话" + (item.flow === "in" ? "接听" : "拨打") + "时长 " +  getNetcallDurationText(item.attach.duration);
+                break;
+            case 'cancelNetcallBeforeAccept':
+                return '无人接听';
+                break;
+            case 'rejectNetcall':
+                return '已拒绝';
+                break;
+            case 'netcallRejected':
+                return '对方已拒绝';
+                break;
+            default:
+                return '';
+                break;
+        }
+    }
     /**--------------------正剧在下面------------------------*/
     switch (type) {
         case 'addTeamMembers':

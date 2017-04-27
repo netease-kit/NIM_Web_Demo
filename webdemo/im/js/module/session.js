@@ -13,7 +13,8 @@ YX.fn.session = function () {
  */
 YX.fn.buildSessions = function(id) {
     var data = {
-        sessions:this.cache.getSessions()
+        sessions:this.cache.getSessions(),
+        personSubscribes: this.cache.getPersonSubscribes()
     }
     if(!this.sessions){
         var options = {

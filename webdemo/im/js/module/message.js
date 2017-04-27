@@ -68,6 +68,7 @@ YX.fn.doMsg = function(msg){
                 var msgHtml = appUI.updateChatContentUI(msg,that.cache)
                 that.$chatContent.find('.no-msg').remove()
                 that.$chatContent.append(msgHtml).scrollTop(99999)
+                
             }    
         }
     //非群通知消息处理
@@ -108,7 +109,8 @@ YX.fn.initEmoji = function () {
             that.cbShowEmoji(result)
         	}
         }
-    this.$emNode = new CEmojiEngine($('#emojiTag')[0],emojiConfig) 
+    this.$emNode = new CEmojiEngine($('#emojiTag')[0],emojiConfig)
+    this.$emNode._$hide();
 
 }
 /**
@@ -170,7 +172,7 @@ YX.fn.sendTextMessage = function () {
 	    }else if(text.length===0){
 	        return
 	    } else {
-	        this.mysdk.sendTextMessage(scene, to, text, this.sendMsgDone.bind(this))
+	        this.mysdk.sendTextMessage(scene, to, text,false ,this.sendMsgDone.bind(this))
 	    }
 	}
 }

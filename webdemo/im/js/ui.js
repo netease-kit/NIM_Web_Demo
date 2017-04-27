@@ -11,6 +11,10 @@ var appUI = {
     		for (var i = 0, l = msgs.length; i < l; ++i) {
 			 	var message = msgs[i],
 					user = cache.getUserById(message.from);
+                if(message.attach && message.attach.netcallType !== undefined && ( message.attach.type !== 'netcallBill' && message.attach.type !== "netcallMiss")) {
+                    // 隐藏掉netcall相关的系统消息
+                    continue;
+                }
 				//消息时间显示
 			 	if(i == 0){
                         msgHtml += this.makeTimeTag(transTime(message.time));
@@ -32,6 +36,8 @@ var appUI = {
 	 	var lastItem =$("#chatContent .item").last(),
         	msgHtml="",
         	user =cache.getUserById(msg.from);
+	 	var message = msg;
+        if(message.attach && message.attach.netcallType !== undefined && ( message.attach.type !== 'netcallBill' && message.attach.type !== "netcallMiss")) return ''; // 隐藏掉netcall相关的系统消息
         if(lastItem.length==0){
             msgHtml += this.makeTimeTag(transTime(msg.time));
         }else{
@@ -49,7 +55,9 @@ var appUI = {
     makeChatContent:function(message,user){
     	var msgHtml;
     	//通知类消息
-		if (message.attach && message.attach.type) {
+
+		if (message.attach && message.attach.type && (message.attach.netcallType === undefined || (message.attach.type !== "netcallBill" && message.attach.type !== "netcallMiss"))) {
+            if(message.attach.netcallType !== undefined) return ''; // 隐藏掉netcall相关的系统通知消息
                 var notificationText = transNotification(message);
                 msgHtml =  '<p class="u-notice tc item" data-time="'+ message.time +'" data-id="'+ message.idClient +'" data-idServer="'+ message.idServer +'"><span class="radius5px">'+notificationText+'</span></p>';
         }else{	
