@@ -24,7 +24,6 @@ var SDKBridge = function (ctr,data) {
         appKey: CONFIG.appkey,
         account: userUID,
         token: sdktoken,
-        // syncSessionUnread: true,
         //连接
         onconnect: onConnect.bind(this),
         ondisconnect: onDisconnect.bind(this),
@@ -151,16 +150,19 @@ var SDKBridge = function (ctr,data) {
     var old = this.cache.getSessions();
     this.cache.setSessions(this.nim.mergeSessions(old, sessions));
     for(var i = 0;i<sessions.length;i++){
-        if(sessions[i].scene==="p2p"){
+        if (sessions[i].scene==="p2p") {
           var tmpUser = sessions[i].to
           // 如果会话列表不是好友，需要订阅关系
           if (!this.cache.isFriend(tmpUser)) {
             that.subscribeMultiPortEvent([tmpUser])
           }
           this.person[tmpUser] = true;
-        }else{
+        } else if (sessions[i].scene==="team") {
           this.team.push(sessions[i].to);
-          var arr = getAllAccount(sessions[i].lastMsg);
+          var arr = null
+          if (sessions[i].lastMsg) {
+            arr = getAllAccount(sessions[i].lastMsg);
+          }
           if(!arr){
             continue;
           }
@@ -372,6 +374,10 @@ var SDKBridge = function (ctr,data) {
 
   // 订阅的事件，这里会用于同步多端登录状态
   function onPushEvents(param){
+    // 没有开启订阅服务，忽略通知
+    if (!window.CONFIG.openSubscription) {
+      return
+    }
     if (param.msgEvents) {
       var msgEvents = param.msgEvents
       for (var i = 0; i < msgEvents.length; i++) {
@@ -383,7 +389,11 @@ var SDKBridge = function (ctr,data) {
       ctr.buildSessions()
       var account = ctr.crtSessionAccount
       if (account) {
-        $('#nickName').text(ctr.getNick(account) + ' ' + (this.cache.getMultiPortStatus(account) || ''))
+        if (this.cache.getMultiPortStatus(account)) {
+          $('#nickName').text(ctr.getNick(account) + ' [' + this.cache.getMultiPortStatus(account) + ']')
+        } else {
+          $('#nickName').text(ctr.getNick(account))
+        }
       }
       console.log('订阅事件', param.msgEvents)
     }
@@ -397,6 +407,10 @@ var SDKBridge = function (ctr,data) {
  * @param {StringArray} accounts 
  */
 SDKBridge.prototype.subscribeMultiPortEvent = function (accounts) {
+  if (!window.CONFIG.openSubscription) {
+    // 并未开启订阅服务
+    return
+  }
   this.nim.subscribeEvent({
     // type 1 为登录事件，用于同步多端登录状态
     type: 1,

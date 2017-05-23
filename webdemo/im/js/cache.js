@@ -591,7 +591,7 @@ var Cache = (function(){
           if (typeof custom['net_state'] === 'number') {
             var tempNetState = netState[custom['net_state']]
             if (tempNetState) {
-              multiPortStatus += ('[' + tempNetState + ']')
+              multiPortStatus += ('-' + tempNetState)
             }
           }
           if (typeof custom['online_state'] === 'number') {

@@ -20,6 +20,9 @@ demo地址https://github.com/netease-im/NIM_Web_Demo
 ### 源码结构
 
 依赖SDK文件 Web_SDK_Base.js, Web_SDK_MIN.js(版本号这里略去了)，此外demo依赖jQuery ,并使用了部分JQueryUI插件
+
+* config.js: 用于配置appkey等信息，如果应用开启了订阅服务，也可以在此设置
+
 * link.js：初始化SDK，以及封装SDK相关功能的方法
 
 * cache.js：负责业务数据层相关操作（数据包括消息对象，好友列表，回话列表，群等）

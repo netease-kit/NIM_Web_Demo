@@ -137,12 +137,20 @@ YX.fn.openChatBox = function (account, scene) {
     //根据帐号跟消息类型获取消息数据
     if(scene=="p2p"){
         info = this.cache.getUserById(account)
-        if(info.account == userUID){
+        if (info.account == userUID) {
             this.$nickName.text("我的手机")
             this.$chatTitle.find('img').attr('src', "images/myPhone.png") 
-        }else{
-            var multiPortStatus = this.cache.getMultiPortStatus(account)
-            this.$nickName.text(this.getNick(account) + ' ' + (multiPortStatus || '离线'))
+        } else {
+            if (window.CONFIG.openSubscription) {
+                var multiPortStatus = this.cache.getMultiPortStatus(account)
+                if (multiPortStatus) {
+                  this.$nickName.text(this.getNick(account) + ' [' + multiPortStatus + ']')
+                } else {
+                  this.$nickName.text(this.getNick(account) + ' [离线]')
+                }
+            } else {
+                this.$nickName.text(this.getNick(account))
+            }
             this.$chatTitle.find('img').attr('src', getAvatar(info.avatar)) 
         }
         // 群资料入口隐藏
