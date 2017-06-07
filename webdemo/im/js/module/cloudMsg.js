@@ -30,10 +30,17 @@ YX.fn.showCloudMsg = function () {
                 done:that.cbCloudMsg.bind(that)
             }
         that.mysdk.getHistoryMsgs(param)
+
+        /** 通话中的设置 */
+		var tmp = that.myNetcall;
+		tmp.$goNetcall.toggleClass("hide", !tmp.netcallActive);
     })
 }
 YX.fn.closeCloudMsgContainer = function () {
     this.$cloudMsgContainer.addClass('hide')
+    /** 通话中的设置 */
+	var tmp = this.myNetcall;
+	tmp.$goNetcall.toggleClass("hide", true);
 },
 
 /**

@@ -443,6 +443,12 @@ html, body {
     -webkit-border-radius: 0 0 5px 5px;
     -moz-border-radius: 0 0 5px 5px;
 }
+.chat-editor .chat-btn{
+    display: inline-block;
+    vertical-align: middle;
+    position: relative;
+    margin-right: 2px;
+}
 .btn-send {
     background-color: #0888ff;
     color: #fff;
@@ -461,9 +467,10 @@ html, body {
     color:#fff;
 }
 .msg-type {
-    position: absolute;
+    /*position: absolute;
     top: 15px;
-    left: 44px;
+    left: 44px;*/
+    margin-top: 5px;
 }
 .msg-input {
     font: 14px/1.5 Helvetica, Arial, Tahoma, '微软雅黑';
@@ -476,8 +483,9 @@ html, body {
     border: 1px solid #ccc\9;
     overflow-y: auto;
     padding: 6px 10px;
-    margin-top: 11px;
-    margin-left: 65px;
+    margin-top: 10px;
+    /*vertical-align: -18px!important;*/
+    /*margin-left: 65px;*/
 }
 .create-team {
     padding: 5px 10px;
@@ -505,7 +513,7 @@ html, body {
     border: none;
     height: 520px;
 }
-.create-team-container {
+.dialog-team-container {
     position: fixed;
     width: 680px;
     height: 580px;
@@ -569,9 +577,9 @@ html, body {
     cursor: pointer;
 }
 .u-emoji{
-    position: absolute;
-    top: 10px;
-    left: 8px;
+    position: relative;
+    /*top: 10px;
+    left: 8px;*/
     width: 30px;
     height: 30px;
     background: url(../images/icons.png) no-repeat center;
@@ -1518,6 +1526,12 @@ width: 40px;
     border-right: 1px solid #ececec;
     float: left;
 }
+.user-list.full {
+    height: 450px;
+    width: 100%;
+    border-right: 1px solid #ececec;
+    float: left;
+}
 .added-list {
     height: 450px;
 }
@@ -1532,12 +1546,23 @@ width: 40px;
 .user-list ul {
     float: left;
 }
+.user-list.full ul {
+    float: none;
+    padding: 0;
+}
 .user-list ul li {
     width: 148px;
     float: left;
     line-height: 40px;
     margin-bottom:10px;
     cursor: pointer;
+}
+.user-list.full ul li{
+    width: 100%;
+    border-bottom: 1px solid #ddd;
+    padding: 10px;
+    box-sizing: border-box;
+    margin-bottom: 0;
 }
 .user-list  li img {
     vertical-align: middle;
@@ -1698,8 +1723,8 @@ width: 40px;
 /* 音视频通话相关样式 */
 
 .netcall-box{
-    display:none;
-    height:324px;
+    /*display:none;*/
+    /*height:324px;*/
     width:710px;
     position:absolute;
     top: 81px;
@@ -1708,14 +1733,17 @@ width: 40px;
     z-index: 2;
     transition: all 0.3s ease
 }
-.netcall-box .netcall-mask{
+.netcall-box.calling{
+    height:324px;
+}
+.netcall-mask{
     position: absolute;
     width: 100%;
     height: 40px;
     background-color: rgba(0,0,0,0.7);
     z-index: 5;
 }
-.netcall-box .netcall-mask .netcallTip{
+.netcall-mask .netcallTip{
     position: absolute;
     margin: auto;
     left: 0;
@@ -1726,33 +1754,39 @@ width: 40px;
     line-height: 1;
     font-size: 16px;
     color: #fff;
+    text-align: center;
 }
 .u-netcall-audio-link{
-    position: absolute;
-    top: 10px;
-    left: 80px;
+    position: relative;
+    /*top: 10px;
+    left: 80px;*/
     width: 30px;
     height: 30px;
     background: url(../images/icons.png) no-repeat;
     background-position: -126px -218px;
 }
 .u-netcall-video-link{
-    position: absolute;
-    top: 10px;
-    left: 116px;
+    position: relative;
+    /*top: 10px;
+    left: 116px;*/
     width: 30px;
     height: 30px;
     background: url(../images/icons.png) no-repeat;
     background-position: -160px -217px;
+    margin-top: 5px;
 }
 .msg-input.p2p{
-    margin-left:137px;
+    /*margin-left:137px;*/
+    width: 460px;
 }
 .chat-box.show-netcall-box .chat-content{
-    top:405px;
+    /*top:405px;*/
 }
 .chat-box.show-netcall-box .netcall-box{
     display:block;
+}
+.chat-box.hide-netcall-box .netcall-box{
+    display:none;
 }
 .netcall-box .netcall-calling-box,.netcall-box .netcall-becalling-box{
     text-align:center;
@@ -1784,7 +1818,7 @@ width: 40px;
 }
 .netcall-box  .op{
     margin-top:65px;
-
+    /*margin-bottom: 32px;*/
 }
 .netcall-box .netcall-show-audio .control{
     margin-top: 15px;
@@ -1798,7 +1832,7 @@ width: 40px;
 }
 .netcall-box  .control .control-item{
     display:inline-block;
-    width: 36px;
+    min-width: 36px;
     height: 38px;
     position:relative;
     text-align: center;
@@ -1816,11 +1850,11 @@ width: 40px;
 .netcall-box .netcall-show-audio .control .volume{
     margin-left: 30px;
 }
-.netcall-box .icon-micro{
+.icon-micro{
     background: url(../images/icons.png) no-repeat;
     background-position: 13px -262px;
 }
-.netcall-box .icon-micro.icon-disabled{
+.icon-micro.icon-disabled{
     background-position: -22px -262px;
 }
 .netcall-box .icon-volume{
@@ -1837,6 +1871,14 @@ width: 40px;
 .netcall-box .icon-camera.icon-disabled{
     background: url(../images/icons.png) no-repeat;
     background-position:-175px -262px;
+}
+.netcall-box .icon-ban{
+    background: url(../images/ban.png) no-repeat center;
+    background-size: cover;
+}
+.netcall-box .icon-ban.icon-disabled{
+    background: url(../images/ban-disable.png) no-repeat center;
+    background-size: cover;
 }
 .netcall-box .control .control-item:hover .slider{
 }
@@ -1868,13 +1910,13 @@ width: 40px;
     -ms-user-select: none;
     user-select: none;
 }
-.netcall-box .icon-micro{
+.icon-micro{
     position:relative;
     top:2px;
     display:inline-block;
     width: 36px;
     height: 36px;
-    line-height:36px;
+    /*line-height:36px;*/
     cursor: pointer;
     border-radius: 50%;
     background-color: rgba(255,255,255,0.1);
@@ -1885,7 +1927,7 @@ width: 40px;
     display:inline-block;
     width: 36px;
     height: 36px;
-    line-height:36px;
+    /*line-height:36px;*/
     cursor:pointer;
     border-radius: 50%;
     background-color: rgba(255,255,255,0.1);
@@ -1896,7 +1938,18 @@ width: 40px;
     display:inline-block;
     width: 36px;
     height: 36px;
-    line-height:36px;
+    /*line-height:36px;*/
+    cursor:pointer;
+    border-radius: 50%;
+    background-color: rgba(255,255,255,0.1);
+}
+.netcall-box .icon-ban{
+    position:relative;
+    top:2px;
+    display:inline-block;
+    width: 36px;
+    height: 36px;
+    /*line-height:36px;*/
     cursor:pointer;
     border-radius: 50%;
     background-color: rgba(255,255,255,0.1);
@@ -1911,13 +1964,15 @@ width: 40px;
     font-size: 14px;
     line-height:1;
     text-align:center;
-    width: 66px;
+    min-width: 66px;
     height:32px;
     box-sizing: border-box;
     border:none;
-    padding: 9px 0;
+    padding: 9px;
     border-radius:5px;
     color: #fff;
+    opacity: 1;
+    transition: all 0.1s linear;
     font-family: '微软雅黑', Arial, Helvetica, serif;
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -1948,24 +2003,35 @@ width: 40px;
     background-color:#238efa;
 }
 .netcall-box .netcall-button:hover{
-    cursor: pointer;
-    opacity: 0.7;
+    /*cursor: pointer;*/
+    /*opacity: 0.7;*/
 }
 .netcall-box .netcall-show-video .op{
     margin-top: 14px;
 }
 .netcall-box .netcall-show-video .bigView{
-
+    transform: translate3d(0,0,0);
     height: 100%;
 }
+.netcall-box .netcall-show-video .smallView{
+    transform: translate3d(0,0,0);
+    height: 100%;
+}
+.netcall-box .netcall-show-video .operation{
+    margin-top: 2px;
+    transform: translate3d(0,0,0);
+    /*transition: all 0.1s linear;*/
+}
 .netcall-box .netcall-show-video .bigView canvas{
-
+    transform: translate3d(0,0,0);
+    /*transition: all 0.1s linear;*/
 }
 .netcall-box .netcall-show-video .smallView canvas{
-
+    transform: translate3d(0,0,0);
+    transition: all 0.1s linear;
 }
 .netcall-box .netcall-show-video .smallView{
-
+    transition: all 0.1s linear;
     width: 160px;
     height: 120px;
     position: relative;
@@ -1986,6 +2052,7 @@ width: 40px;
     border-radius: 50%;
     cursor:pointer;
     z-index:2;
+    transform: translateZ(0);
 }
 .netcall-box .netcall-show-video .switchViewPositionButton:hover{
     background-color: rgba(0,0,0,0.2);
@@ -2156,7 +2223,7 @@ width: 40px;
     display: flex;
     flex-direction: column;
     margin-left: 10px;
-    justify-content: space-between;
+    justify-content: center;
 }
 .netcall-video-left .bigView{
     display: flex;
@@ -2185,6 +2252,11 @@ width: 40px;
     vertical-align: top;
 }
 
+/** 对话框样式调整 */
+.ui-dialog.netcall-ui-dialog.netcall-ui-dialog-3 .ui-dialog-buttonpane .ui-button{
+    width: 115px;
+    border: 1px solid #ddd;
+}
 .ui-dialog.netcall-ui-dialog{
     padding: 0;
 }
@@ -2230,7 +2302,7 @@ width: 40px;
     padding:0;
     line-height:30px;
     text-align: center;
-    border: none;
+    /*border: none;*/
     border-radius: 3px;
     font-size: 14px;
 }
@@ -2304,9 +2376,15 @@ width: 40px;
     cursor:pointer;
     margin-bottom: 10px;
 }
+.m-goNetcall .nick{
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    padding: 5px;
+}
 .netcall-icon-state{
     margin-top: 20px;
-    margin-bottom: 16px;
+    margin-bottom: 10px;
     display: inline-block;
     width: 32px;
     height: 32px;
@@ -2389,7 +2467,7 @@ width: 40px;
     width: 15px;
     height: 15px;
     display:inline-block;
-    vertical-align: text-bottom;
+    vertical-align: middle;
     margin-left: 6px;
 }
 .ui-widget-overlay{
@@ -2411,7 +2489,7 @@ width: 40px;
 }
 .netcall-box .op .exception .netcall-button{
     height: 32px;
-    width: 150px;
+    min-width: 150px;
 }
 
 .netcall-box .op .exception .netcall-button.red{
@@ -2427,4 +2505,207 @@ width: 40px;
     color: #ccc;
     margin-top: 10px;
     text-indent: 2em;
+}
+
+/* 多人音视频样式表*/
+.netcall-meeting-box.fullscreen{
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
+    display: block;
+    background-image: url(../images/bg_netcall_fullscreen.png);
+}
+.netcall-meeting-box .member-list{
+    display: flex;
+    flex-direction: row;
+    /*justify-content: center;*/
+    align-items: center;
+    min-height: 140px;
+    flex-wrap: wrap;
+    width: 690px;
+    margin: 0 auto;
+}
+.netcall-meeting-box .member-list .item{
+    width: 138px;
+    height: 138px;
+    display: inline-block;
+    border: 1px solid #000;
+    background-color:rgba(0,0,0,0.5);
+    background-image: url('../images/member.png');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    background-blend-mode: darken;
+    position: relative;    
+    overflow: hidden;
+    box-sizing: border-box;
+    color: #fff;
+}
+.netcall-meeting-box .member-list .item canvas{
+    width: 138px;
+    height: 138px;
+}
+.netcall-meeting-box .member-list .item .name{
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    /* height: 25px; */
+    background: rgba(0, 0, 0, 0.3);
+    /* display: flex; */
+    /* justify-content: center; */
+    /* align-items: center; */
+    /* color: #ddd; */
+    font-size: 15px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    padding: 5px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    padding: 5px 10px;
+    box-sizing: border-box;
+}
+.netcall-meeting-box .member-list .item .tip{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-top: 0;
+    display: block;
+    transform: translate(-50%,-50%);
+    color: #fff;
+    /*z-index: -1;*/
+}
+.netcall-meeting-box .member-list .item .tip i{
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin: 0 5px;
+    background: rgba(255, 255, 255, 0.1);
+    animation: animation-loading 1s linear infinite alternate forwards;
+}
+.netcall-meeting-box .member-list .item .tip i:nth-child(2){
+    animation-delay: 0.3s
+}
+.netcall-meeting-box .member-list .item .tip i:last-child{
+    animation-delay: 0.7s
+}
+@keyframes animation-loading{
+    0% {background: rgba(255, 255, 255, 0.1)}
+    50% {background: rgba(255, 255, 255, 0.5)}
+    100% {background: rgba(255, 255, 255, 1)}
+}
+.netcall-meeting-box .member-list  .item .volume-show{
+    display: inline-block;
+    width: 0%;
+    height: 2px;
+    background: #8a8af9;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    transition: width 0.5s linear;
+}
+.netcall-meeting-box .option-box .operation{
+    background: rgba(221, 221, 221, 0.3);
+    padding: 5px 10px;
+    /* overflow: auto; */
+    display: inline-block;
+    width: 100%;
+    box-sizing: border-box;
+    text-align: left;
+}
+.netcall-meeting-box .option-box .control{
+    display: inline-block;
+    vertical-align: middle;
+    margin-top: 0px;
+}
+.netcall-meeting-box .option-box .control .fullScreenIcon{
+    width: 36px;
+    height: 36px;
+    /*margin-top: 2px;*/
+    /*line-height: 5;*/
+    display: inline-block;
+    background: url(../images/icons.png) no-repeat;
+    background-position: -279px -263px;
+    background-color: rgba(0,0,0, 0.08);
+    cursor: pointer;
+    border-radius: 50%;
+    color: #acadac;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    vertical-align: text-bottom;
+
+}
+.netcall-meeting-box .option-box .control .switch:after{
+    content: '';
+    display: inline-block;
+    width: 2px;
+    height: 70%;
+    background: #ddd;
+    margin-left: 5px;
+    margin-right: 5px;
+    vertical-align: 2px;
+}
+
+/*.netcall-meeting-box .option-box .control .slider{
+    opacity: 0;
+    z-index: -1;
+    transition: opacity 0.5s 0.5s linear;
+}
+.netcall-meeting-box .option-box .control .control-item:hover .slider{
+    opacity: 1;
+    z-index: 0;
+}
+.netcall-meeting-box .option-box .control .control-item.no-device:hover .slider{
+    opacity: 0;
+    z-index: -1;
+}*/
+.netcall-meeting-box .option-box .op{
+    margin-top: 3px;
+    float: right;
+    margin-left: 10px;
+    display: inline-block;
+}
+.netcall-meeting-box .option-box .tip{
+    float: right;
+}
+/* 多人全屏模式 */ 
+.netcall-meeting-box.fullscreen .member-list{
+    min-width: 1090px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+}
+.netcall-meeting-box.fullscreen .member-list .item{
+    width: 218px;
+    height: 218px;
+}
+.netcall-meeting-box.fullscreen .member-list .item canvas{
+    width: 218px;
+    height: 218px;
+}
+.netcall-meeting-box.fullscreen .option-box{
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+}
+.netcall-meeting-box.fullscreen .option-box .control .fullScreenIcon{
+    background-position: -245px -263px;
+}
+/* 弹框样式修改 */
+.dialog-team-container .icon-control{
+    float: right;
+    background-color: rgba(0, 0, 0, 0.6);
+}
+.dialog-team-container .icon-micro.cur{
+    background-position: -22px -262px;
 }

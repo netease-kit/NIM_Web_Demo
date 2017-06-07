@@ -57,6 +57,7 @@ body{color:#666;font-family: Tahoma, '微软雅黑';-webkit-font-smoothing:antia
 /** buttons */
 .btn{border:0;font-size: 1.0625rem;color: #fff;}
 .btn-ok{background-color: #0888ff;width: 100px;line-height: 34px;border:1px solid #0070d9}
+.btn-ok.disabled{background-color: #bdd0fd;border: 1px solid #bdd0fd;}
 .btn-cancel,.btn-del{border:1px solid #ccc;background-color:#eee;color:#666;width: 100px;line-height: 34px;margin-right: 14px;}
 .btn-del{background-color: #eb493d;color: #fff;border-color:#c23227;}
 /** 普通对话框 */

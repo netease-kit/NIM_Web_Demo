@@ -7,6 +7,7 @@
 	<link rel="stylesheet" href="css/animate.css"/>
 	<link rel="stylesheet" href="css/jquery-ui.css"/>
 	<link rel="stylesheet" href="css/contextMenu/jquery.contextMenu.css"/>
+	<link rel="stylesheet" href="css/minAlert.css"/>
 	<link rel="stylesheet" href="css/main.css"/>
 	<link rel="stylesheet" href="css/uiKit.css"/>
 	<link rel="stylesheet" href="css/CEmojiEngine.css"/>
@@ -132,11 +133,12 @@
                         <div class="netcall-mask hide">
                             <div class="netcallTip"></div>
                         </div>
-                        <div class="top">
+                        <div class="top hide">
                             <span class="transferAudioAndVideo switchToAudio" id="switchToAudio">切换音频</span>
                             <span class="transferAudioAndVideo switchToVideo" id="switchToVideo">切换视频</span>
                             <span class="fullScreenIcon toggleFullScreenButton" id="toggleFullScreenButton" title="切换全屏">&nbsp;</span>
                         </div>
+						<!-- p2p呼叫界面 -->
                         <div class="netcall-calling-box hide">
                             <img  alt="用户头像" class="avatar" >
                             <div class="nick"></div>
@@ -145,9 +147,8 @@
                                 <button id="callingHangupButton" class="netcall-button red">挂断</button>
                             </div>
                         </div>
+						<!-- p2p视频界面 -->
                         <div class="netcall-show-video hide">
-
-
                             <div class="netcall-video-left">
                                 <div class="netcall-video-remote bigView">
                                     <div class="message" ></div>
@@ -164,14 +165,14 @@
                                         <div class="microphone control-item">
                                             <div class="slider hide">
                                                 <div class="txt">10</div>
-                                                <input id="microSliderInput1" type="range" min="0" max="10" step="1" value="10" data-orientation="vertical">
+                                                <input class="microSliderInput" id="microSliderInput1" type="range" min="0" max="10" step="1" value="10" data-orientation="vertical">
                                             </div>
                                             <span class="icon-micro"></span>
                                         </div>
                                         <div class="volume control-item">
                                             <div class="slider hide">
                                                 <div class="txt">10</div>
-                                                <input id="volumeSliderInput1" type="range" min="0" max="10" step="1" value="10" data-orientation="vertical">
+                                                <input class="volumeSliderInput" id="volumeSliderInput1" type="range" min="0" max="10" step="1" value="10" data-orientation="vertical">
                                             </div>
                                             <span class="icon-volume"></span>
                                         </div>
@@ -185,10 +186,9 @@
                                     <div class="tip">00 : 00</div>
                                 </div>
                             </div>
-
-
                         </div>
-                        <div class="netcall-show-audio ">
+						<!-- p2p音频界面 -->
+                        <div class="netcall-show-audio hide">
                             <img  alt="用户头像" class="avatar">
                             <div class="nick">test</div>
                             <div class="tip">00 : 00</div>
@@ -196,14 +196,14 @@
                                 <div class="microphone control-item " >
                                     <div class="slider hide">
                                         <div class="txt">10</div>
-                                        <input id="microSliderInput" type="range" min="0" max="10" step="1" value="10" data-orientation="vertical">
+                                        <input class="microSliderInput" id="microSliderInput" type="range" min="0" max="10" step="1" value="10" data-orientation="vertical">
                                     </div>
                                     <span class="icon-micro"></span>
                                 </div>
                                 <div class="volume control-item" >
                                     <div class="slider hide">
                                         <div class="txt">10</div>
-                                        <input id="volumeSliderInput" type="range" min="0" max="10" step="1" value="10" data-orientation="vertical">
+                                        <input class="microSliderInput" id="volumeSliderInput" type="range" min="0" max="10" step="1" value="10" data-orientation="vertical">
                                     </div>
                                     <span class="icon-volume"></span>
                                 </div>
@@ -213,6 +213,9 @@
                             </div>
 
                         </div>
+						<!-- 多人音视频互动界面 -->
+						<div class="netcall-meeting-box hide" id="netcallMeetingBox"></div>
+						<!-- 被叫界面 -->
                         <div class="netcall-becalling-box hide">
                             <img  alt="用户头像" class="avatar">
                             <div class="nick"></div>
@@ -237,60 +240,29 @@
                             </div>
                         </div>
                         <div class="dialogs hide">
-                            <div id="askSwitchToVideoDialog">
-                                对方邀请你开始视频聊天
-                            </div>
-                            <div id="alertDuplicateDialog">
-                                <span class="netcall-icon-alert"></span>正在通话中，无法发起新的通话
-                            </div>
-                            <div id="osNotSupportDialog">
-                                <span class="netcall-icon-alert"></span>当前系统不支持音视频功能，请使用win7、win10系统
-                            </div>
-                            <div id="browserNotSupportDialog">
-                                <span class="netcall-icon-alert"></span>当前浏览器不支持音视频功能，请使用 Chrome、IE 11 或者 Edge 浏览器
-                            </div>
-                            <div id="agentCheckingDialog">
-                                <span class="netcall-icon-alert"></span>检查插件中...<span class="netcall-icon-checking"></span>
-                            </div>
-                            <div id="agentCheckSuccessDialog">
-                                <span class="netcall-icon-ok"></span>成功检测到插件！
-                            </div>
-                            <div id="agentCheckingFailureDialog">
-                                <span class="netcall-icon-alert"></span>未检测到插件！请确认已安装插件并未被占用
-                            </div>
-                            <div id="agentNeedInstallDialog">
-                                <span class="netcall-icon-alert"></span>请安装插件PC Agent，方可使用音视频功能
-                                <div class="netcall-agent-install-tip">（拒绝调用插件申请会导致无法唤起插件,需重启浏览器）</div>
-                            </div>
-                            <div id="agentInstallConfirmDialog">
-                                <span class="netcall-icon-alert"></span>下载完成后，需手动安装插件
-                            </div>
-
-
                         </div>
                     </div>
 					<div class="chat-content box-sizing" id="chatContent"> <!-- 聊天记录 -->
-
 					</div>
 					<div class="u-chat-notice">您已退出</div>
 					<div class="chat-mask"></div>
 					<div class="chat-editor box-sizing" id="chatEditor" data-disabled="1">
 						<div id="emojiTag" class="m-emojiTag"></div>
-						<a class="u-emoji" id="showEmoji"></a>
-						<span class="msg-type" id="chooseFileBtn">
+						<a class="chat-btn u-emoji" id="showEmoji"></a>
+						<span class="chat-btn msg-type" id="chooseFileBtn">
 							<a class="icon icon-file" data-type="file"></a>
 						</span>
-                        <a class="u-netcall-audio-link" id="showNetcallAudioLink">&nbsp;</a>
-                        <a class="u-netcall-video-link" id="showNetcallVideoLink">&nbsp;</a>
+                        <a class="chat-btn u-netcall-audio-link" id="showNetcallAudioLink">&nbsp;</a>
+                        <a class="chat-btn u-netcall-video-link" id="showNetcallVideoLink">&nbsp;</a>
+						<textarea id="messageText" class="chat-btn msg-input box-sizing radius5px p2p" rows="1" autofocus="autofocus" maxlength="500"></textarea>
+						<a class="btn-send radius5px" id="sendBtn">发送</a>
 						<form action="#" id="uploadForm">
 							<input multiple="multiple" type="file" name="file" id="uploadFile" class="hide"/>
 						</form>
-						<textarea id="messageText" class="msg-input box-sizing radius5px p2p" rows="1" autofocus="autofocus" maxlength="500"></textarea>
-						<a class="btn-send radius5px" id="sendBtn">发送</a>
 					</div>
 				</div>
 			</div>
-			<div class="right-panel hide radius5px devices-container" id="devices">
+			<div class="right-panel hide radius5px devices-container" id="devices">		<!-- 设备管理面板 -->
 				<div class="info-box">
 					<div class="title tc">
 						<button class="btn back-btn radius5px" id="backBtn2">返回</button>多端登录管理
@@ -323,8 +295,8 @@
 		<div class="team-info-container hide" id="teamInfoContainer"></div>
 		<!-- 云记录 -->
 		<div class="cloud-msg-container hide" id="cloudMsgContainer"></div>
-		<!-- 创建群，添加成员 -->
-		<div class="create-team-container radius5px hide" id="createTeamContainer"></div>
+		<!-- 弹框 -->
+		<div class="dialog-team-container radius5px hide" id="dialogTeamContainer"></div>
 		<!-- 黑名单 -->
 		<div class="m-blacklist radius5px hide" id="blacklist">
 			<div class="title box-sizing">
@@ -584,9 +556,10 @@
 	<div id="mask" class="mask hide"></div>
 
 	<!-- js-->
-	<script src="../3rd/NIM_Web_SDK_v3.6.0.js"></script>
-	<script src="../3rd/NIM_Web_Netcall_v3.6.0.js"></script>
+	<script src="../3rd/NIM_Web_SDK_v3.8.0.js"></script>
+	<script src="../3rd/NIM_Web_Netcall_v3.8.0.js"></script>
 	<script src="../3rd/jquery-1.11.3.min.js"></script>
+	
 	<script src="../3rd/platform.js"></script>
 	<script src="js/3rd/jquery-ui.min.js"></script>
 	<script src="../3rd/rangeslider.min.js"></script>
@@ -601,16 +574,20 @@
 	<script src="js/link.js"></script>
 	<script src="js/ui.js?v=2"></script>
 	<script src="js/widget/uiKit.js?v=2"></script>
+	<script src="js/widget/minAlert.js"></script>
 	<script src="js/module/base.js"></script>
 	<script src="js/module/message.js"></script>
 	<script src="js/module/sysMsg.js"></script>
 	<script src="js/module/personCard.js"></script>
 	<script src="js/module/session.js"></script>
 	<script src="js/module/friend.js"></script>
+
 	<script src="js/module/team.js"></script>
+	<script src="js/module/team_dialog.js"></script>
 	<script src="js/module/cloudMsg.js"></script>
 	<script src="js/module/notification.js"></script>
 	<script src="js/module/netcall.js"></script>
+	<script src="js/module/netcall_meeting.js"></script>
 	<script src="js/module/netcall_ui.js"></script>
 	<script src="js/main.js?v=2"></script>
 </body>
