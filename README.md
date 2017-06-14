@@ -1,5 +1,5 @@
 
-
+12
 # 网易云信web demo简介
 网易云信demo工程基于网易云信[webSDK](http://dev.netease.im/docs?doc=web)，演示了SDK聊天，群组等功能。用户可参照该demo，将网易云信SDK接入自己的app。
 
