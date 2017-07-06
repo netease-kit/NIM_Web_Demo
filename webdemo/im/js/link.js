@@ -814,7 +814,7 @@ SDKBridge.prototype.getUsers = function (accounts, callback) {
   var datas = []
   var that = this
   var getInfo = function () {
-    if (!accounts || accounts.length) {
+    if (!accounts || accounts.length <= 0) {
       console.warn('getUsers 方法参数 accounts 不能为空：', accounts)
       return
     }
