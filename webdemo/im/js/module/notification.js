@@ -6,6 +6,10 @@ YX.fn.notification =  function() {
 	
 }
 YX.fn.messageHandler = function(msg,callback) {
+  if (msg.type === 'robot') {
+    this.doMsg(msg)
+    return
+  }
 	var type = msg.attach.type,
 		team = msg.attach.team
 	switch (type) {

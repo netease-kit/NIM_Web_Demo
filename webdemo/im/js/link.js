@@ -450,7 +450,7 @@ var SDKBridge = function (ctr, data) {
  * @param {StringArray} accounts 
  */
 SDKBridge.prototype.subscribeMultiPortEvent = function (accounts) {
-  if (!window.CONFIG.openSubscription) {
+  if (!window.CONFIG.openSubscription || (!accounts) || accounts.length <= 0) {
     // 并未开启订阅服务
     return
   }
@@ -476,6 +476,10 @@ SDKBridge.prototype.subscribeMultiPortEvent = function (accounts) {
  * @param {StringArray} accounts 
  */
 SDKBridge.prototype.unSubscribeMultiPortEvent = function (accounts) {
+  if (!window.CONFIG.openSubscription || (!accounts) || accounts.length <= 0) {
+    // 并未开启订阅服务
+    return
+  }
   this.nim.unSubscribeEventsByAccounts({
     type: 1,
     accounts: accounts,
@@ -810,6 +814,10 @@ SDKBridge.prototype.getUsers = function (accounts, callback) {
   var datas = []
   var that = this
   var getInfo = function () {
+    if (!accounts || accounts.length) {
+      console.warn('getUsers 方法参数 accounts 不能为空：', accounts)
+      return
+    }
     that.nim.getUsers({
       accounts: arr1,
       done: function (err, data) {

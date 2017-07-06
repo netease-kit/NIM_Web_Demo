@@ -188,8 +188,8 @@ function buildSessionMsg(msg) {
  */
 function getMessage(msg) {
     var str = '',
-        url = msg.file ? _$escape(msg.file.url) : '',
-        sentStr = (msg.from !== userUID) ? "收到" : "发送";
+        url = msg.file ? _$escape(msg.file.url) : ''
+    var sentStr = (msg.flow === 'in') ? "收到" : "发送";
     switch (msg.type) {
         case 'text':
             var re = /(http:\/\/[\w.\/]+)(?![^<]+>)/gi; // 识别链接
@@ -260,6 +260,9 @@ function getMessage(msg) {
                 str = sentStr + '一条[自定义]消息，请到手机或电脑客户端查看';
             }
             break;
+        case 'robot':
+            str = sentStr + '一条[机器人]消息,请到手机或电脑客户端查看';
+            break
         default:
             if (msg && msg.attach && msg.attach.netcallType !== undefined) {
                 var netcallType = msg.attach.netcallType;
@@ -351,13 +354,10 @@ function buildSender(msg) {
             sender = 'you';
         }
     } else {
-        if (msg.from === userUID && !msg.fromClientType) {
-            sender = 'me';
-        } else {
-            sender = 'you';
-        }
-        if (msg.from === userUID && msg.to != userUID) {
-            sender = 'me';
+        if (msg.flow === 'in') {
+            sender = 'you'
+        } else if (msg.flow === 'out') {
+            sender = 'me'
         }
     }
     return sender;

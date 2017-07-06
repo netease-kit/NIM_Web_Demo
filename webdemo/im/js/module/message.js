@@ -72,7 +72,7 @@ YX.fn.doMsg = function (msg) {
             }
         }
     //非群通知消息处理
-    if (/text|image|file|audio|video|geo|custom|tip/i.test(msg.type)) {
+    if (/text|image|file|audio|video|geo|custom|tip|robot/i.test(msg.type)) {
         this.cache.addMsgs(msg)
         var account = (msg.scene === "p2p" ? who : msg.from)
         //用户信息本地没有缓存，需存储
