@@ -103,6 +103,8 @@ body.stop-scrolling {
   width: 470px;
   margin: 30px 0;
   text-align: left;
+  max-height: 60vh;
+  overflow: auto;
 }
 /*.min-alert .min-desc.alert-error {
   width: 255px;

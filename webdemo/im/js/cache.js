@@ -585,6 +585,9 @@ var Cache = (function(){
         } else if (custom[16]) {
           custom = custom[16]
           multiPortStatus = 'Web'
+        } else if (custom[64]) {
+          custom = custom[64]
+          multiPortStatus = 'Mac'
         }
         if (custom) {
           custom = JSON.parse(custom)
@@ -623,6 +626,9 @@ var Cache = (function(){
             } else if (serverConfig.online.indexOf(16) >= 0) {
               tempData.multiPortStatus = 'Web'
               customType = 16
+            } else if (serverConfig.online.indexOf(64) >= 0) {
+              tempData.multiPortStatus = 'Mac'
+              customType = 64
             }
           }
           if (tempData.custom && (Object.keys(tempData.custom).length > 0)) {

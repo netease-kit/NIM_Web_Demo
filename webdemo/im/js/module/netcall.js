@@ -1,5 +1,8 @@
 /*
  * 点对点音视频通话控制逻辑
+ * 注：由于融合了WebRTC和Netcall两种音视频sdk，需要进行如下处理
+ * 1. 分别初始化两种实例 webrtc(WebRTC) / webnet(Netcall), 注册各种事件
+ * 2. 逻辑里真正调用的sdk API需要通过一个 bridge(目前名字叫netcall) 进行桥接选择当前使用的sdk，默认使用 Netcall 方式
  */
 function NetcallBridge(yx) {
     this.yx = yx;
@@ -30,10 +33,14 @@ function NetcallBridge(yx) {
     this.netcall = null;
     // 呼叫超时检查定时器
     this.callTimer = null;
+    // 被呼叫超时检查定时器
+    this.beCallTimer = null;
     // 音频或视频通话
     this.type = null;
     // 是否处于通话流程中
     this.netcallActive = false;
+    // 通话的channelId
+    this.channelId = null;
     // 通话流程的另一方账户
     this.netcallAccount = "";
     // 通话时长
@@ -59,23 +66,42 @@ function NetcallBridge(yx) {
     this.deviceAudioOutOn = true;
     // 是否全屏状态
     this.isFullScreen = false;
+
     // 本地agent连接状态
     this.signalInited = false;
     // agent程序下载地址
-    this.agentDownloadUrl = "http://yx-web.nos.netease.com/package%2FWebAgent_Setup_V2.0.0.524.zip";
-    // this.agentDownloadUrl = "../3rd/WebAgent_Setup_V2.0.0.524.exe";
+    this.agentDownloadUrl = "http://yx-web.nos.netease.com/package%2FWebAgent_Setup_V2.1.0.83.zip";
+    // this.agentDownloadUrl = "../3rd/WebAgent_Setup_V2.1.0.83.exe";
     // 多人音视频的缓存对象
     this.meetingCall = {};
+    // 当前视频状态，是桌面共享还是视频: video / window / screen
+    this.videoType = 'video'
+
+    this.isRtcSupported = false;
+    // this.signalInited = false;
+    // isWebRTCEnable 开关
+    this.isWebRTCEnable = false;
+
+    // 通话方式选择，是WebRTC还是Netcall，每次发起通话都要进行选择, 值有: WebRTC / Netcall
+    this.callMethod = "";
+    // 通话方式选择，是WebRTC还是Netcall，第一次进行选择后记住选择
+    this.callMethodRemember = "";
+
+    // 真正业务调用的 API 桥, 在进行通话方式选择之后赋值对应的实例
+    this.netcall = null;
+
     // 开始初始化
     this.init();
 }
-NetcallBridge.fn = NetcallBridge.prototype;
-NetcallBridge.fn.init = function () {
+
+var fn = NetcallBridge.fn = NetcallBridge.prototype;
+
+fn.init = function () {
     this.initEvent();
     this.initNetcall();
-    this.initNetcallMeeting();
 };
-NetcallBridge.fn.initEvent = function () {
+
+fn.initEvent = function () {
     var that = this;
     // 点击发起音频通话按钮
     this.$netcallAudioLink.on("click", this.onClickNetcallLink.bind(this, Netcall.NETCALL_TYPE_AUDIO));
@@ -95,11 +121,15 @@ NetcallBridge.fn.initEvent = function () {
     // 切换为音频通话
     this.$switchToAudioButton.on("click", this.requestSwitchToAudio.bind(this));
     // 切换全屏状态
+    $('body').on('click', '.J-member-list .fullScreenIcon', this.toggleFullScreen.bind(this))
     this.$toggleFullScreenButton.on("click", this.toggleFullScreen.bind(this));
     // 点击右上角悬浮框返回到音视频通话聊天界面
     this.$goNetcall.on("click", this.doOpenChatBox.bind(this));
     // 视频通话时，切换自己和对方的画面显示位置
     this.$switchViewPositionButton.on("click", this.switchViewPosition.bind(this));
+
+    // 桌面共享按钮
+    $('body').on('click', '.J-desktop-share .share-item', this.firefoxDesktopShare.bind(this))
 
     // 离开页面调用destroy
     window.addEventListener('beforeunload', this.beforeunload.bind(this));
@@ -165,13 +195,22 @@ NetcallBridge.fn.initEvent = function () {
             this.cameraStateTimeout = null;
             if (this.cameraDebounceState !== this.deviceVideoInOn) {
                 var nextState = !this.deviceVideoInOn;
-                this.setDeviceVideoIn(nextState);
                 this.deviceVideoInOn = nextState;
+
+                // WebRTC 模式
+                if (this.isRtcSupported && nextState && this.meetingCall.channelName) {
+                    return this.setDeviceVideoIn(nextState).then(function () {
+                        that.startLocalStreamMeeting();
+                        that.setVideoViewSize();
+                    })
+                } else {
+                    this.setDeviceVideoIn(nextState)
+                }
+
             }
             this.cameraDebounceState = null;
         }.bind(this), 300)
         $(".icon-camera").toggleClass("icon-disabled", !this.cameraDebounceState);
-
     }.bind(this));
 
     // 麦克风、摄像头按钮在hover的时候显示音量调节的slider
@@ -228,7 +267,7 @@ NetcallBridge.fn.initEvent = function () {
 };
 
 /** 页面卸载事件 */
-NetcallBridge.fn.beforeunload = function (e) {
+fn.beforeunload = function (e) {
     if (!this.netcall.calling) return;
 
     if (this.meetingCall.channelName) {
@@ -263,12 +302,26 @@ NetcallBridge.fn.beforeunload = function (e) {
 }
 
 /** 初始化p2p音视频响应事件 */
-NetcallBridge.fn.initNetcall = function () {
+fn.initNetcall = function () {
     var NIM = window.SDK.NIM;
     var Netcall = window.Netcall;
-    var that = this;
+    var WebRTC = window.WebRTC;
+
+    NIM.use(WebRTC);
     NIM.use(Netcall);
-    var netcall = window.testNetCall = this.netcall = Netcall.getInstance({
+
+    var that = this;
+
+    // 初始化webrtc
+    window.webrtc = this.webrtc = WebRTC.getInstance({
+        nim: window.nim,
+        container: $(".netcall-video-local")[0],
+        remoteContainer: $(".netcall-video-remote")[0],
+        debug: true
+    })
+
+    // 初始化netcall
+    window.webnet = this.webnet = Netcall.getInstance({
         nim: window.nim,
         mirror: false,
         mirrorRemote: false,
@@ -276,13 +329,151 @@ NetcallBridge.fn.initNetcall = function () {
         container: $(".netcall-video-local")[0],
         remoteContainer: $(".netcall-video-remote")[0]
     });
-    // 相关事件
-    // signalClosed devices beCalling callRejected callAccepted deviceStatus streamResize remoteStreamResize
-    // callerAckSync hangup control netStatus statistics audioVolumn
 
-    netcall.on("callAccepted", this.onCallAccepted.bind(this)); // 对方接受通话 或者 我方接受通话，都会触发
-    netcall.on("callRejected", this.onCallingRejected.bind(this));
-    netcall.on('signalClosed', function () {
+    this.initWebRTCEvent();
+    this.initNetcallEvent();
+
+    // 默认使用agent模式
+    this.netcall = this.webnet
+    this.callMethod = "webnet";
+};
+
+/** 初始化webrtc事件 */
+fn.initWebRTCEvent = function () {
+    var webrtc = this.webrtc;
+    var that = this;
+    // 对方接受通话 或者 我方接受通话，都会触发
+    webrtc.on("callAccepted", function (obj) {
+        if (this.callMethod !== 'webrtc') return
+        this.onCallAccepted(obj);
+    }.bind(this));
+    webrtc.on("callRejected", function (obj) {
+        if (this.callMethod !== 'webrtc') return
+        this.onCallingRejected(obj);
+    }.bind(this));
+    webrtc.on('signalClosed', function () {
+        if (this.callMethod !== 'webrtc') return
+
+        console.log("signal closed");
+        this.signalInited = false;
+        this.showTip("信令断开了", 2000, function () {
+            this.beCalling = false;
+            this.beCalledInfo = null;
+            this.hideAllNetcallUI();
+
+            /** 如果是群视频，离开房间 */
+            if (this.meetingCall.channelName) {
+                this.leaveChannel();
+                this.resetWhenHangup();
+                return;
+            }
+
+            this.netcall.hangup();
+            this.resetWhenHangup();
+        }.bind(this));
+    }.bind(this));
+    webrtc.on('rtcConnectFailed', function () {
+        if (this.callMethod !== 'webrtc') return
+        console.log("rtcConnectFailed");
+        this.log("rtc 连接中断");
+        this.showTip("通话连接断开了", 2000, function () {
+            this.beCalling = false;
+            this.beCalledInfo = null;
+            this.netcall.hangup();
+            this.hideAllNetcallUI();
+        }.bind(this));
+    }.bind(this));
+    webrtc.on("devices", function (obj) {
+        if (this.callMethod !== 'webrtc') return
+        console.log("on devices:", obj);
+        //this.checkDeviceStateUI();
+    }.bind(this));
+    webrtc.on("deviceStatus", function (obj) {
+        if (this.callMethod !== 'webrtc') return
+        console.log("on deviceStatus:", obj);
+        this.checkDeviceStateUI();
+    }.bind(this));
+    // webrtc.on('deviceAdd', function (obj) {
+    //     if (this.callMethod !== 'webrtc') return
+    //     console.log('on deviceAdd', obj)
+    //     var temp = this.netcall
+    //     if (!temp.signalInited) return;
+    //     this.checkDeviceStateUI();
+    // }.bind(this))
+    // webrtc.on('deviceRemove', function (obj) {
+    //     if (this.callMethod !== 'webrtc') return
+    //     console.log('on deviceRemove', obj)
+    //     var temp = this.netcall
+    //     if (!temp.signalInited) return;
+    //     this.checkDeviceStateUI();
+    // }.bind(this))
+    webrtc.on("beCalling", function (obj) {
+        if (this.callMethod !== 'webrtc') return
+        this.onBeCalling(obj);
+    }.bind(this));
+    webrtc.on("control", function (obj) {
+        if (this.callMethod !== 'webrtc') return
+        this.onControl(obj);
+    }.bind(this));
+    webrtc.on("hangup", function (obj) {
+        if (this.callMethod !== 'webrtc') return
+        this.onHangup(obj);
+    }.bind(this));
+    webrtc.on("heartBeatError", function (obj) {
+        if (this.callMethod !== 'webrtc') return
+        console.log("heartBeatError,要重建信令啦");
+    }.bind(this));
+    webrtc.on("callerAckSync", function (obj) {
+        if (this.callMethod !== 'webrtc') return
+        this.onCallerAckSync(obj);
+    }.bind(this));
+    webrtc.on("netStatus", function (obj) {
+        if (this.callMethod !== 'webrtc') return
+        // console.log("on net status:", obj);
+    }.bind(this));
+    webrtc.on("statistics", function (obj) {
+        if (this.callMethod !== 'webrtc') return
+        // console.log("on statistics:", obj);
+    }.bind(this));
+    webrtc.on("audioVolume", function (obj) {
+        if (this.callMethod !== 'webrtc') return
+        // console.log(JSON.stringify(obj))
+        // console.log("on audioVolume:", obj);
+        /** 如果是群聊，转到多人脚本处理 */
+        if (this.netcall.calling && this.yx.crtSessionType === 'team' && this.meetingCall.channelName) {
+            this.updateVolumeBar(obj)
+        }
+    }.bind(this));
+    webrtc.on('joinChannel', function (obj) {
+        if (this.callMethod !== 'webrtc') return
+        // type多人没用
+        console.log('user join', obj)
+        that.onJoinChannel(obj);
+    }.bind(this))
+    webrtc.on('leaveChannel', function (obj) {
+        if (this.callMethod !== 'webrtc') return
+        console.log('sb leaveChannel', obj)
+        that.onLeaveChannel(obj);
+    }.bind(this))
+}
+
+/** 初始化netcall事件 */
+fn.initNetcallEvent = function () {
+    var webnet = this.webnet;
+    var that = this;
+    // 对方接受通话 或者 我方接受通话，都会触发
+    webnet.on("callAccepted", function (obj) {
+        if (this.callMethod !== 'webnet') return
+        this.onCallAccepted(obj);
+    }.bind(this));
+    webnet.on("callRejected", function (obj) {
+        if (this.callMethod !== 'webnet') return
+        this.onCallingRejected(obj);
+    }.bind(this));
+
+    webnet.on('signalClosed', function () {
+        if (this.callMethod !== 'webnet') return
+
         console.log("signal closed");
         this.signalInited = false;
         this.showTip("信令断开了", 2000, function () {
@@ -300,57 +491,75 @@ NetcallBridge.fn.initNetcall = function () {
             this.netcall.hangup();
         }.bind(this));
     }.bind(this));
-    netcall.on("devices", function (obj) {
+    webnet.on("devices", function (obj) {
+        if (this.callMethod !== 'webnet') return
+
         console.log("on devices:", obj);
         //this.checkDeviceStateUI();
     }.bind(this));
-    netcall.on("deviceStatus", function (obj) {
+    webnet.on("deviceStatus", function (obj) {
+        if (this.callMethod !== 'webnet') return
         console.log("on deviceStatus:", obj);
         this.checkDeviceStateUI();
     }.bind(this));
-
-    netcall.on("beCalling", this.onBeCalling.bind(this));
-    netcall.on("control", this.onControl.bind(this));
-    netcall.on("hangup", this.onHangup.bind(this));
-    netcall.on("heartBeatError", function (obj) {
+    webnet.on("beCalling", function (obj) {
+        if (this.callMethod !== 'webnet') return
+        this.onBeCalling(obj);
+    }.bind(this));
+    webnet.on("control", function (obj) {
+        if (this.callMethod !== 'webnet') return
+        this.onControl(obj);
+    }.bind(this));
+    webnet.on("hangup", function (obj) {
+        if (this.callMethod !== 'webnet') return
+        this.onHangup(obj);
+    }.bind(this));
+    webnet.on("heartBeatError", function (obj) {
+        if (this.callMethod !== 'webnet') return
         console.log("heartBeatError,要重建信令啦");
-    });
-    netcall.on("callerAckSync", this.onCallerAckSync.bind(this));
-    netcall.on("netStatus", function (obj) {
+    }.bind(this));
+    webnet.on("callerAckSync", function (obj) {
+        if (this.callMethod !== 'webnet') return
+        this.onCallerAckSync(obj);
+    }.bind(this));
+
+    webnet.on("netStatus", function (obj) {
+        if (this.callMethod !== 'webnet') return
         // console.log("on net status:", obj);
-    });
-    netcall.on("statistics", function (obj) {
+    }.bind(this));
+    webnet.on("statistics", function (obj) {
+        if (this.callMethod !== 'webnet') return
         // console.log("on statistics:", obj);
-    });
-    netcall.on("audioVolume", function (obj) {
+    }.bind(this));
+    webnet.on("audioVolume", function (obj) {
+        if (this.callMethod !== 'webnet') return
         // console.log("on audioVolume:", obj);
         /** 如果是群聊，转到多人脚本处理 */
         if (this.netcall.calling && this.yx.crtSessionType === 'team' && this.meetingCall.channelName) {
             this.updateVolumeBar(obj)
         }
     }.bind(this));
-    netcall.on("streamResize", function () {
+    webnet.on("streamResize", function () {
+        if (this.callMethod !== 'webnet') return
         console.log("stream resize", arguments)
-    })
-
-};
-
-/** 初始化多人音视频响应事件 */
-NetcallBridge.fn.initNetcallMeeting = function () {
-    var netcall = this.netcall, that = this;
-    netcall.on('joinChannel', function (obj) {
+    }.bind(this))
+    webnet.on('joinChannel', function (obj) {
+        if (this.callMethod !== 'webnet') return
         // type多人没用
-        that.log('user join', obj)
+        console.log('user join', obj)
         that.onJoinChannel(obj);
-    })
-    netcall.on('leaveChannel', function (obj) {
-        that.log('sb leaveChannel', obj)
+    }.bind(this))
+    webnet.on('leaveChannel', function (obj) {
+        if (this.callMethod !== 'webnet') return
+        console.log('sb leaveChannel', obj)
         that.onLeaveChannel(obj);
-    })
-};
+    }.bind(this))
 
-NetcallBridge.fn.onControl = function (obj) {
+}
+
+fn.onControl = function (obj) {
     console.log("on control:", obj);
+
     var netcall = this.netcall;
     // 如果不是当前通话的指令, 直接丢掉
     if (netcall.notCurrentChannelId(obj)) {
@@ -378,11 +587,28 @@ NetcallBridge.fn.onControl = function (obj) {
         case Netcall.NETCALL_CONTROL_COMMAND_NOTIFY_VIDEO_ON:
             this.log("对方打开了摄像头");
             this.$videoRemoteBox.toggleClass("empty", false).find(".message").text("");
+            if (this.isRtcSupported) {
+                //p2p
+                if (this.yx.crtSessionType === 'p2p') {
+                    return this.startRemoteStream();
+                }
+                // team
+                this.startRemoteStreamMeeting(obj.account);
+            }
+            this.updateVideoShowSize(true, true);
             break;
         // NETCALL_CONTROL_COMMAND_NOTIFY_VIDEO_OFF 通知对方自己关闭了视频
         case Netcall.NETCALL_CONTROL_COMMAND_NOTIFY_VIDEO_OFF:
             this.log("对方关闭了摄像头");
             this.$videoRemoteBox.toggleClass("empty", true).find(".message").text("对方关闭了摄像头");
+            if (this.isRtcSupported) {
+                //p2p
+                if (this.yx.crtSessionType === 'p2p') {
+                    return this.stopRemoteStream();
+                }
+                // team
+                this.stopRemoteStreamMeeting(obj.account);
+            }
             break;
         // NETCALL_CONTROL_COMMAND_SWITCH_AUDIO_TO_VIDEO_REJECT 拒绝从音频切换到视频
         case Netcall.NETCALL_CONTROL_COMMAND_SWITCH_AUDIO_TO_VIDEO_REJECT:
@@ -439,6 +665,14 @@ NetcallBridge.fn.onControl = function (obj) {
         case Netcall.NETCALL_CONTROL_COMMAND_SELF_CAMERA_INVALID:
             this.log("对方摄像头不可用");
             this.$videoRemoteBox.toggleClass("empty", true).find(".message").text("对方摄像头不可用");
+            if (this.isRtcSupported) {
+                //p2p
+                if (this.yx.crtSessionType === 'p2p') {
+                    return this.stopRemoteStream();
+                }
+                // team
+                this.stopRemoteStreamMeeting(obj.account);
+            }
             break;
         // NETCALL_CONTROL_COMMAND_SELF_ON_BACKGROUND 自己处于后台
         // NETCALL_CONTROL_COMMAND_START_NOTIFY_RECEIVED 告诉发送方自己已经收到请求了（用于通知发送方开始播放提示音）
@@ -446,18 +680,34 @@ NetcallBridge.fn.onControl = function (obj) {
         // NETCALL_CONTROL_COMMAND_NOTIFY_RECORD_STOP 通知对方自己结束录制视频了
     }
 };
+
 // 对方请求音频切换为视频时
-NetcallBridge.fn.beingAskSwitchToVideo = function () {
+fn.beingAskSwitchToVideo = function () {
     var that = this;
     function agree() {
         this.log("同意切换到视频通话");
         this.netcall.control({
             command: Netcall.NETCALL_CONTROL_COMMAND_SWITCH_AUDIO_TO_VIDEO_AGREE
         });
-        this.netcall.switchAudioToVideo();
-        this.setDeviceVideoIn(true);
-        this.netcall.startLocalStream();
-        this.netcall.startRemoteStream();
+
+        if (this.isRtcSupported) {
+            this.setDeviceVideoIn(true).then(function () {
+                this.startLocalStream()
+            }.bind(this)).then(function () {
+                return this.netcall.switchAudioToVideo();
+            }.bind(this)).then(function () {
+                this.startRemoteStream()
+            }.bind(this)).catch(function (e) {
+                console.log(e);
+            })
+        } else {
+            this.netcall.switchAudioToVideo();
+            this.setDeviceVideoIn(true);
+            this.startLocalStream();
+            this.startRemoteStream();
+        }
+
+
         this.updateVideoShowSize(true, true);
         this.type = Netcall.NETCALL_TYPE_VIDEO;
         this.showConnectedUI(Netcall.NETCALL_TYPE_VIDEO);
@@ -485,21 +735,42 @@ NetcallBridge.fn.beingAskSwitchToVideo = function () {
 
 };
 // 我方请求音频切换到视频通话，对方同意时
-NetcallBridge.fn.doSwitchToVideo = function () {
+fn.doSwitchToVideo = function () {
     this.log("切换到视频通话")
     this.requestSwitchToVideoWaiting = false;
     this.type = Netcall.NETCALL_TYPE_VIDEO;
     this.$switchToAudioButton.toggleClass("disabled", false);
-    this.netcall.switchAudioToVideo();
-    this.setDeviceVideoIn(true);
-    this.startLocalStream();
-    this.startRemoteStream();
+
+    if (this.isRtcSupported) {
+        var promise;
+        if (!this.requestSwitchToVideoWaiting) {
+            promise = this.setDeviceVideoIn(true).then(function () {
+                this.startLocalStream()
+            }.bind(this))
+        } else {
+            promise = Promise.resolve();
+        }
+
+        promise.then(function () {
+            return this.netcall.switchAudioToVideo();
+        }.bind(this)).then(function () {
+            this.startRemoteStream()
+        }.bind(this)).catch(function (e) {
+            console.log(e);
+        })
+    } else {
+        this.netcall.switchAudioToVideo();
+        this.setDeviceVideoIn(true);
+        this.startLocalStream();
+        this.startRemoteStream();
+    }
+
     this.$videoRemoteBox.toggleClass("empty", false).find(".message").text("");
     this.updateVideoShowSize(true, true);
     this.$goNetcall.find(".netcall-icon-state").toggleClass("netcall-icon-state-audio", this.type === Netcall.NETCALL_TYPE_AUDIO).toggleClass("netcall-icon-state-video", this.type === Netcall.NETCALL_TYPE_VIDEO);
     this.checkDeviceStateUI();
 };
-NetcallBridge.fn.requestSwitchToVideoRejected = function () {
+fn.requestSwitchToVideoRejected = function () {
     this.requestSwitchToVideoWaiting = false;
     $(".netcall-video-remote .message").text("");
     this.showTip("对方拒绝切换为视频聊天", 2000, function () {
@@ -509,30 +780,36 @@ NetcallBridge.fn.requestSwitchToVideoRejected = function () {
     }.bind(this));
 
 };
-NetcallBridge.fn.requestSwitchToVideo = function () {
+fn.requestSwitchToVideo = function () {
     this.log("请求切换到视频通话");
-    this.requestSwitchToVideoWaiting = true; // 标志请求中的状态
-    this.netcall.control({
-        command: Netcall.NETCALL_CONTROL_COMMAND_SWITCH_AUDIO_TO_VIDEO
-    });
-    this.showConnectedUI(Netcall.NETCALL_TYPE_VIDEO);
-    this.updateVideoShowSize(true);
-    this.$videoRemoteBox.toggleClass("empty", true).find(".message").text("正在等待对方开启摄像头");
-    this.setDeviceVideoIn(true);
-    this.startLocalStream();
+    this.setDeviceVideoIn(true).then(function () {
+        this.startLocalStream();
+    }.bind(this)).then(function () {
+
+        this.requestSwitchToVideoWaiting = true; // 标志请求中的状态
+        this.netcall.control({
+            command: Netcall.NETCALL_CONTROL_COMMAND_SWITCH_AUDIO_TO_VIDEO
+        });
+        this.showConnectedUI(Netcall.NETCALL_TYPE_VIDEO);
+        this.updateVideoShowSize(true);
+        this.$videoRemoteBox.toggleClass("empty", true).find(".message").text("正在等待对方开启摄像头");
+    }.bind(this));
+
 };
-NetcallBridge.fn.doSwitchToAudio = function () {
+fn.doSwitchToAudio = function () {
     this.log("切换到音频通话");
     this.type = Netcall.NETCALL_TYPE_AUDIO;
-    this.netcall.switchVideoToAudio().then(function () {
-        this.setDeviceVideoIn(false);
-        this.stopLocalStream();
-        this.stopRemoteStream();
+    this.setDeviceVideoIn(false).then(function () {
+        this.netcall.switchVideoToAudio().then(function () {
+            this.stopLocalStream();
+            this.stopRemoteStream();
+        }.bind(this));
     }.bind(this));
+
     this.showConnectedUI(Netcall.NETCALL_TYPE_AUDIO);
     this.$goNetcall.find(".netcall-icon-state").toggleClass("netcall-icon-state-audio", this.type === Netcall.NETCALL_TYPE_AUDIO).toggleClass("netcall-icon-state-video", this.type === Netcall.NETCALL_TYPE_VIDEO);
 };
-NetcallBridge.fn.stopLocalStream = function () {
+fn.stopLocalStream = function () {
     this.log("停止本地流显示 stopLocalStream");
     try {
         this.netcall.stopLocalStream();
@@ -541,7 +818,7 @@ NetcallBridge.fn.stopLocalStream = function () {
         console && console.warn && console.warn(e);
     }
 };
-NetcallBridge.fn.stopRemoteStream = function () {
+fn.stopRemoteStream = function () {
     this.log("停止远端流显示 stopRemoteStream");
     try {
         this.netcall.stopRemoteStream();
@@ -550,25 +827,25 @@ NetcallBridge.fn.stopRemoteStream = function () {
         console && console.warn && console.warn(e);
     }
 };
-NetcallBridge.fn.startLocalStream = function () {
+fn.startLocalStream = function (node) {
     this.log("开启本地流显示 startLocalStream");
     try {
-        this.netcall.startLocalStream();
+        this.netcall.startLocalStream(node);
     } catch (e) {
         this.log("开启本地流失败");
         console && console.warn && console.warn(e);
     }
 };
-NetcallBridge.fn.startRemoteStream = function () {
-    this.log("开启远断流显示 startRemoteStream");
+fn.startRemoteStream = function () {
+    this.log("开启远端流显示 startRemoteStream");
     try {
         this.netcall.startRemoteStream();
     } catch (e) {
-        this.log("开启远断流失败");
+        this.log("开启远端流失败");
         console && console.warn && console.warn(e);
     }
 };
-NetcallBridge.fn.requestSwitchToAudio = function () {
+fn.requestSwitchToAudio = function () {
     this.log("请求切换到音频流");
     if (this.$switchToAudioButton.is(".disabled")) return;
     this.netcall.control({
@@ -577,11 +854,61 @@ NetcallBridge.fn.requestSwitchToAudio = function () {
     this.doSwitchToAudio();
 };
 
-/** 同意音视频通话, 兼容多人音视频 by hzzouhuan */
-NetcallBridge.fn.accept = function () {
+/** 同意音视频通话, 兼容多人音视频 */
+fn.accept = function (e) {
+    // 如果在转圈的状态，忽略
+    if (this.$beCallingAcceptButton.hasClass('loading')) return
 
+    var that = this
     if (this.$beCallingAcceptButton.is(".disabled")) return;
     if (!this.beCalling) return;
+
+    // 发起通话选择UI
+    this.displayCallMethodUI(deviceCheck.bind(that), function () {
+        that.reject()
+    })
+
+    function deviceCheck(data) {
+
+        this.callMethod = data && data.type || this.callMethod;
+        this.callMethodRemember = data && data.type || this.callMethodRemember;
+
+        this.$beCallingAcceptButton.toggleClass("loading", true);
+
+        // WebRTC模式
+        if (this.callMethod === 'webrtc') {
+            this.netcall = this.webrtc;
+            that.updateBeCallingSupportUI(true);
+            return this.callAcceptedResponse()
+        }
+
+        // webnet模式
+        this.netcall = this.webnet;
+        // 音视频插件检查, signal只做检测
+        this.checkNetcallSupporting(function () {
+
+            that.updateBeCallingSupportUI(true);
+            this.callAcceptedResponse()
+
+        }.bind(this), function () {
+            // 平台不支持
+            that.reject();
+        }, function (err) {
+
+            // 插件弹框报错
+            that.showAgentNeedInstallDialog(err, deviceCheck.bind(that), function () {
+                that.reject();
+            })
+
+            that.updateBeCallingSupportUI(false, null, err);
+        }, true, true);
+
+    }
+
+};
+
+/** 同意通话的操作 */
+fn.callAcceptedResponse = function () {
 
     /** 如果是群视频通话 */
     if (this.yx.crtSessionType === 'team') {
@@ -590,9 +917,10 @@ NetcallBridge.fn.accept = function () {
         return;
     }
 
+    this.clearBeCallTimer();
     this.log("同意对方音视频请求");
     this.beCalling = false;
-    this.$beCallingAcceptButton.toggleClass("loading", true);
+
     this.netcall.response({
         accepted: true,
         beCalledInfo: this.beCalledInfo,
@@ -603,11 +931,12 @@ NetcallBridge.fn.accept = function () {
         this.acceptAndWait = true;
         setTimeout(function () {
             if (this.acceptAndWait) {
+                this.log("通话建立过程超时");
                 this.hideAllNetcallUI();
                 this.hangup()
                 this.acceptAndWait = false;
             }
-        }.bind(this), 6000)
+        }.bind(this), 10000)
 
     }.bind(this)).catch(function (err) {
         this.log("同意对方音视频通话失败，转为拒绝");
@@ -615,10 +944,10 @@ NetcallBridge.fn.accept = function () {
         this.$beCallingAcceptButton.toggleClass("loading", false);
         this.reject();
     }.bind(this));
-};
 
-/** 拒绝音视频通话, 兼容多人音视频 by hzzouhuan */
-NetcallBridge.fn.reject = function () {
+}
+/** 拒绝音视频通话, 兼容多人音视频 */
+fn.reject = function () {
 
     /** 如果是群视频通话 */
     if (this.meetingCall.channelName) {
@@ -630,6 +959,8 @@ NetcallBridge.fn.reject = function () {
     }
 
     if (!this.beCalling) return;
+
+    this.clearBeCallTimer();
     this.log("拒绝对方音视频通话请求");
     var beCalledInfo = this.beCalledInfo;
     this.netcall.response({
@@ -642,14 +973,18 @@ NetcallBridge.fn.reject = function () {
         this.beCalling = false;
         this.hideAllNetcallUI();
     }.bind(this)).catch(function (err) {
+        // 自己断网了
         this.log("拒绝对方音视频通话请求失败");
         console.log("error info:", err);
+        this.beCalledInfo = null;
+        this.beCalling = false;
+        this.hideAllNetcallUI();
     }.bind(this));
 
 };
 
 // 取消呼叫
-NetcallBridge.fn.cancelCalling = function (isClick) {
+fn.cancelCalling = function (isClick) {
     if (isClick === true && this.$callingHangupButton.is(".disabled")) return;
 
     if (!this.isBusy) {
@@ -663,7 +998,7 @@ NetcallBridge.fn.cancelCalling = function (isClick) {
     this.resetWhenHangup();
 };
 // 聊天窗口添加本地消息
-NetcallBridge.fn.sendLocalMessage = function (text, to) {
+fn.sendLocalMessage = function (text, to) {
     if (!to) to = this.netcallAccount;
     setTimeout(function () {
         this.yx.mysdk.sendTextMessage("p2p", to, text, true, function (error, msg) {
@@ -676,7 +1011,7 @@ NetcallBridge.fn.sendLocalMessage = function (text, to) {
 
 };
 // 挂断通话过程
-NetcallBridge.fn.hangup = function () {
+fn.hangup = function () {
     this.netcall.hangup();
     this.beCalledInfo = null;
     this.beCalling = false;
@@ -693,7 +1028,7 @@ NetcallBridge.fn.hangup = function () {
     this.resetWhenHangup();
 };
 // 其它端已处理
-NetcallBridge.fn.onCallerAckSync = function (obj) {
+fn.onCallerAckSync = function (obj) {
     this.log("其它端已处理");
     if (this.beCalledInfo && obj.channelId === this.beCalledInfo.channelId) {
 
@@ -710,7 +1045,7 @@ NetcallBridge.fn.onCallerAckSync = function (obj) {
 // 对方挂断通话过程
 // 1. 通话中挂断
 // 2. 请求通话中挂断
-NetcallBridge.fn.onHangup = function (obj) {
+fn.onHangup = function (obj) {
     this.log("收到对方挂断通话消息");
     console.log("on hange up", obj);
     console.log(this.beCalling, this.beCalledInfo, this.netcallDurationTimer);
@@ -733,7 +1068,7 @@ NetcallBridge.fn.onHangup = function (obj) {
     try {
         // $("#askSwitchToVideoDialog").dialog("close");
     } catch (e) { }
-
+    this.clearBeCallTimer();
     /* var tipText;
     if(this.netcallDurationTimer !== null) {
         // this.sendLocalMessage("通话拨打时长" + this.getDurationText(this.netcallDuration));
@@ -763,21 +1098,29 @@ NetcallBridge.fn.onHangup = function (obj) {
 
 };
 // 打开当前音视频通话对象的聊天窗口
-NetcallBridge.fn.doOpenChatBox = function () {
+fn.doOpenChatBox = function () {
     /** 群视频处理 */
     if (this.meetingCall.channelName) {
         this.yx.openChatBox(this.meetingCall.teamId, 'team');
         return;
     }
     var account = this.netcallAccount;
+    if (!account) {
+        if (this.showTipTimer) {
+            clearTimeout(this.showTipTimer);
+            this.showTipTimer = null;
+        }
+        // 隐藏右上角悬浮框
+        return this.$goNetcall.addClass("hide");
+    }
     this.yx.openChatBox(account, 'p2p');
 };
 
-/** 被呼叫，兼容多人音视频, by hzzouhuan
+/** 被呼叫，兼容多人音视频
  * @param {object} obj 主叫信息
  * @param {string} scene 是否是群视频，默认值p2p
  */
-NetcallBridge.fn.onBeCalling = function (obj, scene) {
+fn.onBeCalling = function (obj, scene) {
     scene = scene || 'p2p';
     this.log("收到音视频呼叫");
     console.log("on be calling:", obj);
@@ -785,13 +1128,16 @@ NetcallBridge.fn.onBeCalling = function (obj, scene) {
     var netcall = this.netcall;
     var that = this;
 
+    // 如果是同一通呼叫，直接丢掉
+    if (obj.channelId === this.channelId) return
+
     // p2p场景，先通知对方自己收到音视频通知
-    if (scene === 'p2p') {
-        netcall.control({
-            channelId: channelId,
-            command: Netcall.NETCALL_CONTROL_COMMAND_START_NOTIFY_RECEIVED
-        });
-    }
+    // if (scene === 'p2p') {
+    //     netcall.control({
+    //         channelId: channelId,
+    //         command: Netcall.NETCALL_CONTROL_COMMAND_START_NOTIFY_RECEIVED
+    //     });
+    // }
 
     // 自己正在通话或者被叫中, 知对方忙并拒绝通话
     if (netcall.calling || this.beCalling) {
@@ -809,34 +1155,28 @@ NetcallBridge.fn.onBeCalling = function (obj, scene) {
 
     // 正常发起通话请求
     this.type = obj.type;
+    this.channelId = obj.channelId;
     this.beCalling = true;
 
-    // 音视频插件检查, signal只做检测
-    function checkDevice() {
-        this.checkNetcallSupporting(function () {
-            that.updateBeCallingSupportUI(true);
-            this.checkDeviceStateUI();
-        }.bind(this), function () {
-            // 平台不支持
-            that.reject();
-        }, function (err) {
-            // agent调用失败
-            that.updateBeCallingSupportUI(false, null, err);
-        }, true, true);
-    }
+    // 先关闭所有弹框
+    minAlert.close();
+    this.dialog_call && this.dialog_call.close();
+    this.dialog && this.dialog.close();
+
+    that.updateBeCallingSupportUI(true);
 
     // team场景
     if (scene === 'team') {
 
         this.netcallActive = true;
         var tmp = obj.content;
+
         this.showBeCallingUI(tmp.type, 'team', {
             teamId: tmp.teamId,
             caller: obj.from
         });
 
-        this.updateBeCallingSupportUI(true, true);
-        checkDevice.call(this);
+        // this.updateBeCallingSupportUI(true, true);
 
         this.playRing("E", 45);
 
@@ -861,42 +1201,88 @@ NetcallBridge.fn.onBeCalling = function (obj, scene) {
     this.netcallAccount = account;
     this.doOpenChatBox(account);
     this.showBeCallingUI(obj.type);
-    this.updateBeCallingSupportUI(true, true);
-    checkDevice.call(this);
+
+    // this.updateBeCallingSupportUI(true, true);
+    // checkDevice.call(this);
+
     this.playRing("E", 45);
     $(".asideBox .nick").text(this.yx.getNick(account));
 
 };
 // 对方接受通话 或者 我方接受通话，都会触发
-NetcallBridge.fn.onCallAccepted = function (obj) {
-    this.log("音视频通话开始");
-    this.acceptAndWait = false;
-    this.type = obj.type;
-    this.showConnectedUI(obj.type);
-    this.clearCallTimer();
-    this.clearRingPlay();
-    this.$beCallingAcceptButton.toggleClass("loading", false);
-    this.$switchToAudioButton.toggleClass("disabled", false);
-    if (obj.type === Netcall.NETCALL_TYPE_VIDEO) {
-        this.setDeviceAudioIn(true);
-        this.setDeviceAudioOut(true);
-        this.setDeviceVideoIn(true);
-        this.netcall.startLocalStream();
-        this.netcall.startRemoteStream();
-        $("#videoWaitingAcceptedTip").toggleClass("hide", true);
-        $("#microSliderInput1").val(10).change();
-        $("#volumeSliderInput1").val(10).change();
-        this.updateVideoShowSize(true, true);
-    } else {
-        this.setDeviceAudioIn(true);
-        this.setDeviceAudioOut(true);
-        this.setDeviceVideoIn(false);
-        $("#microSliderInput").val(10).change();
-        $("#volumeSliderInput").val(10).change();
+fn.onCallAccepted = function (obj) {
+
+    function changeState() {
+        this.acceptAndWait = false;
+        this.log("音视频通话开始");
+        this.type = obj.type;
+        this.showConnectedUI(obj.type);
+        this.clearCallTimer();
+        this.clearRingPlay();
+        this.$beCallingAcceptButton.toggleClass("loading", false);
+        this.$switchToAudioButton.toggleClass("disabled", false);
     }
-    // 设置采集和播放音量
-    this.netcall.setCaptureVolume(255);
-    this.netcall.setPlayVolume(255);
+
+    changeState = changeState.bind(this);
+
+    // WebRTC模式
+    if (this.isRtcSupported) {
+        var promise;
+        if (obj.type === WebRTC.NETCALL_TYPE_VIDEO) {
+            promise = this.setDeviceVideoIn(true);
+        } else {
+            promise = this.setDeviceVideoIn(false);
+        }
+        promise.then(function () {
+            return this.setDeviceAudioIn(true);
+        }.bind(this)).then(function () {
+            this.startLocalStream();
+            this.updateVideoShowSize(true, false);
+            this.netcall.setCaptureVolume(255);
+        }.bind(this)).then(function () {
+            this.log("开始webrtc连接")
+            return this.netcall.startRtc();
+        }.bind(this)).then(function () {
+            this.log("webrtc连接成功")
+            changeState();
+            return this.setDeviceAudioOut(true);
+        }.bind(this)).catch(function (e) {
+            console.error(e);
+            this.log("连接出错");
+            if (e === '信令链接地址缺失') {
+                minAlert.alert({
+                    type: 'error',
+                    msg: '无法接通!请让呼叫方打开"WebRTC兼容开关"，方可正常通话', //消息主体
+                    confirmBtnMsg: '知道了，挂断',
+                    cbConfirm: this.hangup.bind(this)
+                })
+            }
+        }.bind(this))
+    } else {
+        changeState();
+
+        if (obj.type === Netcall.NETCALL_TYPE_VIDEO) {
+            this.setDeviceAudioIn(true);
+            this.setDeviceAudioOut(true);
+            this.setDeviceVideoIn(true);
+            this.netcall.startLocalStream();
+            this.netcall.startRemoteStream();
+            $("#videoWaitingAcceptedTip").toggleClass("hide", true);
+            $("#microSliderInput1").val(10).change();
+            $("#volumeSliderInput1").val(10).change();
+            this.updateVideoShowSize(true, true);
+        } else {
+            this.setDeviceAudioIn(true);
+            this.setDeviceAudioOut(true);
+            this.setDeviceVideoIn(false);
+            $("#microSliderInput").val(10).change();
+            $("#volumeSliderInput").val(10).change();
+        }
+        // 设置采集和播放音量
+        this.netcall.setCaptureVolume(255);
+        this.netcall.setPlayVolume(255);
+    }
+
     // 通话时长显示
     this.startDurationTimer();
     /** 重置文案聊天高度 */
@@ -904,12 +1290,12 @@ NetcallBridge.fn.onCallAccepted = function (obj) {
     // 关闭被呼叫倒计时
     this.beCallTimer = null;
 };
-// 对方拒绝通话
-/** 对方拒绝通话, 兼容多人音视频 by hzzouhuan
+
+/** 
+ * 对方拒绝通话, 兼容多人音视频
  * 先判断是否是群视频，如果是群视频，交给群视频的脚本处理
- * 目前群视频拒绝测不通，估计协议不对
  */
-NetcallBridge.fn.onCallingRejected = function (obj) {
+fn.onCallingRejected = function (obj) {
 
     if (this.yx.crtSessionType === 'team') {
         this.onMeetingCallRejected(obj);
@@ -923,7 +1309,7 @@ NetcallBridge.fn.onCallingRejected = function (obj) {
 };
 
 // 发起音视频呼叫
-NetcallBridge.fn.doCalling = function (type) {
+fn.doCalling = function (type) {
     this.log("发起音视频呼叫");
     // this.type = type;
     var netcall = this.netcall;
@@ -956,7 +1342,7 @@ NetcallBridge.fn.doCalling = function (type) {
             pushPayload: '',
             sound: '',
         },
-        webrtcEnable: true,
+        webrtcEnable: this.isWebRTCEnable,
         sessionConfig: this.sessionConfig
     }).then(function (obj) {
         this.log("发起通话成功，等待对方接听");
@@ -998,10 +1384,13 @@ NetcallBridge.fn.doCalling = function (type) {
     }.bind(this));
 };
 
-NetcallBridge.fn.setDeviceAudioIn = function (state) {
+fn.setDeviceAudioIn = function (state) {
+    $(".icon-micro").toggleClass("icon-disabled", !state);
+    this.deviceAudioInOn = !!state;
+
     if (state) {
         this.log("开启麦克风");
-        this.netcall.startDevice({
+        return this.netcall.startDevice({
             // 开启麦克风输入
             type: Netcall.DEVICE_TYPE_AUDIO_IN
         }).then(function () {
@@ -1013,11 +1402,11 @@ NetcallBridge.fn.setDeviceAudioIn = function (state) {
         }.bind(this)).catch(function () {
             console.log("开启麦克风失败");
             this.log("开启麦克风失败");
+            this.onDeviceNoUsable(Netcall.DEVICE_TYPE_AUDIO_IN);
         }.bind(this));
     } else {
         this.log("关闭麦克风");
-        this.netcall
-            .stopDevice(Netcall.DEVICE_TYPE_AUDIO_IN) // 关闭麦克风输入
+        return this.netcall.stopDevice(Netcall.DEVICE_TYPE_AUDIO_IN) // 关闭麦克风输入
             .then(function () {
                 this.log("关闭麦克风成功，通知对方我方关闭了麦克风");
                 // 通知对方自己关闭了麦克风
@@ -1028,41 +1417,45 @@ NetcallBridge.fn.setDeviceAudioIn = function (state) {
                 this.log("关闭麦克风失败");
             }.bind(this));
     }
-    $(".icon-micro").toggleClass("icon-disabled", !state);
-    this.deviceAudioInOn = !!state;
-
 };
-NetcallBridge.fn.setDeviceAudioOut = function (state) {
+
+fn.setDeviceAudioOut = function (state) {
+    $(".icon-volume").toggleClass("icon-disabled", !state);
+    this.deviceAudioOutOn = !!state;
+
     if (state) {
         this.log("开启扬声器");
-        this.netcall.startDevice({
+        return this.netcall.startDevice({
             type: Netcall.DEVICE_TYPE_AUDIO_OUT_CHAT
         }).then(function () {
             this.log("开启扬声器成功");
         }.bind(this)).catch(function () {
             console.log("开启扬声器失败");
             this.log("开启扬声器失败");
+            this.onDeviceNoUsable(Netcall.DEVICE_TYPE_AUDIO_OUT_CHAT);
         }.bind(this));
     } else {
         this.log("关闭扬声器");
-        this.netcall.stopDevice(Netcall.DEVICE_TYPE_AUDIO_OUT_CHAT).then(function () {
+        return this.netcall.stopDevice(Netcall.DEVICE_TYPE_AUDIO_OUT_CHAT).then(function () {
             this.log("关闭扬声器成功");
         }.bind(this)).catch(function () {
             this.log("关闭扬声器失败");
         }.bind(this));
     }
-    $(".icon-volume").toggleClass("icon-disabled", !state);
-    this.deviceAudioOutOn = !!state;
-
 };
-NetcallBridge.fn.setDeviceVideoIn = function (state) {
+
+fn.setDeviceVideoIn = function (state) {
+    $(".icon-camera").toggleClass("icon-disabled", !state);
+    this.deviceVideoInOn = !!state;
+
     if (state) {
         this.log("开启摄像头");
-        this.netcall.startDevice({
+        return this.netcall.startDevice({
             type: Netcall.DEVICE_TYPE_VIDEO
             /* width: this.videoCaptureSize.width,
              height: this.videoCaptureSize.height */
         }).then(function () {
+            this.videoType = 'video'
             this.log("开启摄像头成功，通知对方己方开启了摄像头");
             // 通知对方自己开启了摄像头
             this.netcall.control({
@@ -1074,11 +1467,18 @@ NetcallBridge.fn.setDeviceVideoIn = function (state) {
             /** 如果是群聊，转到多人脚本处理 */
             if (this.netcall.calling && this.yx.crtSessionType === 'team' && this.meetingCall.channelName) {
                 this.updateDeviceStatus(Netcall.DEVICE_TYPE_VIDEO, true, true);
+                this.startLocalStreamMeeting() && this.setVideoViewSize()
+            } else {
+                this.startLocalStream() && this.setVideoViewSize()
             }
 
-        }.bind(this)).catch(function () {
+        }.bind(this)).catch(function (err) {
+            console.error(err)
+            this.videoType = null
             // 通知对方自己的摄像头不可用
-            this.log("开启摄像头失败，通知对方己方摄像头不可用");
+            this.log("开启摄像头失败，通知对方己方摄像头不可用", err);
+            this.onDeviceNoUsable(Netcall.DEVICE_TYPE_VIDEO);
+
             this.netcall.control({
                 command: Netcall.NETCALL_CONTROL_COMMAND_SELF_CAMERA_INVALID
             });
@@ -1090,12 +1490,13 @@ NetcallBridge.fn.setDeviceVideoIn = function (state) {
             $(".netcall-video-local .message").text("摄像头不可用");
             $(".netcall-box .camera.control-item").toggleClass("no-device", true).attr("title", "摄像头不可用");
 
-            console.log("摄像头不可用");
+            // console.log("摄像头不可用");
         }.bind(this));
 
     } else {
+        this.videoType = null
         this.log("关闭摄像头");
-        this.netcall.stopDevice(Netcall.DEVICE_TYPE_VIDEO).then(function () {
+        return this.netcall.stopDevice(Netcall.DEVICE_TYPE_VIDEO).then(function () {
             // 通知对方自己关闭了摄像头
             this.log("关闭摄像头成功，通知对方我方关闭了摄像头");
             this.netcall.control({
@@ -1108,26 +1509,36 @@ NetcallBridge.fn.setDeviceVideoIn = function (state) {
                 this.updateDeviceStatus(Netcall.DEVICE_TYPE_VIDEO, false, true);
             }
         }.bind(this)).catch(function (e) {
+            this.videoType = null
             this.log("关闭摄像头失败");
         }.bind(this));
 
     }
-    $(".icon-camera").toggleClass("icon-disabled", !state);
-    this.deviceVideoInOn = !!state;
+
 };
-NetcallBridge.fn.clearCallTimer = function () {
+
+
+fn.clearCallTimer = function () {
     if (this.callTimer) {
         clearTimeout(this.callTimer);
         this.callTimer = null;
     }
 };
-NetcallBridge.fn.clearRingPlay = function () {
+
+fn.clearBeCallTimer = function () {
+    if (this.beCallTimer) {
+        clearTimeout(this.beCallTimer);
+        this.beCallTimer = null;
+    }
+};
+fn.clearRingPlay = function () {
     if (this.playRingInstance) {
         this.playRingInstance.cancel && this.playRingInstance.cancel();
         this.playRingInstance = null;
     }
 };
-NetcallBridge.fn.playRing = function (name, count, done) {
+
+fn.playRing = function (name, count, done) {
     done = done || function () { };
     this.playRingInstance = this.playRingInstance || {};
     var nameMap = {
@@ -1170,7 +1581,7 @@ NetcallBridge.fn.playRing = function (name, count, done) {
     }
     wrap();
 };
-NetcallBridge.fn.log = function () {
+fn.log = function () {
     message = [].join.call(arguments, " ");
     console.log("%c" + message, "color: green;font-size:16px;");
 };

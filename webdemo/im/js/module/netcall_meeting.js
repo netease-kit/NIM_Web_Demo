@@ -2,7 +2,7 @@
  * 多人音视频控制
  */
 
-var fn = NetcallBridge.fn;
+var fn = NetcallBridge.prototype;
 
 window.requestAnimationFrame = (function () {
     return window.requestAnimationFrame ||
@@ -34,17 +34,17 @@ fn.getMeetingMemberListUI = function () {
 
     // 回调传回来选中的列表
     function cbConfirm(list) {
-        this.meetingCall.members = list;
-        this.meetingCall.caller = this.netcall.account;
-        this.createChannel();
+        that.meetingCall.members = list;
+        that.meetingCall.caller = that.netcall.getAccount();
+        that.createChannel();
         console.log(list);
     }
 
     // 取消多人音视频，放开通道
     function cbCancel() {
-        this.signalInited = false;
-        this.meetingCall = {};
-        this.netcall && this.netcall.stopSignal && this.netcall.stopSignal()
+        that.signalInited = false;
+        that.meetingCall = {};
+        that.netcall && that.netcall.stopSignal && that.netcall.stopSignal()
     }
 
 }
@@ -57,6 +57,7 @@ fn.getMeetingCallUI = function (list) {
     var that = this;
     dialog.load('./netcall_meeting.html', function () {
         var $addUserUl = $('#memberList'), tmp = '';
+
         // 拉取模板失败，连不上网的情况下, 
         if ($addUserUl.length === 0) {
             that.resetWhenHangup();
@@ -68,12 +69,16 @@ fn.getMeetingCallUI = function (list) {
         }
         dialog.removeClass('hide');
 
-
         list.forEach(function (item) {
             tmp += appUI.buildmeetingMemberUI({ account: item, nick: getNick(item), avatar: that.yx.cache.getUserById(item).avatar });
         });
 
         $addUserUl.html(tmp);
+
+        // 判断是否是firefox, 显示桌面共享按钮
+        if (platform.name === 'Firefox' && that.isRtcSupported) {
+            $('.J-desktop-share').toggleClass('hide', false)
+        }
 
         that.joinChannel();
 
@@ -98,7 +103,8 @@ fn.showSpeakBanUI = function (list) {
 
 }
 
-/** 设置禁言
+/** 
+ * 设置禁言
  * @param {object} listObj 被禁言的人列表
  */
 fn.disableSpeak = function (listObj) {
@@ -169,15 +175,17 @@ fn.initMeetingCallEvent = function () {
         that.leaveChannel();
         console.log('hangup')
     });
-    $box.on('click', '.fullScreenIcon', function (e) {
-        $box.toggleClass('fullscreen');
-        var isFullScreen = $box.hasClass('fullscreen');
-        that.$netcallBox.toggleClass("fullscreen", isFullScreen);
-        var screenSize = isFullScreen ? '216' : '136';
-        that.videoCaptureSize = { width: screenSize, height: screenSize };
-        that.setVideoViewSize();
-        that.setVideoViewRemoteSize();
-    });
+
+    // $box.on('click', '.fullScreenIcon', function (e) {
+    //     $box.toggleClass('fullscreen');
+    //     var isFullScreen = $box.hasClass('fullscreen');
+    //     that.$netcallBox.toggleClass("fullscreen", isFullScreen);
+    //     var screenSize = isFullScreen ? '216' : '136';
+    //     that.videoCaptureSize = { width: screenSize, height: screenSize };
+    //     that.setVideoViewSize();
+    //     that.setVideoViewRemoteSize();
+    // });
+
     $box.on('click', '.microphone', function (e) {
         console.log('microphone')
     });
@@ -201,7 +209,8 @@ fn.initMeetingCallEvent = function () {
     that.meetingCall.inited = true;
 }
 
-/** 多人音视频过程的控制处理
+/** 
+ * 多人音视频过程的控制处理
  * @param {object} obj 传递过来的控制对象属性
  */
 fn.onMeetingControl = function (obj) {
@@ -227,12 +236,14 @@ fn.onMeetingControl = function (obj) {
             this.log("对方打开了摄像头");
             this.nodeLoadingStatus(obj.account, '');
             this.nodeCameraStatus(obj.account, true);
+            this.netcall.setVideoShow(obj.account);
             break;
         // NETCALL_CONTROL_COMMAND_NOTIFY_VIDEO_OFF 通知对方自己关闭了视频
         case Netcall.NETCALL_CONTROL_COMMAND_NOTIFY_VIDEO_OFF:
             this.log("对方关闭了摄像头");
             this.nodeLoadingStatus(obj.account, '对方关闭了摄像头');
             this.nodeCameraStatus(obj.account, false);
+            this.netcall.setVideoBlack(obj.account);
             break;
         // NETCALL_CONTROL_COMMAND_SWITCH_AUDIO_TO_VIDEO_REJECT 拒绝从音频切换到视频
         case Netcall.NETCALL_CONTROL_COMMAND_SWITCH_AUDIO_TO_VIDEO_REJECT:
@@ -261,6 +272,7 @@ fn.onMeetingControl = function (obj) {
             this.log("对方摄像头不可用");
             this.nodeLoadingStatus(obj.account, '对方摄像头不可用');
             this.nodeCameraStatus(obj.account, false);
+            this.netcall.setVideoBlack(obj.account);
             break;
         // NETCALL_CONTROL_COMMAND_SELF_ON_BACKGROUND 自己处于后台
         // NETCALL_CONTROL_COMMAND_START_NOTIFY_RECEIVED 告诉发送方自己已经收到请求了（用于通知发送方开始播放提示音）
@@ -269,7 +281,8 @@ fn.onMeetingControl = function (obj) {
     }
 }
 
-/** 更新音量状态显示
+/** 
+ * 更新音量状态显示
  * @param {object} obj 当前在房间的群成员的音量表 eg: {id1:{status:1000}}
  */
 fn.updateVolumeBar = function (obj) {
@@ -294,8 +307,18 @@ fn.updateVolumeBar = function (obj) {
         for (var i in tmp) {
             id = i === 'self' ? that.yx.accid : i;
             val = tmp[i].status;
-            log10 = Math.log(val / 65535.0) / Math.LN10;
-            percent = val === 0 ? 0 : (20.0 * log10) + 96;
+
+            // WebRTC模式
+            if (that.isRtcSupported) {
+                percent = val * 100
+            } else {
+
+                // webnet模式
+                log10 = Math.log(val / 65535.0) / Math.LN10;
+                percent = val === 0 ? 0 : (20.0 * log10) + 96;
+            }
+
+
             meetingCall.$box.find('.item[data-account=' + id + '] .volume-show').css({
                 width: percent + '%'
             });
@@ -310,7 +333,8 @@ fn.updateBanStatus = function () {
     tmp.$box.find('.icon-ban').toggleClass('icon-disabled', Object.keys(tmp.joinedMembers || []).length === 0);
 }
 
-/** 呼叫等待计时器
+/** 
+ * 呼叫等待计时器
  * 60s呼叫倒计时，到点将所有未接入的用户设置为未连接
  * @param {string} type 倒计时类型
  *  - beCalling: 被呼叫中
@@ -404,10 +428,10 @@ fn.createChannel = function () {
     this.netcall.channelName = this.yx.crtSession + '-' + Date.now();
     // this.netcall.channelName = "a";
     this.netcall.createChannel({
-        channelName: this.netcall.channelName
-        // custom: this.channelCustom
+        channelName: this.netcall.channelName,
+        webrtcEnable: this.isWebRTCEnable
     }).then(function (obj) {
-        // this.log('createChannel', obj)
+        that.log('createChannel', JSON.stringify(obj))
         var mcall = that.meetingCall;
         mcall.teamId = that.yx.crtSessionAccount
         mcall.teamName = that.yx.cache.getTeamMapById(mcall.teamId);
@@ -420,7 +444,7 @@ fn.createChannel = function () {
         keys.unshift(that.yx.accid);
         that.getMeetingCallUI(keys);
     }, function (err) {
-        that.log('createChannelErr', err)
+        that.log('createChannelErr', JSON.stringify(err))
         that.resetWhenHangup()
         that.sendTeamTip('发起视频通话失败: ' + err.message, true)
     })
@@ -436,18 +460,117 @@ fn.joinChannel = function (isReConnect) {
     var type = that.meetingCall.type || that.type;
 
     // 默认视频宽高
-    that.videoCaptureSize = that.videoCaptureSize || {
+    that.videoCaptureSize = {
         width: 136,
         height: 136
     }
+
     that.netcall.joinChannel({
         channelName: netcall.channelName,
         type: type,
         custom: netcall.channelCustom || "",
         sessionConfig: that.sessionConfig
     }).then(function (obj) {
-        that.log('joinChannel', obj);
+        that.log('joinChannel', JSON.stringify(obj));
 
+        // next
+        function next() {
+            /** 断网重连不再做其他设置 */
+            if (isReConnect) return;
+
+            /** 设置自己在通话中 */
+            that.netcall.calling = true;
+            that.netcallActive = true;
+            that.netcallAccount = that.meetingCall.teamId;
+
+            /** 启动60s呼叫倒计时 */
+            that.waitingCallTimer('calling');
+
+            // 通话时长显示
+            that.startDurationTimer();
+            that.meetingCall.isCallingTimer = true;
+
+            /** 显示通话小图标 */
+            that.$goNetcall.find(".tip").text("接通中...");
+
+            /** 如果是视频发起者，需要发送呼叫声音，tip和点对点通知 */
+            if (that.meetingCall.caller === that.yx.accid) {
+
+                that.$goNetcall.find(".nick").text(that.meetingCall.teamName);
+                that.$goNetcall.find(".netcall-icon-state").toggleClass("netcall-icon-state-audio", that.type === Netcall.NETCALL_TYPE_AUDIO).toggleClass("netcall-icon-state-video", that.type === Netcall.NETCALL_TYPE_VIDEO);
+
+                /** 呼叫声音开启 */
+                that.afterPlayRingA = function () {
+                    that.playRing("E", 45);
+                };
+                that.playRing("A", 1, function () {
+                    that.afterPlayRingA && that.afterPlayRingA();
+                    that.afterPlayRingA = null;
+                }.bind(that));
+
+                /** 发送群视频tip */
+                that.sendTeamTip('发起了视频聊天', false)
+                /** 发给本地 */
+                // that.sendTeamTip('发起了视频聊天', true)
+
+                // 新语法不支持
+                // var tmplist = [that.yx.accid, ...Object.keys(that.meetingCall.members)];
+                var tmplist = Object.keys(that.meetingCall.members);
+                tmplist.unshift(that.yx.accid);
+
+                that.meetingCall.list = tmplist;
+
+                /** 点对点发起视频通知 */
+                that.yx.sendCustomMessage({
+                    caller: that.yx.accid,
+                    list: tmplist,
+                    teamId: that.yx.crtSessionAccount,
+                    channelName: that.meetingCall.channelName,
+                    type: that.type
+                });
+
+            }
+        }
+
+        // WebRTC模式
+        if (this.isRtcSupported) {
+            // 设置为互动者
+            this.netcall.changeRoleToPlayer()
+            var promise;
+            if (obj.type === WebRTC.NETCALL_TYPE_VIDEO) {
+                promise = this.setDeviceVideoIn(true);
+            } else {
+                promise = this.setDeviceVideoIn(false);
+            }
+            promise.then(function () {
+                return this.setDeviceAudioIn(true);
+            }.bind(this)).then(function () {
+                this.startLocalStreamMeeting();
+                this.setVideoViewSize();
+                this.netcall.setCaptureVolume(255);
+            }.bind(this)).then(function () {
+                this.log("开始webrtc连接")
+                return this.netcall.startRtc();
+            }.bind(this)).then(function () {
+                this.log("webrtc连接成功")
+                next();
+                return this.setDeviceAudioOut(true);
+            }.bind(this)).catch(function (e) {
+                console.error(e);
+                this.log("连接出错");
+                if (e === '信令链接地址缺失') {
+                    minAlert.alert({
+                        type: 'error',
+                        msg: '无法接通!请让呼叫方打开"WebRTC兼容开关"，方可正常通话', //消息主体
+                        confirmBtnMsg: '知道了，挂断',
+                        cbConfirm: this.leaveChannel.bind(this)
+                    })
+                }
+            }.bind(this))
+            return
+        }
+
+        // webnet模式
         that.checkDeviceStateUI().then(function () {
             if (type === Netcall.NETCALL_TYPE_VIDEO) {
                 that.startDeviceAudioIn()
@@ -462,69 +585,13 @@ fn.joinChannel = function (isReConnect) {
             that.setPlayVolume()
             that.setVideoViewSize()
             that.setVideoViewRemoteSize()
+            next();
         });
 
-        /** 断网重连不再做其他设置 */
-        if (isReConnect) return;
-
-        /** 设置自己在通话中 */
-        that.netcall.calling = true;
-        that.netcallActive = true;
-        that.netcallAccount = that.meetingCall.teamId;
-
-        /** 启动60s呼叫倒计时 */
-        that.waitingCallTimer('calling');
-
-        // 通话时长显示
-        that.startDurationTimer();
-        that.meetingCall.isCallingTimer = true;
-
-
-        /** 显示通话小图标 */
-        that.$goNetcall.find(".tip").text("接通中...");
-
-        /** 如果是视频发起者，需要发送呼叫声音，tip和点对点通知 */
-        if (that.meetingCall.caller === that.yx.accid) {
-
-            that.$goNetcall.find(".nick").text(that.meetingCall.teamName);
-            that.$goNetcall.find(".netcall-icon-state").toggleClass("netcall-icon-state-audio", that.type === Netcall.NETCALL_TYPE_AUDIO).toggleClass("netcall-icon-state-video", that.type === Netcall.NETCALL_TYPE_VIDEO);
-
-            /** 呼叫声音开启 */
-            that.afterPlayRingA = function () {
-                that.playRing("E", 45);
-            };
-            that.playRing("A", 1, function () {
-                that.afterPlayRingA && that.afterPlayRingA();
-                that.afterPlayRingA = null;
-            }.bind(that));
-
-            /** 发送群视频tip */
-            that.sendTeamTip('发起了视频聊天', false)
-            /** 发给本地 */
-            // that.sendTeamTip('发起了视频聊天', true)
-
-            // 新语法不支持
-            // var tmplist = [that.yx.accid, ...Object.keys(that.meetingCall.members)];
-            var tmplist = Object.keys(that.meetingCall.members);
-            tmplist.unshift(that.yx.accid);
-
-            that.meetingCall.list = tmplist;
-
-            /** 点对点发起视频通知 */
-            that.yx.sendCustomMessage({
-                caller: that.yx.accid,
-                list: tmplist,
-                teamId: that.yx.crtSessionAccount,
-                channelName: that.meetingCall.channelName,
-                type: that.type
-            });
-
-        }
-
-    }, function (err) {
+    }.bind(this), function (err) {
 
         that.resetWhenHangup();
-        that.log('joinChannelErr', JSON.stringify(err))
+        that.log('joinChannelErr', JSON.stringify(err));
 
         /** 断网重连失败处理 */
         if (isReConnect) {
@@ -577,8 +644,17 @@ fn.leaveChannel = function (cb) {
  */
 fn.onJoinChannel = function (obj) {
 
+    // 如果是p2p模式
+    if (this.yx.crtSessionType !== 'team' && !this.meetingCall.channelName) {
+        this.startDeviceAudioOutChat()
+        this.startRemoteStreamMeeting(obj)
+        this.updateVideoShowSize(false, true);
+        return
+    }
+
     var joinedMembers = this.meetingCall.joinedMembers;
     if (joinedMembers && joinedMembers[obj.account]) return;
+
 
     this.log('加入群视频:', JSON.stringify(obj));
 
@@ -593,10 +669,21 @@ fn.onJoinChannel = function (obj) {
     this.updateBanStatus();
 
     this.startDeviceAudioOutChat()
+
+    // // WebRTC模式
+    // if (this.isRtcSupported) {
+    //     this.startDeviceAudioOutChat()
+    //     this.startRemoteStreamMeeting(obj)
+    //     return
+    // } else {
+
+    // }
+
     this.startRemoteStreamMeeting(obj)
     this.setCaptureVolume()
     // this.setVideoViewSize()
     this.setVideoViewRemoteSize()
+    // this.updateVideoShowSize(true, false);
     this.setVideoScale();
 
     /** 停止呼叫音乐 */
@@ -604,10 +691,6 @@ fn.onJoinChannel = function (obj) {
 
     /** 如果已经开始计时, 不再重新计时 */
     if (this.meetingCall.isCallingTimer) return;
-
-    // // 通话时长显示
-    // this.startDurationTimer(this.meetingCall.$box.find('.option-box .tip'));
-    // this.meetingCall.isCallingTimer = true;
 
 }
 
@@ -625,19 +708,13 @@ fn.onLeaveChannel = function (obj) {
 /** 音视频通信状态重置 */
 fn.resetWhenHangup = function () {
     /** 放开通道 */
+    this.channelId = null;
     this.signalInited = false;
     this.netcall && this.netcall.stopSignal && this.netcall.stopSignal();
+    this.isFullScreen = false
+    this.videoType = null
 
     minAlert.close();
-    
-    if (!this.meetingCall.channelName) return;
-    // this.clearCallTimer()
-    this.stopLocalStreamMeeting()
-    this.stopRemoteStreamMeeting()
-    this.stopDeviceAudioIn()
-    this.stopDeviceAudioOutLocal()
-    this.stopDeviceAudioOutChat()
-    this.stopDeviceVideo()
 
     /** 设置自己空闲 */
     this.netcall.calling = false;
@@ -645,12 +722,14 @@ fn.resetWhenHangup = function () {
     this.beCalling = false;
     this.netcallActive = false;
     this.netcallAccount = "";
+    this.isFullScreen = false;
 
     /** 关闭UI */
     this.meetingCall.$box && this.meetingCall.$box.removeClass('fullscreen').html('');
     this.$chatBox.toggleClass("show-netcall-box", false);
     this.$chatBox.toggleClass("hide-netcall-box", false);
     this.$netcallBox.toggleClass("fullscreen", false);
+
     // 隐藏右上角悬浮框
     this.$goNetcall.addClass("hide");
     /** 重置文案聊天高度 */
@@ -668,9 +747,17 @@ fn.resetWhenHangup = function () {
         $box: this.meetingCall.$box
     };
 
+    if (!this.meetingCall.channelName) return;
+    this.stopLocalStreamMeeting()
+    this.stopRemoteStreamMeeting()
+    this.stopDeviceAudioIn()
+    this.stopDeviceAudioOutLocal()
+    this.stopDeviceAudioOutChat()
+    this.stopDeviceVideo()
+
 }
 
-/** 收到群视频呼叫 by hzzouhuan
+/** 收到群视频呼叫
  * 1. 首先判断呼叫team是否是自己所属team
  * 2. 判断当前是否在视频会话中
  * 3. 判断当前会话窗口是否是呼叫群窗口
@@ -798,7 +885,7 @@ fn.meetingCallReject = function (reject_type) {
 }
 
 /** 
- * 对方同意群视频 by hzzouhuan
+ * 对方同意群视频
  */
 fn.onMeetingCallAccepted = function (obj) {
 
@@ -806,7 +893,7 @@ fn.onMeetingCallAccepted = function (obj) {
 }
 
 /** 
-* 对方拒绝群视频 by hzzouhuan
+* 对方拒绝群视频
 */
 fn.onMeetingCallRejected = function (obj) {
 
@@ -943,7 +1030,7 @@ fn.setCaptureVolume = function () {
 fn.setPlayVolume = function () {
     var netcall = this.netcall;
     if (netcall) {
-        netcall.setPlayVolume(this.playVolume || 255)
+        netcall.setPlayVolume({ volume: this.playVolume || 255 })
     }
 }
 
@@ -963,7 +1050,7 @@ fn.setVideoViewRemoteSize = function () {
 
 /** 设置视频裁剪尺寸 */
 fn.setVideoScale = function () {
-    this.netcall.setVideoScale({ type: 1 });
+    this.netcall.setVideoScale && this.netcall.setVideoScale({ type: 1 });
 }
 
 /** 播放自己的声音 */
@@ -1017,5 +1104,36 @@ fn.updateDeviceStatus = function (type, isOn, isEnable) {
     }
 }
 
+// 桌面共享
+fn.firefoxDesktopShare = function (e) {
+    if (!this.isRtcSupported) return
+    var typeText = $(e.target).data('type'), type
+    var that = this
+    if (this.videoType === typeText && /(screen|window)/.test(typeText)) return
 
+    if (typeText === 'close') {
+        this.videoType = typeText
+        return this.setDeviceVideoIn(this.deviceVideoInOn).then(function () {
+            that.startLocalStreamMeeting()
+        })
+    }
 
+    if (typeText === 'screen') {
+        type = WebRTC.DEVICE_TYPE_DESKTOP_SCREEN
+    }
+
+    if (typeText === 'window') {
+        type = WebRTC.DEVICE_TYPE_DESKTOP_WINDOW
+    }
+
+    return this.netcall.startDevice({
+        type: type
+    }).then(function () {
+        that.videoType = typeText
+        console.log('启动成功')
+        that.startLocalStreamMeeting()
+    }).catch(function (error) {
+        console.error('启动失败', error)
+    })
+
+}

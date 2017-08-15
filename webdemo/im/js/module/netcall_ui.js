@@ -3,40 +3,57 @@
  * 2. 多人音视频相关UI逻辑
 */
 
-var fn = NetcallBridge.fn;
+var fn = NetcallBridge.prototype;
+
 // 每当设备信息发生变化时，调用此方法同步设备控制按钮状态和提示信息，更新设备输入,更新视频画面提示信息等
-NetcallBridge.fn.checkDeviceStateUI = function () {
+fn.checkDeviceStateUI = function () {
+    var temp = this.netcall
     var p1 = this.netcall.getDevicesOfType(Netcall.DEVICE_TYPE_VIDEO).then(function (obj) {
         var $camera = $(".netcall-box .camera.control-item");
+
+
         if (obj.devices.length) {
-            if ($camera.is(".no-device")) { // 摄像头从无到有的变化
+            // 摄像头从无到有的变化
+            if ($camera.is(".no-device")) {
+
+                // 更新ui
+                $camera.toggleClass("no-device", false).attr("title", "");
+
+                // rtc模式检测
+                if (this.callMethod === 'webrtc') {
+                    if (!temp.devices.needVideo) {
+                        return Promise.resolve()
+                    }
+                }
+
                 // 开启摄像头
                 this.setDeviceVideoIn(true);
-                // 开始推送本地流
-                this.netcall.startLocalStream();
 
                 /** 如果是群聊，转到多人脚本处理 */
                 if (this.netcall.calling && this.yx.crtSessionType === 'team' && this.meetingCall.channelName) {
-                    this.updateDeviceStatus(Netcall.DEVICE_TYPE_VIDEO, true, false);
+                    this.updateDeviceStatus(Netcall.DEVICE_TYPE_VIDEO, true, true);
+                    this.isRtcSupported && this.startLocalStreamMeeting() && this.setVideoViewSize()
                 } else {
-                    // 更新画面显示大小
-                    this.updateVideoShowSize(true);
+                    this.isRtcSupported && this.startLocalStream() && this.this.setVideoViewSize()
                 }
 
                 $(".netcall-video-local").toggleClass("empty", false);
                 $(".netcall-video-local .message").text("");
 
             }
-            $camera.toggleClass("no-device", false).attr("title", "");
-        } else {
-            // 通知对方，我方摄像头不可用
-            this.netcall.control({
-                command: Netcall.NETCALL_CONTROL_COMMAND_SELF_CAMERA_INVALID
-            });
 
-            $camera.toggleClass("no-device", true).attr("title", "摄像头不可用");
-            $(".netcall-video-local").toggleClass("empty", true);
-            $(".netcall-video-local .message").text("摄像头不可用");
+        } else {
+
+            this.onDeviceNoUsable(Netcall.DEVICE_TYPE_VIDEO);
+
+            // // 通知对方，我方摄像头不可用
+            // this.netcall.control({
+            //     command: Netcall.NETCALL_CONTROL_COMMAND_SELF_CAMERA_INVALID
+            // });
+
+            // $camera.toggleClass("no-device", true).attr("title", "摄像头不可用");
+            // $(".netcall-video-local").toggleClass("empty", true);
+            // $(".netcall-video-local .message").text("摄像头不可用");
 
             /** 如果是群聊，转到多人脚本处理 */
             if (this.netcall.calling && this.yx.crtSessionType === 'team' && this.meetingCall.channelName) {
@@ -46,15 +63,27 @@ NetcallBridge.fn.checkDeviceStateUI = function () {
     }.bind(this));
     var p2 = this.netcall.getDevicesOfType(Netcall.DEVICE_TYPE_AUDIO_IN).then(function (obj) {
         var $microphone = $(".netcall-box .microphone.control-item");
+
         if (obj.devices.length) {
             if ($microphone.is(".no-device")) {
+
+                // 更新ui
+                $microphone.toggleClass("no-device", false).attr("title", "");
+
+                // rtc模式检测
+                if (this.callMethod === 'webrtc') {
+                    if (!temp.devices.needAudio) {
+                        return Promise.resolve()
+                    }
+                }
+
                 this.setDeviceAudioIn(true);
             }
 
-            $microphone.toggleClass("no-device", false).attr("title", "");
-        } else {
 
-            $microphone.toggleClass("no-device", true).attr("title", "麦克风不可用");
+        } else {
+            this.onDeviceNoUsable(Netcall.DEVICE_TYPE_AUDIO_IN);
+            // $microphone.toggleClass("no-device", true).attr("title", "麦克风不可用");
         }
     }.bind(this));
     var p3 = this.netcall.getDevicesOfType(Netcall.DEVICE_TYPE_AUDIO_OUT_CHAT).then(function (obj) {
@@ -63,18 +92,41 @@ NetcallBridge.fn.checkDeviceStateUI = function () {
             if ($volume.is(".no-device")) {
                 this.setDeviceAudioOut(true);
             }
-
             $volume.toggleClass("no-device", false).attr("title", "");
         } else {
-
-            $volume.toggleClass("no-device", true).attr("title", "麦克风不可用");
+            this.onDeviceNoUsable(Netcall.DEVICE_TYPE_AUDIO_OUT_CHAT);
+            // $volume.toggleClass("no-device", true).attr("title", "麦克风不可用");
         }
     }.bind(this));
-    console.log(p1)
     return Promise.all([p1, p2, p3]);
 };
-// 切换对方我方画面位置
-NetcallBridge.fn.switchViewPosition = function () {
+
+fn.onDeviceNoUsable = function (type) {
+    if (type === Netcall.DEVICE_TYPE_VIDEO) {
+        // 通知对方，我方摄像头不可用
+        this.netcall.control({
+            command: Netcall.NETCALL_CONTROL_COMMAND_SELF_CAMERA_INVALID
+        });
+        $(".netcall-box .camera.control-item").toggleClass("no-device", true).attr("title", "摄像头不可用");
+        $(".netcall-video-local").toggleClass("empty", true);
+        $(".netcall-video-local .message").text("摄像头不可用");
+    } else if (type === Netcall.DEVICE_TYPE_AUDIO_IN) {
+        // 通知对方，我方麦克风不可用
+        this.netcall.control({
+            command: Netcall.NETCALL_CONTROL_COMMAND_SELF_AUDIO_INVALID
+        });
+        this.$controlItem.filter(".microphone").toggleClass("no-device", true).attr("title", "麦克风不可用");
+    } else if (type === Netcall.DEVICE_TYPE_AUDIO_OUT_CHAT) {
+        this.$controlItem.filter(".volume").toggleClass("no-device", true).attr("title", "扬声器不可用");
+    }
+
+    /** 如果是群聊，转到多人脚本处理 */
+    if (this.netcall.calling && this.yx.crtSessionType === 'team' && this.meetingCall.channelName) {
+        this.updateDeviceStatus(type, true, false);
+    }
+}
+// 切换对方我方画面位置, 需要重写!
+fn.switchViewPosition = function () {
     var $smallView = $(".netcall-box .smallView");
     var $bigView = $(".netcall-box .bigView");
     var $smallParent = $smallView[0].parentNode;
@@ -82,16 +134,66 @@ NetcallBridge.fn.switchViewPosition = function () {
     $bigView.prependTo($smallParent).addClass("smallView").removeClass("bigView");
     $smallView.prependTo($bigParent).addClass("bigView").removeClass("smallView");
 
+    // video标签位置移动以后，会变为pause状态，需要重新play
+    this.$netcallBox.find("video").each(function () {
+        if (this.paused) this.play();
+    })
     this.updateVideoShowSize(true, true);
 };
-NetcallBridge.fn.toggleFullScreen = function () {
-    this.isFullScreen = !this.isFullScreen;
+
+fn.toggleFullScreen = function (e) {
+    console.log(e)
+    this.isFullScreen = e && !$(e.target).hasClass('active');
     this.$netcallBox.toggleClass("fullscreen", this.isFullScreen);
-    this.$netcallBox.find(".fullScreenIcon").toggleClass("full", this.isFullScreen);
-    this.updateVideoShowSize(true, true);
+
+    // p2p模式
+    if (this.yx.crtSessionType !== 'team' && !this.meetingCall.channelName) {
+        this.$netcallBox.find(".fullScreenIcon").toggleClass("full", this.isFullScreen);
+        this.updateVideoShowSize(true, true);
+        e && $(e.target).toggleClass('active');
+        return
+    }
+
+    // team模式
+    $('.netcall-meeting-box').toggleClass('fullscreen', this.isFullScreen)
+    $('.J-member-list .item').toggleClass('fullscreen', false);
+    $('.J-member-list .item .fullScreenIcon').toggleClass('active', false);
+
+    if (!e || !e.target) return
+    $(e.target).closest('.item').toggleClass('fullscreen', this.isFullScreen)
+    $(e.target).toggleClass('active', this.isFullScreen);
+
+    var account = $(e.target).closest('.item').data('account');
+
+    // 重置大小
+    var defaultVideoCaptureSize = { cut: true, width: 138, height: 138 };
+
+    // 先取出上一次的account
+    var preAccount = this.videoCaptureSize.account;
+
+    // 画面大小重置
+    this.netcall.setVideoViewSize(defaultVideoCaptureSize)
+    this.netcall.setVideoViewRemoteSize(defaultVideoCaptureSize)
+    // 重置上一次的大小
+    defaultVideoCaptureSize.account = preAccount
+    this.netcall.setVideoViewRemoteSize(defaultVideoCaptureSize)
+
+    // 设置新的大小
+    var videoCaptureSize = this.videoCaptureSize = { cut: true, account: account };
+    videoCaptureSize.width = this.isFullScreen ? document.body.clientWidth : 138
+    videoCaptureSize.height = this.isFullScreen ? document.body.clientHeight : 138
+
+    // 设置自己
+    if (account === this.yx.accid && this.isFullScreen) {
+        return this.netcall.setVideoViewSize(videoCaptureSize)
+    }
+
+    // 设置单个目标
+    this.netcall.setVideoViewRemoteSize(videoCaptureSize)
+
 };
 // UI界面蒙版展示提示信息，指定时间后消失，消失后执行回调函数
-NetcallBridge.fn.showTip = function (message, duration, done) {
+fn.showTip = function (message, duration, done) {
     $(".netcall-mask").toggleClass("hide", false).find(".netcallTip").text(message);
     this.showTipTimer = setTimeout(function () {
         $(".netcall-mask").toggleClass("hide", true).find(".netcallTip").text("");
@@ -99,8 +201,11 @@ NetcallBridge.fn.showTip = function (message, duration, done) {
         this.showTipTimer = null;
     }.bind(this), duration);
 };
-// 更新视频画面显示尺寸
-NetcallBridge.fn.updateVideoShowSize = function (local, remote) {
+/** 
+ * 设置视频画面尺寸 
+ * 
+*/
+fn.setVideoSize = function (sizeObj) {
     var bigSize = {
         width: this.isFullScreen ? 640 : 320,
         height: this.isFullScreen ? 480 : 240
@@ -109,17 +214,52 @@ NetcallBridge.fn.updateVideoShowSize = function (local, remote) {
         width: this.isFullScreen ? 240 : 160,
         height: this.isFullScreen ? 180 : 120
     };
+    var size = sizeObj && sizeObj.constructor === Object ? sizeObj : $(".netcall-video-local").is(".bigView") ? bigSize : smallSize;
+    this.netcall.setVideoViewSize(size);
+}
+fn.setVideoRemoteSize = function (sizeObj) {
+    var bigSize = {
+        width: this.isFullScreen ? 640 : 320,
+        height: this.isFullScreen ? 480 : 240
+    };
+    var smallSize = {
+        width: this.isFullScreen ? 240 : 160,
+        height: this.isFullScreen ? 180 : 120
+    };
+
+    var size = sizeObj && sizeObj.constructor === Object ? sizeObj : $(".netcall-video-local").is(".bigView") ? bigSize : smallSize;
+    this.netcall.setVideoViewRemoteSize(size);
+}
+// 更新视频画面显示尺寸
+fn.updateVideoShowSize = function (local, remote) {
+    var bigSize = {
+        cut: true,
+        width: this.isFullScreen ? 640 : 320,
+        height: this.isFullScreen ? 480 : 240
+    };
+    var smallSize = {
+        cut: true,
+        width: this.isFullScreen ? 240 : 160,
+        height: this.isFullScreen ? 180 : 120
+    };
     if (local) {
-        this.netcall.setVideoViewSize($(".netcall-video-local").is(".bigView") ? bigSize : smallSize);
+        var isBig = $(".netcall-video-local").is(".bigView")
+        console.log('local big?', isBig, isBig ? bigSize : smallSize)
+        this.netcall.setVideoViewSize(isBig ? bigSize : smallSize);
     }
     if (remote) {
-        this.netcall.setVideoViewRemoteSize($(".netcall-video-remote").is(".bigView") ? bigSize : smallSize);
+        var isBig = $(".netcall-video-remote").is(".bigView")
+        console.log('remote big?', isBig, isBig ? bigSize : smallSize)
+        this.netcall.setVideoViewRemoteSize(isBig ? bigSize : smallSize);
     }
-
 };
-//
-NetcallBridge.fn.hideAllNetcallUI = function () {
+
+fn.hideAllNetcallUI = function () {
     this.clearRingPlay();
+    this.clearDurationTimer();
+    this.clearCallTimer();
+    this.clearBeCallTimer();
+
     this.$netcallBox.toggleClass("calling", false);
     this.$chatBox.toggleClass("show-netcall-box", false);
     this.$callingBox.toggleClass("hide", true);
@@ -146,7 +286,13 @@ NetcallBridge.fn.hideAllNetcallUI = function () {
     }
     // 隐藏右上角悬浮框
     this.$goNetcall.addClass("hide");
-    this.clearDurationTimer();
+
+    // 关闭所有弹框
+    minAlert.close();
+    this.dialog_call && this.dialog_call.close();
+    this.dialog && this.dialog.close();
+    this.yx.dialog && this.yx.dialog.close();
+
     this.$beCallingAcceptButton.toggleClass("loading", false);
     if (this.requestSwitchToVideoWaiting) {
         this.requestSwitchToVideoWaiting = false;
@@ -157,7 +303,6 @@ NetcallBridge.fn.hideAllNetcallUI = function () {
     this.$switchToAudioButton.toggleClass("disabled", false);
     this.$callingHangupButton.toggleClass("disabled", false);
     this.isBusy = false;
-    this.clearRingPlay();
     $(".netcall-mask").toggleClass("hide", true);
     if (this.showTipTimer) {
         clearTimeout(this.showTipTimer);
@@ -167,7 +312,7 @@ NetcallBridge.fn.hideAllNetcallUI = function () {
     this.resizeChatContent();
 };
 // 通话建立成功后，展示视频通话或者音频通话画面
-NetcallBridge.fn.showConnectedUI = function (type) {
+fn.showConnectedUI = function (type) {
     this.checkDeviceStateUI();
     // this.$netcallBox.toggleClass("calling", true);
     this.$toggleFullScreenButton.toggleClass("hide", false);
@@ -189,7 +334,7 @@ NetcallBridge.fn.showConnectedUI = function (type) {
     this.$beCallingBox.toggleClass("hide", true);
 };
 
-/** 接收方显示来电界面，兼容多人音视频 by hzzouhuan
+/** 接收方显示来电界面，兼容多人音视频
  * 
  * @param {string} type 通话类型，1： 音频，2：视频
  * @param {string} scene 通话场景，p2p(默认值) / team
@@ -197,7 +342,7 @@ NetcallBridge.fn.showConnectedUI = function (type) {
  * @param {string} option.teamId 群视频id
  * @param {string} option.caller 发起群视频的人
  */
-NetcallBridge.fn.showBeCallingUI = function (type, scene, option) {
+fn.showBeCallingUI = function (type, scene, option) {
     scene = scene || 'p2p';
     option = option || {};
     this.type = type;
@@ -228,7 +373,7 @@ NetcallBridge.fn.showBeCallingUI = function (type, scene, option) {
     if (scene === 'team') {
         option.nick = getNick(option.caller);
         var tmpUser = this.yx.cache.getTeamMemberInfo(option.caller, option.teamId);
-        if(tmpUser.nickInTeam){
+        if (tmpUser.nickInTeam) {
             option.nick = option.nick === option.caller ? tmpUser.nickInTeam : option.nick;
         }
 
@@ -250,7 +395,7 @@ NetcallBridge.fn.showBeCallingUI = function (type, scene, option) {
     this.resizeChatContent();
 };
 // 发起方显示通话界面
-NetcallBridge.fn.showCallingUI = function () {
+fn.showCallingUI = function () {
     this.$netcallBox.toggleClass("calling", true);
     $("#toggleFullScreenButton").toggleClass("hide", false);
     $("#switchToVideo").toggleClass("hide", true);
@@ -278,7 +423,7 @@ NetcallBridge.fn.showCallingUI = function () {
  * 1: NETCALL_TYPE_AUDIO
  * 2: NETCALL_TYPE_VIDEO
  */
-NetcallBridge.fn.onClickNetcallLink = function (type) {
+fn.onClickNetcallLink = function (type) {
     var that = this;
     // 已经处于音视频通话中，弹窗提示
     if (that.netcallActive) {
@@ -292,7 +437,8 @@ NetcallBridge.fn.onClickNetcallLink = function (type) {
 
     // p2p场景
     if (that.yx.crtSessionType === 'p2p') {
-        deviceCheck.call(that);
+        this.displayCallMethodUI(deviceCheck.bind(that))
+        // deviceCheck.call(that);
         return;
     }
 
@@ -303,20 +449,40 @@ NetcallBridge.fn.onClickNetcallLink = function (type) {
             that.showTip('无法发起，人数少于2人', 2000);
             return;
         }
-        deviceCheck.call(that);
+        that.displayCallMethodUI(deviceCheck.bind(that))
+        // deviceCheck.call(that);
     });
 
-    function deviceCheck() {
+    // 下一步操作
+    function next() {
+        that.type = type;
+        if (that.yx.crtSessionType === 'p2p') {
+            that.doCalling.call(that, type)
+            return;
+        }
+        //多人音视频
+        that.showMeetingMemberListUI(type, that.yx.crtSessionAccount)
+    }
+
+    function deviceCheck(data) {
+
+        this.callMethod = data.type;
+        this.callMethodRemember = data.type;
+
+        // WebRTC模式
+        if (data.type === 'webrtc') {
+            this.netcall = this.webrtc;
+            return next()
+        }
+
+        // agent模式
+        this.netcall = this.webnet;
         // 检查设备支持情况
         that.checkNetcallSupporting(function () {
-            that.type = type;
-            if (that.yx.crtSessionType === 'p2p') {
-                that.doCalling.call(that, type)
-                return;
-            }
-            //多人音视频
-            that.showMeetingMemberListUI(type, that.yx.crtSessionAccount)
+            that.netcall = that.webnet;
+            next()
         }, reject, reject);
+
         function reject() {
             // 平台检查失败的处理
             if (that.yx.crtSessionType === 'team') {
@@ -333,7 +499,7 @@ NetcallBridge.fn.onClickNetcallLink = function (type) {
     }
 };
 /** 错误事件响应，是应该下载插件还是重试 */
-NetcallBridge.fn.clickAgentEvent = function (e) {
+fn.clickAgentEvent = function (e) {
     var errorType = $(e.target).data('error-type');
     if (errorType === 'device_busy') {
         this.reCheckAgent();
@@ -341,7 +507,7 @@ NetcallBridge.fn.clickAgentEvent = function (e) {
     }
     this.clickDownloadAgent();
 }
-NetcallBridge.fn.reCheckAgent = function (e) {
+fn.reCheckAgent = function (e) {
     var that = this;
     function successCb() {
         that.updateBeCallingSupportUI(true);
@@ -351,8 +517,9 @@ NetcallBridge.fn.reCheckAgent = function (e) {
     }
     that.doAgentIntallCheck(successCb, failureCb);
 }
-NetcallBridge.fn.clickDownloadAgent = function () {
-    location.href = this.agentDownloadUrl;
+fn.clickDownloadAgent = function () {
+    // location.href = this.agentDownloadUrl;
+    window.open(this.agentDownloadUrl)
     function successCb() {
         this.updateBeCallingSupportUI(true);
     }
@@ -368,10 +535,12 @@ NetcallBridge.fn.clickDownloadAgent = function () {
         failureCb();
     });
 };
-NetcallBridge.fn.checkNetcallSupporting = function (done, platformReject, agentReject, onlyCheckingSignal, notShowCheckingDialog) {
+fn.checkNetcallSupporting = function (done, platformReject, agentReject, onlyCheckingSignal, notShowCheckingDialog) {
     if (this.signalInited) {
         return done();
     }
+
+    // 检查是否支持插件
     // 1. 检查操作系统和浏览器
     // 2. 检查是否能连通agent
     this.checkPlatform(function () {
@@ -381,7 +550,7 @@ NetcallBridge.fn.checkNetcallSupporting = function (done, platformReject, agentR
     // mac测试，后期需要删除
     // this.checkAgentWorking(done, agentReject, onlyCheckingSignal, notShowCheckingDialog);
 };
-NetcallBridge.fn.checkPlatform = function (done, failure) {
+fn.checkPlatform = function (done, failure) {
     failure = failure || function () { };
     if (platform.os.family.indexOf("Windows") !== -1 && (platform.os.version === "10" || platform.os.version === "7")) { // 判断是否是win7或win10
         if (platform.name === "Chrome" || platform.name === "Microsoft Edge" || (platform.name === "IE" && platform.version === "11.0")) { // 判断是否是Chrome, Edge, IE 11
@@ -405,7 +574,7 @@ NetcallBridge.fn.checkPlatform = function (done, failure) {
         });
     }
 };
-NetcallBridge.fn.updateBeCallingSupportUI = function (isSupport, showChecking, errObj) {
+fn.updateBeCallingSupportUI = function (isSupport, showChecking, errObj) {
 
     this.$beCallingBox.find(".checking-tip").toggleClass("hide", !showChecking);
     this.$beCallingAcceptButton.toggleClass("disabled", !!showChecking);
@@ -419,7 +588,7 @@ NetcallBridge.fn.updateBeCallingSupportUI = function (isSupport, showChecking, e
     }
 
 };
-NetcallBridge.fn.checkAgentWorking = function (done, failure, onlyCheckingSignal, notShowCheckingDialog) {
+fn.checkAgentWorking = function (done, failure, onlyCheckingSignal, notShowCheckingDialog) {
     console.log("checkAgentWorking");
     failure = failure || function () { };
     done = done || function () { };
@@ -455,7 +624,7 @@ NetcallBridge.fn.checkAgentWorking = function (done, failure, onlyCheckingSignal
     }.bind(this));
 
 };
-NetcallBridge.fn.showAgentNeedInstallDialog = function (errOjb, successCb, failureCb) {
+fn.showAgentNeedInstallDialog = function (errOjb, successCb, failureCb) {
     var that = this;
     var msg_text = errOjb.error || "请安装插件PC Agent，方可使用音视频功能";
     var errorType = errOjb.errorType || "agent_empty";
@@ -468,12 +637,12 @@ NetcallBridge.fn.showAgentNeedInstallDialog = function (errOjb, successCb, failu
         confirmBtnMsg: btn_text,
         cbCancel: failureCb,
         cbConfirm: function () {
-
             if (errorType === "device_busy") {
                 that.doAgentIntallCheck(successCb, failureCb);
                 return;
             }
-            location.href = that.agentDownloadUrl;
+            // location.href = that.agentDownloadUrl;
+            window.open(that.agentDownloadUrl)
             var closeDialog = that.showAgentInstallConfirmDialog(function () {
                 closeDialog();
                 that.doAgentIntallCheck(successCb, failureCb);
@@ -484,7 +653,7 @@ NetcallBridge.fn.showAgentNeedInstallDialog = function (errOjb, successCb, failu
     });
 
 };
-NetcallBridge.fn.doAgentIntallCheck = function (successCb, failureCb) {
+fn.doAgentIntallCheck = function (successCb, failureCb) {
     successCb = successCb || function () { };
     failureCb = failureCb || function () { };
     console.log("do checking");
@@ -521,7 +690,7 @@ NetcallBridge.fn.doAgentIntallCheck = function (successCb, failureCb) {
         })
     }.bind(this))
 };
-NetcallBridge.fn.showAgentCheckingFailureDialog = function (errOjb, done, reject) {
+fn.showAgentCheckingFailureDialog = function (errOjb, done, reject) {
     var text = errOjb.error || "未检测到插件！请确认已安装插件并未被占用";
     var errorType = errOjb.errorType;
     minAlert.alert({
@@ -538,7 +707,7 @@ NetcallBridge.fn.showAgentCheckingFailureDialog = function (errOjb, done, reject
         minAlert.close();
     };
 };
-NetcallBridge.fn.showAgentInstallConfirmDialog = function (done, failure) {
+fn.showAgentInstallConfirmDialog = function (done, failure) {
     minAlert.alert({
         type: 'error',
         msg: '下载完成后，需手动安装插件', //消息主体
@@ -551,7 +720,7 @@ NetcallBridge.fn.showAgentInstallConfirmDialog = function (done, failure) {
         minAlert.close();
     };
 };
-NetcallBridge.fn.showCheckingDialog = function (onCancel) {
+fn.showCheckingDialog = function (onCancel) {
     minAlert.alert({
         type: 'error',
         msg: '检查插件中...<span class="netcall-icon-checking"></span>', //消息主体
@@ -562,7 +731,7 @@ NetcallBridge.fn.showCheckingDialog = function (onCancel) {
         minAlert.close();
     };
 };
-NetcallBridge.fn.showSuccessDialog = function (done) {
+fn.showSuccessDialog = function (done) {
     var timer;
     function agree() {
         clearTimeout(timer);
@@ -584,7 +753,7 @@ NetcallBridge.fn.showSuccessDialog = function (done) {
 /** 点击左侧列表，打开聊天窗口时，判断是否是单人聊天，调整ui
  * 是否当前在通话中，切换了别的窗口
  */
-NetcallBridge.fn.whenOpenChatBox = function (scene, account) {
+fn.whenOpenChatBox = function (scene, account) {
     // this.$msgInput.toggleClass("p2p", scene === "p2p");
     /** 多人隐藏音频按钮 */
     this.$netcallAudioLink.toggleClass("hide", scene !== "p2p");
@@ -601,12 +770,10 @@ NetcallBridge.fn.whenOpenChatBox = function (scene, account) {
     }
     // this.$goNetcall.toggleClass("hide", !this.netcallActive || account === this.netcallAccount);
 
-
-
     this.resizeChatContent();
 };
 /** 动态更改文字聊天窗口的高度 */
-NetcallBridge.fn.resizeChatContent = function (scene, account) {
+fn.resizeChatContent = function (scene, account) {
     var h = this.yx.$chatTitle.height();
     h = h + (this.$chatBox.hasClass('show-netcall-box') ? this.$netcallBox.height() : 0);
     /** 最小值81 */
@@ -619,7 +786,7 @@ NetcallBridge.fn.resizeChatContent = function (scene, account) {
     });
 };
 
-NetcallBridge.fn.getDurationText = function (ms) {
+fn.getDurationText = function (ms) {
     var allSeconds = parseInt(ms / 1000);
     var result = "";
     var hours, minutes, seconds;
@@ -642,7 +809,7 @@ NetcallBridge.fn.getDurationText = function (ms) {
  * 场景：p2p音视频 / 多人音视频
  * @param {dom对象} box 倒计时容器
  */
-NetcallBridge.fn.startDurationTimer = function (box) {
+fn.startDurationTimer = function (box) {
     box = box || $(".netcall-show-audio .tip,.netcall-show-video .tip,.asideBox .tip,.netcall-meeting-box .option-box .tip");
     this.clearDurationTimer();
     function timer() {
@@ -657,7 +824,7 @@ NetcallBridge.fn.startDurationTimer = function (box) {
     this.netcallDurationTimer = setInterval(timer, 500);
     timer();
 };
-NetcallBridge.fn.clearDurationTimer = function () {
+fn.clearDurationTimer = function () {
     if (this.netcallDurationTimer) {
         clearInterval(this.netcallDurationTimer);
         this.netcallDurationTimer = null;
@@ -666,9 +833,74 @@ NetcallBridge.fn.clearDurationTimer = function () {
 
 /***************多人音视频的UI部分******************************/
 /**
- * 显示选择好友列表
+ * 选择好友列表ui
  */
-NetcallBridge.fn.showMeetingMemberListUI = function (type, teamId) {
-    this.yx.myNetcall.getMeetingMemberListUI()
+fn.showMeetingMemberListUI = function () {
+    this.getMeetingMemberListUI()
+}
+/**
+ * 选择通话方式
+ */
+fn.displayCallMethodUI = function (cbSuccess, cbFail) {
+    var that = this
+    function next(data) {
+
+        console.log('选择情况', data)
+        that.isWebRTCEnable = data.isWebRTCEnable;
+
+        // 检查WebRTC情况
+        if (data.type === 'webrtc') {
+            var versionSupport = this.checkRtcBrowser()
+            that.isRtcSupported = versionSupport && rtcSupport.supportGetUserMedia && rtcSupport.supportRTCPeerConnection && rtcSupport.supportMediaStream
+            if (!that.isRtcSupported) {
+                minAlert.alert({
+                    type: 'error',
+                    msg: '当前浏览器不支持WebRTC功能或H264的编解码格式, 无法使用音视频功能, 请使用最新版Chrome浏览器',
+                    confirmBtnMsg: '知道了，挂断',
+                    cbConfirm: function () {
+                        cbFail && cbFail(data)
+                    },
+                    cbCancel: function () {
+                        cbFail && cbFail(data)
+                    }
+                })
+                return
+            }
+            if (!rtcSupport.supportWebAudio) {
+                that.isRtcSupported = false
+                minAlert.alert({
+                    type: 'error',
+                    msg: '当前浏览器不支持完整的WebAudio功能, 无法使用音视频功能, 请使用最新版chrome浏览器',
+                    confirmBtnMsg: '知道了，挂断',
+                    cbConfirm: function () {
+                        cbFail && cbFail(data)
+                    },
+                    cbCancel: function () {
+                        cbFail && cbFail(data)
+                    }
+                })
+                return
+            }
+            return cbSuccess && cbSuccess(data)
+        }
+
+        that.isRtcSupported = false;
+        cbSuccess && cbSuccess(data)
+        // console.log(data);
+    }
+    this.dialog_call.open({
+        callMethod: this.callMethod,
+        isWebRTCEnable: this.isWebRTCEnable,
+        cbConfirm: next,
+        yx: this.yx,
+        env: this,
+    })
 };
 
+fn.checkRtcBrowser = function () {
+    var test = platform.ua.match(/(chrome)\/(\d+)/i)
+    if (!test) return false
+    var name = test[1], version = test[2]
+    return (/chrome/i.test(name) && version > 49 || /firefox/i.test(name) && version > 52)
+}
+/****方案选择的UI弹框 */

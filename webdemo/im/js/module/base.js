@@ -368,7 +368,7 @@ YX.fn.hideLogoutDialog = function () {
     for (var i = devices.length - 1; i >= 0; i--) {
         if(/iOS|Android|WindowsPhone/i.test(devices[i].type)){
             mobile=devices[i]
-        }else if(/PC/i.test(devices[i].type)){
+        }else if(/Mac|PC/i.test(devices[i].type)){
             pc = devices[i]
         }
     }

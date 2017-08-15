@@ -1,5 +1,5 @@
 /** minAlert
- * created by hzzouhuan
+ * 
  * 为了兼容IE8写的弹窗，默认支持传入自定义html结构内容
  * 调用方法:
  * 1. 在目标文件引入该文件 var minAlert = require('./minAlert.js');

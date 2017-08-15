@@ -109,6 +109,7 @@ var SDKBridge = function (ctr, data) {
             Web: "网页版",
             Android: "手机版",
             iOS: "手机版",
+            Mac: "电脑版",
             WindowsPhone: "手机版"
           };
           var str = error.from;

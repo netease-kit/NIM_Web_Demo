@@ -260,6 +260,7 @@ var appUI = {
         data.avatar = getAvatar(data.avatar);
         data.avatar = /default-icon\.png/gi.test(data.avatar) ? "" : data.avatar;
         return '<li class="item loading" style="'+ (data.avatar ? 'background-image:url(' + data.avatar + ')' : '') + '" data-account=' + data.account + '>'+
+                    '<span class="fullScreenIcon" title="切换全屏">&nbsp;</span>'+
                     '<span class="tip"><i></i><i></i><i></i></span>'+
                     '<p class="name" data-account="' + data.account + '">' + data.nick + '</p>'+
                     '<p class="volume-show" style="width:0"></p>'+
