@@ -471,6 +471,17 @@ a, a:hover{
 .m-room .sendBtn:after{
 	clear: both;
 }
+.m-room .loginBtn{
+	position: absolute;
+	right: 10px;
+	bottom: 20px;
+}
+.m-room .loginWarn{
+	display: inline-block;
+	margin: 10px;
+	color: #999;
+	font-weight: normal;
+}
 .m-room:before, .m-room:after{
 	display: table;
 	content: "";
@@ -786,5 +797,9 @@ body a:hover{
 	height: 25px;
 	border-radius: 50%;
 	background-color: yellow;
+}
+.m-head #nickName {
+	cursor: pointer;
+	color: #000;
 }
 

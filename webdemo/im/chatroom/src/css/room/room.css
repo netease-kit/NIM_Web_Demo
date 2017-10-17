@@ -274,7 +274,17 @@
             background: url(../../images/icon.png) no-repeat 0 -27px;
         }
     }
-    
+    .loginBtn {
+        position: absolute;
+        right: 10px;
+        bottom: 20px;
+    }
+    .loginWarn {
+        display: inline-block;
+        margin: 10px;
+        color: #999;
+        font-weight: normal;
+    }
 }
 .m-menu{
     position: absolute;

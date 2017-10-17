@@ -22,6 +22,13 @@ body {
     box-sizing: border-box;
     background: url(../images/logo.png) no-repeat top center;
 }
+.sub-title {
+    position: relative;
+    top: -20px;
+    text-align: center;
+    font-size: 20px;
+}
+
 .row {
     margin-bottom: 14px;
     position: relative;

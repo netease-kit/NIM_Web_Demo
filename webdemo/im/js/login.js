@@ -74,7 +74,12 @@ var Login = {
 		//自己的appkey就不用加密了
 		// setCookie('sdktoken',pwd);
 		setCookie('sdktoken',MD5(pwd));
-		window.location.href = './main.html';
+		if (/chatroom/.test(location.href)) {
+			delCookie('nickName')
+			window.location.href = './list.html'
+		} else {
+			window.location.href = './main.html';
+		}
 			
 	},
 

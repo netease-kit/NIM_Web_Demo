@@ -10,11 +10,17 @@
 		<div class="g-doc">
 			<div class="logo item">聊天室demo</div>
 			<div class="nav item">
-				<a href="./list.html">首页</a>
+				<a href="../index.html">DEMO首页</a>
+			</div>
+			<div class="nav item">
+				<a href="./list.html">聊天室首页</a>
 			</div>
 			<div class="info item">
 				<img src="./images/default-icon.png" alt="头像" id="avatar">
-				<a href="./roomManage.html" id="nickName">未登录</a>
+				<!-- <a href="./roomManage.html" id="nickName">匿名</a> -->
+				<span id="nickName">匿名</span>
+				<a href="./login.html" id="chatroom-login">登录</a>
+				<a id="chatroom-logout">注销</a>
 			</div>
 			<div class="action item"><a href="./anchor.html"><b class="icon"></b>我要当主播</a></div>
 		</div>
@@ -24,9 +30,10 @@
 		</div>
 	</div>
 	<div id="fun" class="fun"></div>
+	<script src="../../3rd/jquery-1.11.3.min.js"></script>
 	<script src="../js/config.js"></script>
-	<script src="./dist/js/title.js"></script>
 	<script src="./dist/js/util.js"></script>
+	<script src="./dist/js/title.js"></script>
 	<script src="../../3rd/jquery-1.11.3.min.js"></script>
 	<script>
 		$(document).ready(function() {

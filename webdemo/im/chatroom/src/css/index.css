@@ -98,5 +98,9 @@ body{
 			background-color: yellow;
 		}
 	}
+	#nickName {
+		cursor: pointer;
+		color: #000;
+	}
 }
 

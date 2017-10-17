@@ -34,6 +34,17 @@ YX.fn.buildSessions = function(id) {
     this.doPoint()
     //已读回执处理
     this.markMsgRead(id)
+    var $node = $(".m-unread .u-unread")
+    $node.on('mouseenter', function () {
+        $node.text('×')
+    })
+    $node.on('mouseleave', function () {
+        $node.text(this.totalUnread)
+    }.bind(this))
+    $node.on('click', function (event) {
+        this.nim.resetAllSessionUnread()
+        event.preventDefault()
+    }.bind(this))
 }
  // 导航上加未读数
 YX.fn.showUnread = function () {

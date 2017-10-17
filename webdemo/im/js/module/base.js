@@ -334,6 +334,8 @@ YX.fn.logoutEvt = function () {
 YX.fn.doLogout = function () {
     delCookie('uid')
     delCookie('sdktoken')
+    delCookie('avatar')
+    delCookie('nickName')
     window.location.href = './index.html'
 }
 

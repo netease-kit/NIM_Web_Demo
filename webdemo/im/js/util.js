@@ -12,7 +12,7 @@ function setCookie(name, value) {
     var days = 1;
     var exp = new Date();
     exp.setTime(exp.getTime() + days * 24 * 60 * 60 * 1000);
-    document.cookie = name + "=" + escape(value) + ";expires=" + exp.toGMTString();
+    document.cookie = name + "=" + escape(value) + ";path=/;expires=" + exp.toGMTString();
 }
 
 //读取cookies 
@@ -30,7 +30,7 @@ function readCookie(name) {
 function delCookie(name) {
     var cval = readCookie(name);
     if (cval != null) {
-        document.cookie = name + "=" + cval + ";expires=" + (new Date(0)).toGMTString();
+        document.cookie = name + "=;path=/;expires=" + (new Date(0)).toGMTString();
     }
 }
 var _$encode = function (_map, _content) {

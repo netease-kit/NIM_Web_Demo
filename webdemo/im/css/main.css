@@ -1349,6 +1349,7 @@ width: 40px;
     line-height: 16px;
     height: 16px;
     padding: 0 5px;
+    min-width: 8px;
     color: #fff;
     border-radius: 10px;
 }

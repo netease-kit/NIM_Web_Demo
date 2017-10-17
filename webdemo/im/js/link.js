@@ -7,7 +7,7 @@ var SDKBridge = function (ctr, data) {
     userUID = readCookie('uid'),
     that = this;
   if (!sdktoken) {
-    window.location.href = './index.html';
+    window.location.href = './login.html';
     return;
   }
   //缓存需要获取的用户信息账号
@@ -100,10 +100,11 @@ var SDKBridge = function (ctr, data) {
           alert(error.message);
           delCookie('uid');
           delCookie('sdktoken');
-          window.location.href = './index.html';
+          delCookie('nickName');
+          window.location.href = './login.html';
           break;
-        // 被踢, 请提示错误后跳转到登录页面
-        case 'kicked':
+          // 被踢, 请提示错误后跳转到登录页面
+          case 'kicked':
           var map = {
             PC: "电脑版",
             Web: "网页版",
@@ -116,7 +117,8 @@ var SDKBridge = function (ctr, data) {
           alert("你的帐号于" + dateFormat(+new Date(), "HH:mm") + "被" + (map[str] || "其他端") + "踢出下线，请确定帐号信息安全!");
           delCookie('uid');
           delCookie('sdktoken');
-          window.location.href = './index.html';
+          delCookie('nickName');
+          window.location.href = './login.html';
           break;
         default:
           break;

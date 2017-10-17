@@ -21,7 +21,7 @@ var LinkRoom = function (ctr,data) {
         },
         data:JSON.stringify({
             roomid:info.id,
-            uid:info.account
+            // uid:info.account
         })
     }).done(function(data) {
         if(data.res===200){
@@ -33,7 +33,7 @@ var LinkRoom = function (ctr,data) {
     })
     //连接link
     var doLink = function(data){
-        that.room = new SDK.Chatroom({
+        var options = {
             appKey: data.appKey,
             account: data.account,
             token: data.token,
@@ -41,6 +41,22 @@ var LinkRoom = function (ctr,data) {
             chatroomAddresses: that.address,
             onconnect:function(msg) {
                 $("#room .j-chat").html("");
+                util.setCookie("uid", that.room.account); 
+                if (data.chatroomNick) {
+                    util.setCookie("nickName", data.chatroomNick);
+                    document.getElementById('nickName').innerHTML = data.chatroomNick
+                }
+                // 获取用户头像等信息
+                that.room.getChatroomMembersInfo({
+                    accounts: [data.account],
+                    done: function getChatroomMembersInfoDone (error, obj) {
+                        if (!error && obj.members && obj.members[0] && obj.members[0].avatar) {
+                            var avatar = obj.members[0].avatar
+                            util.setCookie("avatar", avatar)
+                            document.getElementById('avatar').src = util.getAvatar(util.readCookie("avatar"));
+                        }
+                    }
+                });
                 that.data.roomInfo = msg.chatroom;
                 that.data.person[that.account] = msg.member;
                 that.getHistoryMsgs(cbGetHistoryMsgs.bind(that));
@@ -67,6 +83,7 @@ var LinkRoom = function (ctr,data) {
                     switch (error.code) {
                     // 账号或者密码错误, 请跳转到登录页面并提示错误
                     case 302:
+                        location.href = './login.html'
                         break;
                     case 13003:
                         $("#linkStatus").text("抱歉，你已被主播拉入了黑名单");
@@ -86,7 +103,16 @@ var LinkRoom = function (ctr,data) {
                     }
                 }
             }
-        }) 
+        }
+        if (!data.token) {
+            delete options.account
+            options.isAnonymous = true
+            data.chatroomNick = options.chatroomNick = '游客' + Math.ceil(Math.random() * 10000)
+            document.getElementById('chatroom-verified').style.display = 'none'
+        } else {
+            document.getElementById('chatroom-anonymous').style.display = 'none'
+        }
+        that.room = SDK.Chatroom.getInstance(options) 
     }
     
 
