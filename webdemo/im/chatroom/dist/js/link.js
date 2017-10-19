@@ -48,7 +48,7 @@ var LinkRoom = function (ctr,data) {
                 }
                 // 获取用户头像等信息
                 that.room.getChatroomMembersInfo({
-                    accounts: [data.account],
+                    accounts: [that.room.account],
                     done: function getChatroomMembersInfoDone (error, obj) {
                         if (!error && obj.members && obj.members[0] && obj.members[0].avatar) {
                             var avatar = obj.members[0].avatar
