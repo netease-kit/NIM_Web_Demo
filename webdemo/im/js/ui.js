@@ -81,10 +81,19 @@ var appUI = {
                 getMessage(message),
                     '</div>',
                     '</div>',
-                    '</div>',
-                message.status === "fail" ? '<span class="error j-resend" data-session="' + message.sessionId + '" data-id="' + message.idClient + '"><i class="icon icon-error"></i>发送失败,点击重发</span>' : '',
+                    '</div>']
+                if (message.blacked) {
+                    msgHtml.push('<span class="error" data-session="' + message.sessionId + '" data-id="' + message.idClient + '"><i class="icon icon-error"></i>发送失败,已被拉黑</span>')
+                } else if (message.status === 'fail') {
+                    msgHtml.push('<span class="error j-resend" data-session="' + message.sessionId + '" data-id="' + message.idClient + '"><i class="icon icon-error"></i>发送失败,点击重发</span>')
+                } else {
+                    msgHtml.push('')
+                }
+                msgHtml = msgHtml.concat([
                     '<span class="readMsg"><i></i>已读</span>',
-                    '</div>'].join('');
+                    '</div>'
+                ])
+                msgHtml = msgHtml.join('')
             }
         }
         return msgHtml;

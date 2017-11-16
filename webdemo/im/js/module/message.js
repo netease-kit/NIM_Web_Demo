@@ -182,6 +182,10 @@ YX.fn.sendTextMessage = function () {
 * @param msg：消息主体，类型分为文本、文件、图片、地理位置、语音、视频、自定义消息，通知等
 */
 YX.fn.sendMsgDone = function (error, msg) {
+    if (error && error.code === 7101) {
+        alert('被拉黑')
+        msg.blacked = true
+    }
     this.cache.addMsgs(msg)
     this.$messageText.val('')
     this.$chatContent.find('.no-msg').remove()
