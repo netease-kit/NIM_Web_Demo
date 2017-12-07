@@ -309,6 +309,7 @@ fn.initNetcall = function () {
 
     NIM.use(WebRTC);
     NIM.use(Netcall);
+    NIM.use(window.WhiteBoard);
 
     var that = this;
 
@@ -408,35 +409,35 @@ fn.initWebRTCEvent = function () {
     //     this.checkDeviceStateUI();
     // }.bind(this))
     webrtc.on("beCalling", function (obj) {
-        if (this.callMethod !== 'webrtc') return
+        if (this.callMethod !== 'webrtc' || window.yunXin.WB.session.length !== 0) return
         this.onBeCalling(obj);
     }.bind(this));
     webrtc.on("control", function (obj) {
-        if (this.callMethod !== 'webrtc') return
+        if (this.callMethod !== 'webrtc' || window.yunXin.WB.session.length !== 0) return
         this.onControl(obj);
     }.bind(this));
     webrtc.on("hangup", function (obj) {
-        if (this.callMethod !== 'webrtc') return
+        if (this.callMethod !== 'webrtc' || window.yunXin.WB.session.length !== 0) return
         this.onHangup(obj);
     }.bind(this));
     webrtc.on("heartBeatError", function (obj) {
-        if (this.callMethod !== 'webrtc') return
+        if (this.callMethod !== 'webrtc' || window.yunXin.WB.session.length !== 0) return
         console.log("heartBeatError,要重建信令啦");
     }.bind(this));
     webrtc.on("callerAckSync", function (obj) {
-        if (this.callMethod !== 'webrtc') return
+        if (this.callMethod !== 'webrtc' || window.yunXin.WB.session.length !== 0) return
         this.onCallerAckSync(obj);
     }.bind(this));
     webrtc.on("netStatus", function (obj) {
-        if (this.callMethod !== 'webrtc') return
+        if (this.callMethod !== 'webrtc' || window.yunXin.WB.session.length !== 0) return
         // console.log("on net status:", obj);
     }.bind(this));
     webrtc.on("statistics", function (obj) {
-        if (this.callMethod !== 'webrtc') return
+        if (this.callMethod !== 'webrtc' || window.yunXin.WB.session.length !== 0) return
         // console.log("on statistics:", obj);
     }.bind(this));
     webrtc.on("audioVolume", function (obj) {
-        if (this.callMethod !== 'webrtc') return
+        if (this.callMethod !== 'webrtc' || window.yunXin.WB.session.length !== 0) return
         // console.log(JSON.stringify(obj))
         // console.log("on audioVolume:", obj);
         /** 如果是群聊，转到多人脚本处理 */
@@ -445,13 +446,13 @@ fn.initWebRTCEvent = function () {
         }
     }.bind(this));
     webrtc.on('joinChannel', function (obj) {
-        if (this.callMethod !== 'webrtc') return
+        if (this.callMethod !== 'webrtc' || window.yunXin.WB.session.length !== 0) return
         // type多人没用
         console.log('user join', obj)
         that.onJoinChannel(obj);
     }.bind(this))
     webrtc.on('leaveChannel', function (obj) {
-        if (this.callMethod !== 'webrtc') return
+        if (this.callMethod !== 'webrtc' || window.yunXin.WB.session.length !== 0) return
         console.log('sb leaveChannel', obj)
         that.onLeaveChannel(obj);
     }.bind(this))
@@ -463,17 +464,17 @@ fn.initNetcallEvent = function () {
     var that = this;
     // 对方接受通话 或者 我方接受通话，都会触发
     webnet.on("callAccepted", function (obj) {
-        if (this.callMethod !== 'webnet') return
+        if (this.callMethod !== 'webnet' || window.yunXin.WB.session.length !== 0) return
         this.onCallAccepted(obj);
     }.bind(this));
     webnet.on("callRejected", function (obj) {
-        if (this.callMethod !== 'webnet') return
+        if (this.callMethod !== 'webnet' || window.yunXin.WB.session.length !== 0) return
         this.onCallingRejected(obj);
     }.bind(this));
 
     webnet.on('signalClosed', function () {
-        if (this.callMethod !== 'webnet') return
-
+        if (this.callMethod !== 'webnet' || window.yunXin.WB.session.length !== 0) return
+        
         console.log("signal closed");
         this.signalInited = false;
         this.showTip("信令断开了", 2000, function () {
@@ -492,34 +493,34 @@ fn.initNetcallEvent = function () {
         }.bind(this));
     }.bind(this));
     webnet.on("devices", function (obj) {
-        if (this.callMethod !== 'webnet') return
-
+        if (this.callMethod !== 'webnet' || window.yunXin.WB.session.length !== 0) return
+        
         console.log("on devices:", obj);
         //this.checkDeviceStateUI();
     }.bind(this));
     webnet.on("deviceStatus", function (obj) {
-        if (this.callMethod !== 'webnet') return
+        if (this.callMethod !== 'webnet' || window.yunXin.WB.session.length !== 0) return
         console.log("on deviceStatus:", obj);
         this.checkDeviceStateUI();
     }.bind(this));
     webnet.on("beCalling", function (obj) {
-        if (this.callMethod !== 'webnet') return
+        if (this.callMethod !== 'webnet' || window.yunXin.WB.session.length !== 0) return
         this.onBeCalling(obj);
     }.bind(this));
     webnet.on("control", function (obj) {
-        if (this.callMethod !== 'webnet') return
+        if (this.callMethod !== 'webnet' || window.yunXin.WB.session.length !== 0) return
         this.onControl(obj);
     }.bind(this));
     webnet.on("hangup", function (obj) {
-        if (this.callMethod !== 'webnet') return
+        if (this.callMethod !== 'webnet' || window.yunXin.WB.session.length !== 0) return
         this.onHangup(obj);
     }.bind(this));
     webnet.on("heartBeatError", function (obj) {
-        if (this.callMethod !== 'webnet') return
+        if (this.callMethod !== 'webnet' || window.yunXin.WB.session.length !== 0) return
         console.log("heartBeatError,要重建信令啦");
     }.bind(this));
     webnet.on("callerAckSync", function (obj) {
-        if (this.callMethod !== 'webnet') return
+        if (this.callMethod !== 'webnet' || window.yunXin.WB.session.length !== 0) return
         this.onCallerAckSync(obj);
     }.bind(this));
 
@@ -532,7 +533,7 @@ fn.initNetcallEvent = function () {
         // console.log("on statistics:", obj);
     }.bind(this));
     webnet.on("audioVolume", function (obj) {
-        if (this.callMethod !== 'webnet') return
+        if (this.callMethod !== 'webnet' || (!this.beCalling && !this.calling && !this.netcallActive)) return
         // console.log("on audioVolume:", obj);
         /** 如果是群聊，转到多人脚本处理 */
         if (this.netcall.calling && this.yx.crtSessionType === 'team' && this.meetingCall.channelName) {
@@ -936,7 +937,7 @@ fn.callAcceptedResponse = function () {
                 this.hangup()
                 this.acceptAndWait = false;
             }
-        }.bind(this), 10000)
+        }.bind(this), 45 * 1000)
 
     }.bind(this)).catch(function (err) {
         this.log("同意对方音视频通话失败，转为拒绝");
@@ -1140,7 +1141,8 @@ fn.onBeCalling = function (obj, scene) {
     // }
 
     // 自己正在通话或者被叫中, 知对方忙并拒绝通话
-    if (netcall.calling || this.beCalling) {
+    var WB = window.yunXin.WB
+    if (netcall.calling || this.beCalling || WB.isCalling || WB.isCalled) {
 
         var tmp = { command: Netcall.NETCALL_CONTROL_COMMAND_BUSY };
         if (scene === 'p2p') {
@@ -1249,7 +1251,8 @@ fn.onCallAccepted = function (obj) {
         }.bind(this)).catch(function (e) {
             console.error(e);
             this.log("连接出错");
-            if (e === '信令链接地址缺失') {
+
+            if (/webrtc服务器地址/.test(e)) {
                 minAlert.alert({
                     type: 'error',
                     msg: '无法接通!请让呼叫方打开"WebRTC兼容开关"，方可正常通话', //消息主体

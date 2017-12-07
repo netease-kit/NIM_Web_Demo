@@ -133,6 +133,7 @@ YX.fn.openChatBox = function (account, scene) {
 
     // 让netcall.js感知到打开聊天框的操作，做一些UI层的控制
     this.myNetcall && this.myNetcall.whenOpenChatBox(scene, account);
+    if (this.WB) this.WB.checkSession()
 
     //根据帐号跟消息类型获取消息数据
     if(scene=="p2p"){

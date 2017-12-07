@@ -255,7 +255,7 @@ function getMessage(msg) {
                     chartvar = _$escape(content.data.chartlet);
                 str = '<img class="chartlet" onload="loadImg()" src="./images/' + catalog + '/' + chartvar + '.png">';
             } else if (content.type == 4) {
-                str = sentStr + '一条[白板]消息,请到手机或电脑客户端查看';
+                str = msg.fromNick + '发起了[白板互动]';
             } else {
                 str = sentStr + '一条[自定义]消息，请到手机或电脑客户端查看';
             }

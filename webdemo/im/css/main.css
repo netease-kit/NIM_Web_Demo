@@ -516,7 +516,7 @@ html, body {
 .dialog-team-container {
     position: fixed;
     width: 680px;
-    height: 580px;
+    height: 600px;
     top: 50%;
     left:50%;
     margin-top: -290px;

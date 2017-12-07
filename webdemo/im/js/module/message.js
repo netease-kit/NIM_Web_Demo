@@ -58,7 +58,7 @@ YX.fn.message = function () {
  * @param  {Object} msg 
  * @return 
  */
-YX.fn.doMsg = function (msg) {
+YX.fn.doMsg = function (msg) { 
     var that = this,
         who = msg.to === userUID ? msg.from : msg.to,
         updateContentUI = function () {

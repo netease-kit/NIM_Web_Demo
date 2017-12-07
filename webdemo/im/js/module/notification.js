@@ -37,7 +37,18 @@ YX.fn.messageHandler = function(msg,callback) {
 		case 'updateTeamMute':
 			this.updateTeamMuteNotification(msg,callback)
 			break
+		case 201: // 白板互动结束后的回单
+			break
+		case 202: // 白板互动未接受时，发起方结束，被邀请方收到的回单
+			break
+		case 'rejectWhiteboard': // 拒绝白板邀请的回单
+			break
+		case 'whiteboardRejected': // 白板邀请被拒绝的回单
+			break
+		case 'cancelWhiteBoardBeforeAccept': // // 白板互动未接受时，发起方结束，发起方收到的回单
+			break
 		default:				// 其他
+			if (window.yunXin.WB.session.length !== 0 && (type === 'rejectNetcall' || type === 'netcallRejected')) return
 			console.log("type-->" + type)
 			this.cache.addMsgs(msg)
     		callback()

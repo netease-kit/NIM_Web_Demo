@@ -10,8 +10,6 @@ fn.checkDeviceStateUI = function () {
     var temp = this.netcall
     var p1 = this.netcall.getDevicesOfType(Netcall.DEVICE_TYPE_VIDEO).then(function (obj) {
         var $camera = $(".netcall-box .camera.control-item");
-
-
         if (obj.devices.length) {
             // 摄像头从无到有的变化
             if ($camera.is(".no-device")) {
@@ -25,7 +23,6 @@ fn.checkDeviceStateUI = function () {
                         return Promise.resolve()
                     }
                 }
-
                 // 开启摄像头
                 this.setDeviceVideoIn(true);
 
@@ -426,10 +423,12 @@ fn.showCallingUI = function () {
 fn.onClickNetcallLink = function (type) {
     var that = this;
     // 已经处于音视频通话中，弹窗提示
-    if (that.netcallActive) {
+    // 已经处于互动白板流程中，弹窗提示
+    var WB = window.yunXin.WB
+    if (that.netcallActive || WB.isCalling || WB.isCalled) {
         minAlert.alert({
             type: 'error',
-            msg: '正在通话中，无法发起新的通话', //消息主体
+            msg: (WB.isCalling || WB.isCalled) ? '正在互动白板流程中，无法发起通话' : '正在通话中，无法发起新的通话', //消息主体
             cancelBtnMsg: '知道了' //取消按钮的按钮内容
         });
         return;
@@ -517,20 +516,24 @@ fn.reCheckAgent = function (e) {
     }
     that.doAgentIntallCheck(successCb, failureCb);
 }
-fn.clickDownloadAgent = function () {
+fn.clickDownloadAgent = function (successCb, failureCb, isWhiteboard) {
     // location.href = this.agentDownloadUrl;
     window.open(this.agentDownloadUrl)
-    function successCb() {
-        this.updateBeCallingSupportUI(true);
+    if (!successCb) {
+        successCb = function () {
+            this.updateBeCallingSupportUI(true);
+        }
+        successCb = successCb.bind(this);
     }
-    successCb = successCb.bind(this);
-    function failureCb() {
-        this.updateBeCallingSupportUI(false);
+    if (!failureCb) {
+        failureCb = function () {
+            this.updateBeCallingSupportUI(false);
+        }
+        failureCb = failureCb.bind(this);
     }
-    failureCb = failureCb.bind(this);
     var closeDialog = this.showAgentInstallConfirmDialog(function () {
         closeDialog();
-        this.doAgentIntallCheck(successCb, failureCb);
+        this.doAgentIntallCheck(successCb, failureCb, isWhiteboard);
     }.bind(this), function () {
         failureCb();
     });
@@ -588,7 +591,7 @@ fn.updateBeCallingSupportUI = function (isSupport, showChecking, errObj) {
     }
 
 };
-fn.checkAgentWorking = function (done, failure, onlyCheckingSignal, notShowCheckingDialog) {
+fn.checkAgentWorking = function (done, failure, onlyCheckingSignal, notShowCheckingDialog, isWhiteboard) {
     console.log("checkAgentWorking");
     failure = failure || function () { };
     done = done || function () { };
@@ -620,32 +623,32 @@ fn.checkAgentWorking = function (done, failure, onlyCheckingSignal, notShowCheck
         closeCheckingDialog();
 
         if (onlyCheckingSignal) return failure(err);
-        this.showAgentNeedInstallDialog(err, done, failure);
+        this.showAgentNeedInstallDialog(err, done, failure, isWhiteboard);
     }.bind(this));
 
 };
-fn.showAgentNeedInstallDialog = function (errOjb, successCb, failureCb) {
+fn.showAgentNeedInstallDialog = function (errOjb, successCb, failureCb, isWhiteboard) {
     var that = this;
-    var msg_text = errOjb.error || "请安装插件PC Agent，方可使用音视频功能";
+    var msg_text = isWhiteboard ? '请安装插件PC Agent，方可使用白板互动功能。白板功能中的音频功能需要此插件的支持' : (errOjb.error || "请安装插件PC Agent，方可使用音视频功能");
     var errorType = errOjb.errorType || "agent_empty";
     var btn_text = (errorType === "device_busy" ? "已解决，重试" : "下载插件");
     minAlert.alert({
         type: 'error',
         msg: msg_text, //消息主体
         subMsg: '拒绝调用插件申请会导致无法唤起插件,需重启浏览器',
-        cancelBtnMsg: '不使用音视频', //取消按钮的按钮内容
+        cancelBtnMsg: isWhiteboard ? (window.yunXin.WB.isCalled ? '拒绝邀请' : '结束邀请') : '不使用音视频', //取消按钮的按钮内容
         confirmBtnMsg: btn_text,
         cbCancel: failureCb,
         cbConfirm: function () {
             if (errorType === "device_busy") {
-                that.doAgentIntallCheck(successCb, failureCb);
+                that.doAgentIntallCheck(successCb, failureCb, isWhiteboard);
                 return;
             }
             // location.href = that.agentDownloadUrl;
             window.open(that.agentDownloadUrl)
             var closeDialog = that.showAgentInstallConfirmDialog(function () {
                 closeDialog();
-                that.doAgentIntallCheck(successCb, failureCb);
+                that.doAgentIntallCheck(successCb, failureCb, isWhiteboard);
             }, function () {
                 failureCb();
             });
@@ -653,7 +656,7 @@ fn.showAgentNeedInstallDialog = function (errOjb, successCb, failureCb) {
     });
 
 };
-fn.doAgentIntallCheck = function (successCb, failureCb) {
+fn.doAgentIntallCheck = function (successCb, failureCb, isWhiteboard) {
     successCb = successCb || function () { };
     failureCb = failureCb || function () { };
     console.log("do checking");
@@ -681,23 +684,23 @@ fn.doAgentIntallCheck = function (successCb, failureCb) {
         // alert("未检测到agent");
         closeCheckingDialog();
         var closeDialog = this.showAgentCheckingFailureDialog(err, function () {
-            this.doAgentIntallCheck(successCb, failureCb);
+            this.doAgentIntallCheck(successCb, failureCb, isWhiteboard);
             // closeDialog();
 
         }.bind(this), function () {
             closeDialog();
             failureCb();
-        })
+        }, isWhiteboard)
     }.bind(this))
 };
-fn.showAgentCheckingFailureDialog = function (errOjb, done, reject) {
-    var text = errOjb.error || "未检测到插件！请确认已安装插件并未被占用";
+fn.showAgentCheckingFailureDialog = function (errOjb, done, reject, isWhiteboard) {
+    var text = isWhiteboard ? '未检测到插件！请确认已安装插件并未被占用' : (errOjb.error || "未检测到插件！请确认已安装插件并未被占用");
     var errorType = errOjb.errorType;
     minAlert.alert({
         type: 'error',
         msg: text, //消息主体
         subMsg: '拒绝调用插件申请会导致无法唤起插件,需重启浏览器',
-        cancelBtnMsg: '不使用音视频', //取消按钮的按钮内容
+        cancelBtnMsg: isWhiteboard ? (window.yunXin.WB.isCalled ? '拒绝邀请' : '结束邀请') : '不使用音视频', //取消按钮的按钮内容
         confirmBtnMsg: '已解决，重试',
         cbCancel: reject,
         cbConfirm: done
@@ -755,10 +758,30 @@ fn.showSuccessDialog = function (done) {
  */
 fn.whenOpenChatBox = function (scene, account) {
     // this.$msgInput.toggleClass("p2p", scene === "p2p");
-    /** 多人隐藏音频按钮 */
-    this.$netcallAudioLink.toggleClass("hide", scene !== "p2p");
+    /** 多人或者我的手机隐藏音频按钮 */
+    this.$netcallAudioLink.toggleClass("hide", scene !== "p2p" || account === userUID);
+    /** 我的手机隐藏视频按钮 */ 
+    this.$netcallVideoLink.toggleClass("hide", account === userUID);
+    /** 多人或者我的手机隐藏白板按钮 */
+    $('#showWhiteboard').toggleClass("hide", scene !== "p2p" || account === userUID);
     // this.$netcallVideoLink.toggleClass("hide", scene !== "p2p");
 
+    /** 当前正在白板互动中，但窗口并非白板窗口，显示右上角提示框 */
+    if (window.yunXin.WB) {
+        if (window.yunXin.WB.isCalled || window.yunXin.WB.isCalling) {
+            window.yunXin.WB.$goWhiteboard.toggleClass("hide", account === window.yunXin.WB.account);
+            if (account !== window.yunXin.WB.account) {
+                window.yunXin.WB.$goWhiteboard.find('.nick').text(window.yunXin.WB.nick)
+                window.yunXin.WB.$goWhiteboard.find('.tip').text(
+                    window.yunXin.WB.connected ? '互动中 ...' :
+                    (window.yunXin.WB.isCalled ? '等待接受邀请...' : '发起中...')
+                )
+            }
+        } else {
+            window.yunXin.WB.$goWhiteboard.toggleClass("hide", true);
+        }
+    }
+        
     /** 当前正在通话中或者被叫中 */
     if (this.netcallActive || this.beCalling) {
         isOtherBoxDisable = $('#teamInfoContainer').hasClass('hide') && $('#cloudMsgContainer').hasClass('hide')
@@ -899,7 +922,7 @@ fn.displayCallMethodUI = function (cbSuccess, cbFail) {
 
 fn.checkRtcBrowser = function () {
     var test = platform.ua.match(/(chrome)\/(\d+)/i)
-    if (!test) return false
+    if (!test || /Edge\/([\d.]+)/.test(platform.ua)) return false
     var name = test[1], version = test[2]
     return (/chrome/i.test(name) && version > 49 || /firefox/i.test(name) && version > 52)
 }

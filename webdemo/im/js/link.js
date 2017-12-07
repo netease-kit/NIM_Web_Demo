@@ -179,6 +179,7 @@ var SDKBridge = function (ctr, data) {
   function onUpdatesession(session) {
     var id = session.id || "";
     var old = this.cache.getSessions();
+    var msg = session.lastMsg;
     this.cache.setSessions(this.nim.mergeSessions(old, session));
     this.controller.buildSessions(id);
   };
