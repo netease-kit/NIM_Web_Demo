@@ -797,6 +797,7 @@ window.yunXin.WB = new window.Vue({
   mounted: function() {
     this.wb = window.WhiteBoard.getInstance({
       nim: window.nim,
+      isCustom: false,
       container: this.$refs.container,
       debug: true
     });
