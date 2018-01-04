@@ -1,7 +1,6 @@
 
-
 # 网易云信web demo简介
-网易云信demo工程基于网易云信[webSDK](http://dev.netease.im/docs?doc=web)，演示了SDK聊天，群组等功能。用户可参照该demo，将网易云信SDK接入自己的app。
+网易云信demo工程基于网易云信[webSDK](/docs/product/IM即时通讯/SDK开发集成/Web开发集成/概要介绍)，演示了SDK聊天，群组，点对点音视频等功能。用户可参照该demo，将网易云信SDK接入自己的app。
 
 ## 预览demo
 demo地址https://github.com/netease-im/NIM_Web_Demo
@@ -20,9 +19,6 @@ demo地址https://github.com/netease-im/NIM_Web_Demo
 ### 源码结构
 
 依赖SDK文件 Web_SDK_Base.js, Web_SDK_MIN.js(版本号这里略去了)，此外demo依赖jQuery ,并使用了部分JQueryUI插件
-
-* config.js: 用于配置appkey等信息，如果应用开启了订阅服务，也可以在此设置
-
 * link.js：初始化SDK，以及封装SDK相关功能的方法
 
 * cache.js：负责业务数据层相关操作（数据包括消息对象，好友列表，回话列表，群等）
@@ -98,15 +94,46 @@ message.js里sendTextMsg,uploadFile方法提供发送文本，文件功能。发
 
 #### 开发思路
 
-[初始化SDK](http://dev.netease.im/docs?doc=web&#%E8%81%8A%E5%A4%A9%E5%AE%A4)
+[初始化SDK](/docs/product/IM即时通讯/SDK开发集成/Web开发集成/初始化)
 
 监听消息通知  —> UI渲染
 
+## 点对点(pcAgent、WebRTC)音视频
 
+源码位于`webdemo/im/js/module`下
 
+## 多人(pcAgent、WebRTC)音视频
+
+源码位于`webdemo/im/js/module`下
+
+#### 源码结构
+
+依赖SDK文件 `Web_SDK_Netcall.js` (版本号这里略去了)
+依赖SDK文件 `Web_SDK_WebRTC.js` (版本号这里略去了)
+
+#### 核心代码
+* netcall.js: 调用agent、webrtc点对点音视频功能核心代码
+* netcall_ui.js: 音视频UI操作相关代码
+
+## 点对点白板
+
+源码位于`webdemo/im/js/module`下
+
+#### 源码结构
+
+依赖SDK文件 `Web_SDK_WhiteBoard.js` (版本号这里略去了)
+
+Demo中白板额外加入了音频通话的功能，因此需要依赖音频相关的SDK，进行开发时也可以只使用白板本身，不使用音频功能。
+音频部分依赖SDK文件 `Web_SDK_Netcall.js` (版本号这里略去了)
+以及 `Web_SDK_WebRTC.js` (版本号这里略去了)
+
+另外为了简化代码，白板界面通过Vue框架编写，源码中尽可能减少UI操作逻辑，只包含业务逻辑。
+
+#### 核心代码
+* whiteboard.js: 包含白板通话建立流程以及功能操作等内容
 
 ## 修改代码为已用
 
-网易云信demo实现了一个IM软件的所有基础功能，开发者可直接以demo为基础，自定义相关样式，开发自己的IM软件，也可以参考demo中[sdk API](http://dev.netease.im/doc/web/index.html)使用方式自行开发。
+网易云信demo实现了一个IM软件的所有基础功能，开发者可直接以demo为基础，自定义相关样式，开发自己的IM软件，也可以参考demo中[sdk API](http://dev.netease.im/docs/interface/即时通讯Web端/NIMSDK-Web/)使用方式自行开发。
 
 注：云信只提供消息通道，并不包含用户资料逻辑。开发者需要在管理后台或通过服务器接口将用户账号和token同步到云信服务器。
