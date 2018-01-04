@@ -154,6 +154,9 @@ function buildSessionMsg(msg) {
         case 'tip':
             text = '[提醒消息]';
             break;
+        case 'robot':
+            text = '[机器人消息]';
+            break;
         case 'custom':
             var content = JSON.parse(msg.content);
             if (content.type === 1) {
@@ -255,7 +258,7 @@ function getMessage(msg) {
                     chartvar = _$escape(content.data.chartlet);
                 str = '<img class="chartlet" onload="loadImg()" src="./images/' + catalog + '/' + chartvar + '.png">';
             } else if (content.type == 4) {
-                str = sentStr + '一条[白板]消息,请到手机或电脑客户端查看';
+                str = msg.fromNick + '发起了[白板互动]';
             } else {
                 str = sentStr + '一条[自定义]消息，请到手机或电脑客户端查看';
             }
@@ -504,6 +507,10 @@ function transNotification(item) {
             str = from ? ("你将" + member + "移除" + tName) : (member + "被移除" + tName);
             return str;
             break;
+        case 'addTeamManagers':
+        case 'removeTeamManagers':
+            return '管理员权限发生了变更'
+            break
         case 'leaveTeam':
             var member = (item.from === userUID) ? "你" : getNick(item.from);
             str = member + "退出了" + tName;

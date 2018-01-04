@@ -20,12 +20,20 @@ YX.fn.message = function () {
     this.$chatContent.delegate('.j-mbox', 'click', this.playAudio)
     //聊天面板右键菜单
     $.contextMenu({
-        selector: '.item-me .j-msg',
+        selector: '.j-msg',
         callback: function (key, options) {
             if (key === 'delete') {
                 var id = options.$trigger.parent().data('id')
                 var msg = this.cache.findMsg(this.crtSession, id)
                 if (!msg || options.$trigger.hasClass('j-msg')) {
+                }
+                if (msg.flow !== 'out' && msg.scene === 'p2p') {
+                    alert('点对点场景，只能撤回自己发的消息')
+                    return
+                }
+                if (!this.cache.isCurSessionTeamManager && msg.flow !== 'out' && msg.scene === 'team') {
+                    alert('群会话场景，非管理员不能撤回别人发的消息')
+                    return
                 }
                 options.$trigger.removeClass('j-msg')
                 this.nim.deleteMsg({
@@ -39,7 +47,8 @@ YX.fn.message = function () {
                                 alert(err.message || '操作失败')
                             }
                         } else {
-                            this.backoutMsg(id)
+                            msg.opeAccount = userUID
+                            this.backoutMsg(id, {msg: msg})
                         }
                     }.bind(this)
                 })
@@ -49,6 +58,7 @@ YX.fn.message = function () {
             "delete": { name: "撤回", icon: "delete" }
         }
     })
+
     //表情贴图模块
     this.initEmoji()
 
@@ -58,7 +68,7 @@ YX.fn.message = function () {
  * @param  {Object} msg 
  * @return 
  */
-YX.fn.doMsg = function (msg) {
+YX.fn.doMsg = function (msg) { 
     var that = this,
         who = msg.to === userUID ? msg.from : msg.to,
         updateContentUI = function () {
@@ -237,11 +247,11 @@ YX.fn.getHistoryMsgs = function (scene, account) {
     //标记已读回执
     this.sendMsgRead(account, scene)
     if (!!sessions) {
-        if (sessions.unread >= msgs.length) {
+        // if (sessions.unread >= msgs.length) {
             var end = (msgs.length > 0) ? msgs[0].time : false
             this.mysdk.getLocalMsgs(id, end, this.getLocalMsgsDone.bind(this))
             return
-        }
+        // }
     }
     this.doChatUI(id)
 }
@@ -326,11 +336,25 @@ YX.fn.backoutMsg = function (id, data) {
     var msg = data ? data.msg : this.cache.findMsg(this.crtSession, id)
     var to = msg.target
     var session = msg.sessionId
+    var opeAccount = msg.opeAccount || msg.from
+    var opeNick = getNick(opeAccount)
+    if (msg.scene === 'team') {
+        var teamId = msg.to || this.crtSessionAccount
+        var teamInfo = this.cache.getTeamById(teamId)
+        if (teamInfo && opeAccount !== msg.from) {
+            if (teamInfo.owner === opeAccount) {
+                opeNick = '群主' + opeNick
+            } else if (teamInfo.type === 'advanced') {
+                opeNick = '管理员' + opeNick
+            }
+        }
+    }
+
     this.nim.sendTipMsg({
         isLocal: true,
         scene: msg.scene,
         to: to,
-        tip: (userUID === msg.from ? '你' : getNick(msg.from)) + '撤回了一条消息',
+        tip: (userUID === opeAccount ? '你' : opeNick) + '撤回了一条消息',
         time: msg.time,
         done: function (err, data) {
             if (!err) {

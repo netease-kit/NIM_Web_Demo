@@ -117,6 +117,7 @@ YX.fn.cbInitLocalTeamInfo = function (err, data) {
  *********************************/
 YX.fn.openChatBox = function (account, scene) {
     var info
+    var that = this
     this.mysdk.setCurrSession(scene,account)
     this.crtSession = scene+"-"+account
     this.crtSessionType = scene
@@ -133,6 +134,9 @@ YX.fn.openChatBox = function (account, scene) {
 
     // 让netcall.js感知到打开聊天框的操作，做一些UI层的控制
     this.myNetcall && this.myNetcall.whenOpenChatBox(scene, account);
+    if (this.WB) this.WB.checkSession()
+    // 是否是群管理员
+    this.cache.isCurSessionTeamManager = false
 
     //根据帐号跟消息类型获取消息数据
     if(scene=="p2p"){
@@ -174,6 +178,9 @@ YX.fn.openChatBox = function (account, scene) {
             this.$chatTitle.find('img').attr('src', "images/normal.png") 
             this.$nickName.text(account) 
         }
+        this.getTeamMembers(account, function () {
+            that.cache.isCurSessionTeamManager = that.cache.isTeamManager(userUID, that.crtSessionAccount)
+        })
         this.crtSessionTeamType = info? info.type : "normal"   
     }
     this.doPoint()

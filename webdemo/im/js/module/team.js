@@ -62,7 +62,10 @@ YX.fn.buildTeams = function (id) {
  * 主动去拿群列表
  */
 YX.fn.getTeamMembers = function (id, callback) {
-	var that = this
+	if (!(callback instanceof Function)) {
+		callback = function () {}
+	}
+ 	var that = this
 	this.mysdk.getTeamMembers(id, function (err, obj) {
 		if (!err) {
 			that.cache.setTeamMembers(id, obj)

@@ -558,11 +558,12 @@ fn.joinChannel = function (isReConnect) {
             }.bind(this)).catch(function (e) {
                 console.error(e);
                 this.log("连接出错");
-                if (e === '信令链接地址缺失') {
+                if (/webrtc兼容开关/i.test(e)) {
                     minAlert.alert({
                         type: 'error',
-                        msg: '无法接通!请让呼叫方打开"WebRTC兼容开关"，方可正常通话', //消息主体
+                        msg: '无法加入房间!请让呼叫方打开"WebRTC兼容开关"，方可正常通话', //消息主体
                         confirmBtnMsg: '知道了，挂断',
+                        cbCancel: this.leaveChannel.bind(this),
                         cbConfirm: this.leaveChannel.bind(this)
                     })
                 }
@@ -696,13 +697,16 @@ fn.onJoinChannel = function (obj) {
 
 /** 有第三方离开房间 */
 fn.onLeaveChannel = function (obj) {
-    console.log(obj);
-    this.nodeLoadingStatus(obj.account, '已挂断');
-    this.stopRemoteStreamMeeting(obj.account);
-
-    delete this.meetingCall.joinedMembers[obj.account];
-    //刷新禁言状态
-    this.updateBanStatus();
+    if(this.meetingCall.joinedMembers) {
+        console.log(obj);
+        this.nodeLoadingStatus(obj.account, '已挂断');
+        this.stopRemoteStreamMeeting(obj.account);
+    
+        delete this.meetingCall.joinedMembers[obj.account];
+        //刷新禁言状态
+        this.updateBanStatus();
+    }
+    
 }
 
 /** 音视频通信状态重置 */

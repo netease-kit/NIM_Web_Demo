@@ -19,6 +19,17 @@ YX.fn.messageHandler = function(msg,callback) {
 		case 'removeTeamMembers':	// 移除成员
 			this.removeMembersNotification(msg,callback)
 			break
+		case 'addTeamManagers':
+		case 'removeTeamManagers':
+			if (this.crtSessionType === 'team' && this.crtSession) {
+				this.getTeamMembers(team.teamId, function () {
+					this.cache.isCurSessionTeamManager = this.cache.isTeamManager(userUID, this.crtSessionAccount)
+					this.buildSessions()
+					this.doChatUI(this.crtSession)
+				}.bind(this))
+				this.cache.addMsgs(msg)
+			}
+			break
 		case 'leaveTeam':		// 离开群
 			this.leaveTeamNotification(msg,callback)
 			break
@@ -37,7 +48,18 @@ YX.fn.messageHandler = function(msg,callback) {
 		case 'updateTeamMute':
 			this.updateTeamMuteNotification(msg,callback)
 			break
+		case 201: // 白板互动结束后的回单
+			break
+		case 202: // 白板互动未接受时，发起方结束，被邀请方收到的回单
+			break
+		case 'rejectWhiteboard': // 拒绝白板邀请的回单
+			break
+		case 'whiteboardRejected': // 白板邀请被拒绝的回单
+			break
+		case 'cancelWhiteBoardBeforeAccept': // // 白板互动未接受时，发起方结束，发起方收到的回单
+			break
 		default:				// 其他
+			if (window.yunXin.WB.session.length !== 0 && (type === 'rejectNetcall' || type === 'netcallRejected')) return
 			console.log("type-->" + type)
 			this.cache.addMsgs(msg)
     		callback()

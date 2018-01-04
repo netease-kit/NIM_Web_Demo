@@ -38,6 +38,8 @@ var appUI = {
             user = cache.getUserById(msg.from);
         var message = msg;
         if (message.attach && message.attach.netcallType !== undefined && (message.attach.type !== 'netcallBill' && message.attach.type !== "netcallMiss")) return ''; // 隐藏掉netcall相关的系统消息
+        // 白板互动结束后会收到的互动时长通知，demo中暂不需要，屏蔽            
+        if (message.type === 'notification' && (message.attach.type === 201 || message.attach.type === 202)) return '';
         if (lastItem.length == 0) {
             msgHtml += this.makeTimeTag(transTime(msg.time));
         } else {
@@ -55,9 +57,10 @@ var appUI = {
     makeChatContent: function (message, user) {
         var msgHtml;
         //通知类消息
-
         if (message.attach && message.attach.type && (message.attach.netcallType === undefined || (message.attach.type !== "netcallBill" && message.attach.type !== "netcallMiss"))) {
             if (message.attach.netcallType !== undefined) return ''; // 隐藏掉netcall相关的系统通知消息
+            // 白板互动结束后会收到的互动时长通知，会触发聊天框的新增，屏蔽
+            if (message.type === 'notification' && (message.attach.type === 201 || message.attach.type === 202)) return '';
             var notificationText = transNotification(message);
             msgHtml = '<p class="u-notice tc item" data-time="' + message.time + '" data-id="' + message.idClient + '" data-idServer="' + message.idServer + '"><span class="radius5px">' + notificationText + '</span></p>';
         } else {

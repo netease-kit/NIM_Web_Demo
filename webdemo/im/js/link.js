@@ -55,6 +55,7 @@ var SDKBridge = function (ctr, data) {
     //系统通知
     onsysmsg: onSysMsg.bind(this, 1),
     onofflinesysmsgs: onOfflineSysmsgs.bind(this),
+    onroamingsysmsgs: onRoamingSysmsgs.bind(this),
     onupdatesysmsg: onSysMsg.bind(this, 0),
     oncustomsysmsg: onCustomSysMsg.bind(this),
     onofflinecustomsysmsgs: onOfflineCustomSysMsgs.bind(this),
@@ -179,6 +180,7 @@ var SDKBridge = function (ctr, data) {
   function onUpdatesession(session) {
     var id = session.id || "";
     var old = this.cache.getSessions();
+    var msg = session.lastMsg;
     this.cache.setSessions(this.nim.mergeSessions(old, session));
     this.controller.buildSessions(id);
   };
@@ -225,9 +227,34 @@ var SDKBridge = function (ctr, data) {
   function onOfflineSysmsgs(sysMsgs) {
     var data = this.cache.getSysMsgs();
     var array = [];
+    var offlineMsgs = []
     for (var i = sysMsgs.length - 1; i >= 0; i--) {
       if (sysMsgs[i].category === "team") {
         array.push(sysMsgs[i]);
+      }
+      if (sysMsgs[i].type === 'deleteMsg') {
+        var msg = sysMsgs[i]
+        ctr.backoutMsg(msg.deletedIdClient, msg)
+      }
+    };
+    array = this.nim.mergeSysMsgs(data, array).sort(function (a, b) {
+      return b.time - a.time;
+    });
+    this.cache.setSysMsgs(array);
+    this.cache.addSysMsgCount(array.length);
+  }
+
+  function onRoamingSysmsgs(sysMsgs) {
+    var data = this.cache.getSysMsgs();
+    var array = [];
+    var offlineMsgs = []
+    for (var i = sysMsgs.length - 1; i >= 0; i--) {
+      if (sysMsgs[i].category === "team") {
+        array.push(sysMsgs[i]);
+      }
+      if (sysMsgs[i].type === 'deleteMsg') {
+        var msg = sysMsgs[i]
+        ctr.backoutMsg(msg.deletedIdClient, msg)
       }
     };
     array = this.nim.mergeSysMsgs(data, array).sort(function (a, b) {

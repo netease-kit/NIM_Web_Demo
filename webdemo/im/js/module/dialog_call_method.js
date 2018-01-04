@@ -18,6 +18,7 @@ NetcallBridge.fn.dialog_call = {
         this.cbCancel = option.cbCancel || function () { };
         this.yx = option.yx || {}
         this.env = option.env || this;
+        this.isWhiteboard = option.isWhiteboard || false
 
         var $dialog = this.$dialog = $('#dialogCallMethod'), that = this;
 
@@ -80,6 +81,10 @@ NetcallBridge.fn.dialog_call = {
             }
             if(that.callMethod){
                 $('.radio[data-type=' + that.callMethod + ']').addClass('active')
+            }
+
+            if(!that.isWhiteboard){
+                $('#whiteboard-tip').addClass('hide')
             }
             
             $dialog.find('.J-webrtc').toggleClass('hide', !that.callMethod || that.callMethod === 'webrtc')

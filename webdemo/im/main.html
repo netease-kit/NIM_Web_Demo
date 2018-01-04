@@ -13,6 +13,8 @@
 	<link rel="stylesheet" href="css/uiKit.css" />
 	<link rel="stylesheet" href="css/CEmojiEngine.css" />
 	<link rel="stylesheet" href="css/rangeslider.css" />
+	<link rel="stylesheet" href="css/pure-min.css">
+	<link rel="stylesheet" href="css/whiteboard.css" />
 	<link rel="icon" href="images/icon.ico" type="image/x-icon" />
 </head>
 
@@ -245,12 +247,12 @@
 									<button class="netcall-button red beCallingRejectButton">拒绝</button>
 									<div class="exception-tip">拒绝调用插件申请会导致无法唤起插件,需重启浏览器</div>
 								</div>
-
 							</div>
 						</div>
 						<div class="dialogs hide">
 						</div>
 					</div>
+					<div id="whiteboard"></div>
 					<div class="chat-content box-sizing" id="chatContent">
 						<!-- 聊天记录 -->
 					</div>
@@ -264,6 +266,8 @@
 						</span>
 						<a class="chat-btn u-netcall-audio-link" id="showNetcallAudioLink">&nbsp;</a>
 						<a class="chat-btn u-netcall-video-link" id="showNetcallVideoLink">&nbsp;</a>
+						<!-- 在netcall_ui.js的fn.whenOpenChatBox中隐藏 -->
+						<a class="chat-btn u-whiteboard" id="showWhiteboard">&nbsp;</a>
 						<textarea id="messageText" class="chat-btn msg-input box-sizing radius5px p2p" rows="1" autofocus="autofocus" maxlength="500"></textarea>
 						<a class="btn-send radius5px" id="sendBtn">发送</a>
 						<form action="#" id="uploadForm">
@@ -295,6 +299,11 @@
 			</div>
 		</div>
 		<div class="asideBox">
+			<div class="m-goWhiteboard hide">
+				<span class="whiteboard-icon-state netcall-icon-state-audio"></span>
+				<div class="nick"></div>
+				<div class="tip"></div>
+			</div>
 			<div class="m-goNetcall hide">
 				<span class="netcall-icon-state netcall-icon-state-audio"></span>
 				<div class="nick">&nbsp;</div>
@@ -569,12 +578,30 @@
 		</div>
 	</div>
 	<div id="mask" class="mask hide"></div>
+	<script>
+			// IE 11 polify
+			if(!Object.assign) {
+				Object.assign = function () {
+					var list = arguments
+					for (var i = 1; i < list.length; i++) {
+						list[0] = extend(list[0], list[i])
+					}
+					return list[0]
+				}
 
-	<!-- js-->
+			function extend(obj1, obj2) {
+				for (var i in obj2) {
+					obj1[i] = obj2[i]
+				}
+				return obj1
+			}
+		}
 
-	<script src="../3rd/NIM_Web_SDK_v4.4.0.js"></script>
-	<script src="../3rd/NIM_Web_Netcall_v4.4.0.js"></script>
-	<script src="../3rd/NIM_Web_WebRTC_v4.4.0.js"></script>
+	</script>
+	<script src="../3rd/NIM_Web_SDK_v4.6.0.js"></script>
+	<script src="../3rd/NIM_Web_Netcall_v4.5.8.js"></script>
+	<script src="../3rd/NIM_Web_WebRTC_v4.5.8.js"></script>
+	<script src="../3rd/NIM_Web_WhiteBoard_v4.5.8.js"></script>
 
 	<script src="../3rd/jquery-1.11.3.min.js"></script>
 	<!--<script src="../3rd/zepto.min.js"></script>-->
@@ -598,18 +625,6 @@
 			// 	msg: JSON.stringify(info),
 			// 	confirmBtnMsg: '好哒'
 			// })
-		}
-		/** 测试用 */
-		window.sdp = function (str) {
-			if (!str) return
-			var reg = /(v=|o=[^0-9]|s=-|t=0|a=|b=|c=I|m=|t=0)\w{0,1}/gi
-			// var res = str.match(reg)
-			var res = str.replace(reg, function (item) {
-				return '<br>\r\n' + item
-				// console.log(item)
-			})
-			// console.log(res)
-			return res
 		}
 	</script>
 
@@ -645,6 +660,83 @@
 	<script src="js/module/netcall_ui.js"></script>
 	<script src="js/module/dialog_call_method.js"></script>
 	<script src="js/main.js?v=2"></script>
+	<script src="../3rd/vue.min.js"></script>
+	<script id="whiteboard-template" type="text/x-template">
+		<div v-show="display" class="function-box whiteboard">
+			<div v-if="banner.length" class="whiteboard-banner">
+				<p>{{ banner }}</p>
+			</div>
+			<div v-if="tip.length" class="whiteboard-mask">
+				<p>{{ tip }}</p>
+			</div>
+			<div v-if="bottomTip.length" class="whiteboard-bottom-tip">
+				<p>{{ bottomTip }}</p>
+			</div>
+			<!-- P2P呼叫界面 -->
+			<div v-if="!connected && isCalling">
+				<img :src="avatar || 'images/default-icon.png'" alt="用户头像" class="avatar">
+				<div class="nick">{{ nick }}</div>
+				<div class="tip">{{ this.statusTip || '正在邀请对方，请稍候...' }} </div>
+				<div class="op">
+					<button @click="hangup" class="pure-button hangup">取消</button>
+				</div>
+			</div>
+			<!-- P2P被叫界面 -->
+			<div v-if="!connected && isCalled">
+				<img :src="avatar || 'images/default-icon.png'" alt="用户头像" class="avatar">
+				<div class="nick">{{ nick }}</div>
+				<div class="tip">{{ this.statusTip || '邀请你进行白板互动' }}</div>
+				<div v-if="needAgent" class="op download">
+					<div>
+						<button @click="downloadAgent" class="pure-button accept">下载插件</button>
+					</div>
+					<div>
+						<button @click="reject" class="pure-button hangup">拒绝</button>
+					</div>
+					<div>
+						<p>拒绝调用插件申请会导致无法唤起插件</p>
+						<p>需重启浏览器</p>
+					</div>
+				</div>
+				<div v-else class="op">
+					<button @click="accept" class="pure-button accept">
+						<span v-if="!waiting">接受</span>
+						<span v-else class="netcall-icon-checking"></span>
+					</button>
+					<button @click="reject" class="pure-button hangup">拒绝</button>
+				</div>
+			</div>
+			<!-- P2P白板界面 -->
+			<div v-show="connected" class="whiteboard-ui pure-g">
+				<div ref="container" class="pure-u-1-2 whiteboard-container"></div>
+				<div class="pure-u-1-2 control-panel">
+					<div class="pure-g btns">
+						<div class="pure-u-1-3 control-btn">
+							<div class="btn-tip">撤销</div>
+							<span @click="undo" class="icon-undo"></span>
+						</div>
+						<div class="pure-u-1-3 control-btn">
+							<div class="btn-tip">清除全部笔迹</div>
+							<span @click="clear" class="icon-clear"></span>
+						</div>
+						<div class="pure-u-1-3 control-btn">
+							<div v-if="!canWeUseMicro" class="alert-icon">!</div>
+							<div v-if="!canWeUseMicro" class="btn-tip">麦克风不可用</div>
+							<div v-else-if="isMicroOpen" class="btn-tip">关闭己方语音</div>
+							<div v-else class="btn-tip">开启己方语音</div>
+							<span @click="switchAudio" class="icon-mic" :class="{ 
+								close: !isMicroOpen,
+								disable: !canWeUseMicro
+							}"></span>
+						</div>
+					</div>
+					<button @click="hangup" class="pure-button hangup">结束</button>
+				</div>
+			</div>
+			<div class="dialogs"></div>
+		</div>
+	</script>
+	<script src="js/module/whiteboard.js"></script>
 </body>
 
-</html>html>
+</html>

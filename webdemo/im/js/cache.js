@@ -187,16 +187,11 @@ var Cache = (function(){
       }
       this.msgs[user].push(msg);
     }
-    for(var i = 0;i<this.sessions.length;i++){
-      if(user===this.sessions[i]){
-        this.sessions.splice(i,1);
-        break;
-      }
-    }
   };
   Cache.prototype.addMsgsByReverse = function(msgs) {
-    var item,
-      user;
+    var item
+    var user
+    var cacheSession = {}
     for (var i = 0; i <msgs.length; i++) {
       if(msgs[i].scene==="team"){
         user = msgs[i].to;
@@ -204,14 +199,21 @@ var Cache = (function(){
           this.msgs["team-"+user] = [];
         }
         this.msgs["team-"+user].unshift(msgs[i]);
+        cacheSession["team-" + user] = true
       }else{
         user = (msgs[i].from === userUID?msgs[i].to:msgs[i].from);
         if(!this.msgs["p2p-"+user]){
           this.msgs["p2p-"+user] = [];
         }
         this.msgs["p2p-"+user].unshift(msgs[i]);
+        cacheSession["p2p-" + user] = true
       }
     };
+    for (var sid in cacheSession) {
+      this.msgs[sid] = this.msgs[sid].sort(function (a, b) {
+        return a.time - b.time;
+      });
+    }
   };
   //查消息 session-id idClient
   Cache.prototype.findMsg = function(sid, cid) {
@@ -321,7 +323,7 @@ var Cache = (function(){
    */
   Cache.prototype.addOfflineMsgs= function(msgs) {
     for (var i = msgs.length - 1; i >= 0; i--) {
-      if (/text|image|file|audio|video|geo|custom|notification/i.test(msgs[i].type)) {
+      if (/text|image|file|audio|video|geo|custom|notification|deleteMsg/i.test(msgs[i].type)) {
         this.addMsgs(msgs[i]);
       }else{
         continue;
