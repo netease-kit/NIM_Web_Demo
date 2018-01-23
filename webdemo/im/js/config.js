@@ -1,6 +1,6 @@
 (function() {
     // 配置
-    var envir = 'test';
+    var envir = 'online';
     var configMap = {
         dev: {
             appkey: '39ce20c26fef2fe1d28cfe65dd9fe576',
