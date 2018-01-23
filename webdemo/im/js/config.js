@@ -1,22 +1,22 @@
 (function() {
     // 配置
-    var envir = 'online';
+    var envir = 'test';
     var configMap = {
         dev: {
-            appkey: 'fe416640c8e8a72734219e1847ad2547',
+            appkey: '39ce20c26fef2fe1d28cfe65dd9fe576',
             url:'https://apptest.netease.im'
         },
         test: {
-            appkey: 'fe416640c8e8a72734219e1847ad2547',
+            appkey: '39ce20c26fef2fe1d28cfe65dd9fe576',
             url:'https://apptest.netease.im'
         },
         pre:{
-    		appkey: '45c6af3c98409b18a84451215d0bdd6e',
+            appkey: '45c6af3c98409b18a84451215d0bdd6e',
     		url:'http://preapp.netease.im:8184'
         },
         online: {
-           appkey: '45c6af3c98409b18a84451215d0bdd6e',
-           url:'https://app.netease.im'
+            appkey: '45c6af3c98409b18a84451215d0bdd6e',
+            url:'https://app.netease.im'
         }
     };
     window.CONFIG = configMap[envir];

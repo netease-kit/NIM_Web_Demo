@@ -36,7 +36,7 @@ html, body {
     content:' ';
     position: absolute;
     top: 22px;
-    left: 35px;
+    left: 58px;
 }
 .icon-pic {
     background-position: 0 -79px;
@@ -169,7 +169,7 @@ html, body {
 .panel a {
     display: inline-block;
     float: left;
-    width: 33.3%;
+    width: 50%;
     margin: 5px 0;
 }
 .panel .panel_tab{
