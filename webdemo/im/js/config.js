@@ -3,11 +3,11 @@
     var envir = 'online';
     var configMap = {
         dev: {
-            appkey: '39ce20c26fef2fe1d28cfe65dd9fe576',
+            appkey: '',
             url:'https://apptest.netease.im'
         },
         test: {
-            appkey: '39ce20c26fef2fe1d28cfe65dd9fe576',
+            appkey: '',
             url:'https://apptest.netease.im'
         },
         pre:{
