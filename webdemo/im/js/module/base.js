@@ -18,7 +18,6 @@ YX.fn.initModule = function () {
     this.sysMsg()
     this.session()
     this.friend()
-    this.team()
     this.cloudMsg()
 }
 YX.fn.initBase = function () {

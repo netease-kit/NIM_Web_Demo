@@ -1,0 +1,170 @@
+.box-content,
+.box-title {
+  width: 100%;
+  float: left;
+}
+
+.box-content .box-content-icon {
+  /* float: left; */
+  position: absolute;
+  transform: translate(-50%, 0%);
+  margin-left: 20px;
+}
+
+.box-content-icon i {
+  font-size: 25px;
+  color: #fff;
+}
+
+.box-content-inner {
+  float: left;
+  margin-left: 45px;
+}
+
+.box-content-inner span {
+  display: inline-block;
+  float: left;
+  width: 100%;
+  color: #fff;
+}
+
+.box-content-inner span:first-child {
+  font-size: 14px;
+}
+
+.box-content-inner span:last-child {
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.msg-idcard .portrait {
+  width: 30px;
+  height: 30px;
+  border-radius: 5px;
+  margin: 0;
+}
+
+.item-you .msg-transfer,
+.item-you .msg-receipt,
+.item-you .msg-creditReport,
+.item-you .msg-owe,
+.item-you .msg-idcard {
+  /* width: 40%; */
+  float: left;
+  color: #6b8299;
+  /* background: #fff; */
+  border-color: #eee;
+}
+
+.msg-transfer,
+.msg-receipt,
+.msg-creditReport,
+.msg-owe,
+.msg-idcard {
+  padding: 0;
+  width: 100%;
+  display: inline-block;
+  border-radius: 5px;
+}
+
+.msg-transfer .box-content,
+.msg-receipt .box-content,
+.msg-creditReport .box-content,
+.msg-owe .box-content,
+.msg-idcard .box-content {
+  padding: 10px 0 10px 0;
+  position: relative;
+  min-height: 30px;
+}
+
+.msg-transfer .icon,
+.msg-receipt .icon,
+.msg-creditReport .icon,
+.msg-owe .icon,
+.msg-idcard .icon {
+  background-image: none;
+  width: auto;
+  height: auto;
+}
+
+.msg-transfer .box-title,
+.msg-receipt .box-title,
+.msg-creditReport .box-title,
+.msg-owe .box-title,
+.msg-idcard .box-title {
+  height: 30px;
+  line-height: 30px;
+  background-color: #fff;
+  font-size: 14px;
+  color: #333;
+  font-size: 14px;
+  /* padding-left: 10px; */
+}
+
+.msg-transfer .box-title span,
+.msg-receipt .box-title span,
+.msg-creditReport .box-title span,
+.msg-owe .box-title span,
+.msg-idcard .box-title span {
+  margin-left: 10px;
+}
+
+.item-you .msg-transfer:before {
+  border-right: 5px solid #e6494e;
+}
+
+.item-you .msg-receipt:before {
+  border-right: 5px solid #4d7bfe;
+}
+
+.item-you .msg-creditReport:before {
+  /* border-right: 5px solid #fff; */
+}
+
+.item-you .msg-idcard:before {
+  /* border-right: 5px solid #fff; */
+}
+
+.item-you .msg-owe:before {
+  border-right: 5px solid #ff9808;
+}
+
+.msg-transfer{
+  background-color: #e6494e;
+}
+
+.msg-receipt{
+  background-color: #4d7bfe;
+}
+
+.msg-creditReport{
+  background-color: #fff;
+}
+
+.msg-idcard{
+  background-color: #fff;
+}
+
+.msg-owe{
+  background-color: #ff9808;
+}
+
+.msg-creditReport .box-content-inner span,
+.msg-idcard .box-content-inner span {
+  color: #333;
+}
+
+.msg-creditReport .box-content-icon i,
+.msg-idcard .box-content-icon i {
+  color: #4d7bfe;
+}
+
+.msg-creditReport .box-title,
+.msg-idcard .box-title {
+  border-top: 1px solid #ddd;
+}
+.box-wrap{
+  width: 210px;
+  display: inline-block;
+
+}

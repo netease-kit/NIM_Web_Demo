@@ -59,7 +59,7 @@ YX.fn.messageHandler = function(msg,callback) {
 		case 'cancelWhiteBoardBeforeAccept': // // 白板互动未接受时，发起方结束，发起方收到的回单
 			break
 		default:				// 其他
-			if (window.yunXin.WB.session.length !== 0 && (type === 'rejectNetcall' || type === 'netcallRejected')) return
+			if (type === 'rejectNetcall' || type === 'netcallRejected') return
 			console.log("type-->" + type)
 			this.cache.addMsgs(msg)
     		callback()

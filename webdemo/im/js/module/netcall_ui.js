@@ -425,10 +425,10 @@ fn.onClickNetcallLink = function (type) {
     // 已经处于音视频通话中，弹窗提示
     // 已经处于互动白板流程中，弹窗提示
     var WB = window.yunXin.WB
-    if (that.netcallActive || WB.isCalling || WB.isCalled) {
+    if (that.netcallActive) {
         minAlert.alert({
             type: 'error',
-            msg: (WB.isCalling || WB.isCalled) ? '正在互动白板流程中，无法发起通话' : '正在通话中，无法发起新的通话', //消息主体
+            msg: '请挂断再点击', //消息主体
             cancelBtnMsg: '知道了' //取消按钮的按钮内容
         });
         return;

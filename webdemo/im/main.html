@@ -15,6 +15,8 @@
 	<link rel="stylesheet" href="css/rangeslider.css" />
 	<link rel="stylesheet" href="css/pure-min.css">
 	<link rel="stylesheet" href="css/whiteboard.css" />
+	<link rel="stylesheet" href="css/extends.css" />
+	<link rel="stylesheet" href="icon/iconfont.css" />
 	<link rel="icon" href="images/icon.ico" type="image/x-icon" />
 </head>
 
@@ -214,13 +216,9 @@
 					<div class="chat-editor box-sizing" id="chatEditor" data-disabled="1">
 						<div id="emojiTag" class="m-emojiTag"></div>
 						<a class="chat-btn u-emoji" id="showEmoji"></a>
-						<span class="chat-btn msg-type" id="chooseFileBtn">
-							<a class="icon icon-file" data-type="file"></a>
-						</span>
 						<a class="chat-btn u-netcall-audio-link" id="showNetcallAudioLink">&nbsp;</a>
 						<a class="chat-btn u-netcall-video-link" id="showNetcallVideoLink">&nbsp;</a>
 						<!-- 在netcall_ui.js的fn.whenOpenChatBox中隐藏 -->
-						<a class="chat-btn u-whiteboard" id="showWhiteboard">&nbsp;</a>
 						<textarea id="messageText" class="chat-btn msg-input box-sizing radius5px p2p" rows="1" autofocus="autofocus" maxlength="500"></textarea>
 						<a class="btn-send radius5px" id="sendBtn">发送</a>
 						<form action="#" id="uploadForm">
@@ -574,6 +572,7 @@
 	<script src="js/3rd/contextMenu/jquery.ui.position.js"></script>
 	<script src="js/3rd/contextMenu/jquery.contextMenu.js"></script>
 
+	<script src="js/extend.js"></script>
 	<script src="js/config.js"></script>
 	<script src="js/emoji.js"></script>
 	<script src="js/util.js?v=2"></script>
@@ -589,7 +588,6 @@
 	<script src="js/module/session.js"></script>
 	<script src="js/module/friend.js"></script>
 
-	<script src="js/module/team.js"></script>
 	<script src="js/module/dialog_team.js"></script>
 	<script src="js/module/cloudMsg.js"></script>
 	<script src="js/module/notification.js"></script>
@@ -662,7 +660,7 @@
 							<div v-if="!canWeUseMicro" class="btn-tip">麦克风不可用</div>
 							<div v-else-if="isMicroOpen" class="btn-tip">关闭己方语音</div>
 							<div v-else class="btn-tip">开启己方语音</div>
-							<span @click="switchAudio" class="icon-mic" :class="{ 
+							<span @click="switchAudio" class="icon-mic" :class="{
 								close: !isMicroOpen,
 								disable: !canWeUseMicro
 							}"></span>
@@ -674,7 +672,6 @@
 			<div class="dialogs"></div>
 		</div>
 	</script>
-	<script src="js/module/whiteboard.js"></script>
 </body>
 
 </html>

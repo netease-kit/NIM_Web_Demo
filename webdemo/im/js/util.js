@@ -7,7 +7,7 @@ if (!Function.prototype.bind) {
     }
 }
 
-//写cookies 
+//写cookies
 function setCookie(name, value) {
     var days = 1;
     var exp = new Date();
@@ -15,7 +15,7 @@ function setCookie(name, value) {
     document.cookie = name + "=" + escape(value) + ";path=/;expires=" + exp.toGMTString();
 }
 
-//读取cookies 
+//读取cookies
 function readCookie(name) {
     var arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
     if (arr = document.cookie.match(reg)) {
@@ -26,7 +26,7 @@ function readCookie(name) {
 
 }
 
-//删除cookies 
+//删除cookies
 function delCookie(name) {
     var cval = readCookie(name);
     if (cval != null) {
@@ -248,20 +248,90 @@ function getMessage(msg) {
             str = sentStr + '一条[地理位置]消息';
             break;
         case 'custom':
-            var content = JSON.parse(msg.content);
-            if (content.type === 1) {
-                str = sentStr + '一条[猜拳]消息,请到手机或电脑客户端查看';
-            } else if (content.type === 2) {
-                str = sentStr + '一条[阅后即焚]消息,请到手机或电脑客户端查看';
-            } else if (content.type === 3) {
-                var catalog = _$escape(content.data.catalog),
-                    chartvar = _$escape(content.data.chartlet);
-                str = '<img class="chartlet" onload="loadImg()" src="./images/' + catalog + '/' + chartvar + '.png">';
-            } else if (content.type == 4) {
-                str = msg.fromNick + '发起了[白板互动]';
-            } else {
-                str = sentStr + '一条[自定义]消息，请到手机或电脑客户端查看';
+            var content = JSON.parse(msg.content).data;
+            switch (content.type) {
+                case 'xybg':
+                    str = '<div class="box-wrap msg-creditReport"  onclick="javascript: ExtendsFn.showXYBG(\'' + msg.target +'\');">' +
+                        '<div class="box-content">' +
+                        '<div class="box-content-icon">' +
+                        '<i class="icon iconfont icon-xinyongbaogaofasongtubiao"></i>' +
+                        '</div>' +
+                        '<div class="box-content-inner">' +
+                        '<!-- <span>1000元</span> -->' +
+                        '<span>' + content.title + '</span>' +
+                        '</div>' +
+                        '</div>' +
+                        '<div class="box-title">' +
+                        '<span>信用报告</span>' +
+                        '</div>'+
+                        '</div>';
+                    break;
+                case 'jt':
+                    str = '<div class="box-wrap msg-receipt" onclick="javascript: ExtendsFn.showJT(\'' + content.id +'\');">' +
+                        '<div class="box-content">' +
+                        '<div class="box-content-icon">' +
+                        '<i class="icon iconfont icon-jie"></i>' +
+                        '</div>' +
+                        '<div class="box-content-inner">' +
+                        '<span>' + content.money + '元</span>' +
+                        '<span>打个借条</span>' +
+                        '</div>' +
+                        '</div>' +
+                        '<div class="box-title">' +
+                        '<span>借条大师</span>' +
+                        '</div>' +
+                        '</div>';
+                    break;
+                case 'qt':
+                    str = '<div class="box-wrap msg-owe" onclick="javascript: ExtendsFn.showQT(\'' + content.id +'\');">' + 
+                        '<div class="box-content">' +
+                        '<div class="box-content-icon">' +
+                        '<i class="icon iconfont icon-qian"></i>' +
+                        '</div>' +
+                        '<div class="box-content-inner">' +
+                        '<span>' + content.money + '元</span>' +
+                        '<span>向你打个欠条</span>' +
+                        '</div>' +
+                        '</div>' +
+                        '<div class="box-title">' +
+                        '<span>借条大师</span>' +
+                        '</div>' +
+                        '</div>';
+                    break;
+                case 'zz':
+                    str = '<div class="box-wrap msg-transfer" onclick="javascript: ExtendsFn.showZZ(\'' + content.id +'\');">' +
+                        '<div class="box-content">' +
+                        '<div class="box-content-icon">' +
+                        '<i class="icon iconfont icon-transfer"></i>' +
+                        '</div>' +
+                        '<div class="box-content-inner">' +
+                        '<span>' + content.money + '元</span>' +
+                        '<span>转账</span>' +
+                        '</div>' +
+                        '</div>' +
+                        '<div class="box-title">' +
+                        '<span>借条大师</span>' +
+                        '</div>' +
+                        '</div>';
+                    break;
             }
+
+
+
+
+            // if (content.type === 1) {
+            //     str = sentStr + '一条[猜拳]消息,请到手机或电脑客户端查看';
+            // } else if (content.type === 2) {
+            //     str = sentStr + '一条[阅后即焚]消息,请到手机或电脑客户端查看';
+            // } else if (content.type === 3) {
+            //     var catalog = _$escape(content.data.catalog),
+            //         chartvar = _$escape(content.data.chartlet);
+            //     str = '<img class="chartlet" onload="loadImg()" src="./images/' + catalog + '/' + chartvar + '.png">';
+            // } else if (content.type == 4) {
+            //     str = msg.fromNick + '发起了[白板互动]';
+            // } else {
+            //     str = sentStr + '一条[自定义]消息，请到手机或电脑客户端查看';
+            // }
             break;
         case 'robot':
             str = sentStr + '一条[机器人]消息,请到手机或电脑客户端查看';
@@ -652,4 +722,3 @@ function getAllAccount(obj) {
     };
     return array;
 }
-

@@ -45,7 +45,7 @@ function CEmojiEngine(emNode,emConfig){
 
 CEmojiEngine.prototype.__init = function(emNode,emConfig){
 	this._emojiList = emConfig.emojiList||[];		//表情列表
-	this._pinupList = emConfig.pinupList||[];		//贴图列表
+	this._pinupList = []; //emConfig.pinupList||[];		//贴图列表
 	this._imgpath =  emConfig.imgpath;			//图片根目录
 	this._callback = emConfig.callback||function(){};			//回调函数
 	this.__initXGui(emNode,emConfig);		//控件初始化
@@ -112,15 +112,15 @@ CEmojiEngine.prototype.__renderChangeCol = function(){
 			span.className = 'f-sel';
 		}		
 	}
-	for(var i in this._pinupList){
-		var pinupList = this._pinupList[i];
-		var span = document.createElement('span');
-		span.id = 'chn-pinup-'+i;
-		var img = new Image();
-		img.src = "./images/"+ pinupList[0];
-		span.appendChild(img);
-		this._changeColumn.appendChild(span);		
-	}
+	// for(var i in this._pinupList){
+	// 	var pinupList = this._pinupList[i];
+	// 	var span = document.createElement('span');
+	// 	span.id = 'chn-pinup-'+i;
+	// 	var img = new Image();
+	// 	img.src = "./images/"+ pinupList[0];
+	// 	span.appendChild(img);
+	// 	this._changeColumn.appendChild(span);		
+	// }
 }
 
 CEmojiEngine.prototype.__renderPictureCol= function(){

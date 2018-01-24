@@ -199,7 +199,7 @@ html, body {
     overflow-y: auto;
     background-color: #fff;
     border-radius: 0 0 5px 5px;
-} 
+}
 .chat-vernier {
     position: absolute;
     margin-left: 6px;
@@ -273,7 +273,7 @@ html, body {
     opacity: 0.8;
     text-align: center;
     padding: 20px 0;
-    font-size: 14px;    
+    font-size: 14px;
 }
 .chat-mask{
     z-index: 5;
@@ -285,7 +285,7 @@ html, body {
     opacity: 0.8;
     text-align: center;
     padding: 20px 0;
-    font-size: 14px;  
+    font-size: 14px;
 }
 .chat-content {
     position: absolute;
@@ -337,9 +337,10 @@ html, body {
     color: #6b8299;
     background: #eaeeef;
     border-color: #eee;
-    -webkit-box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 1px 1px rgba(0, 0, 0, 0.06);
+        border-radius: 4px;
+    /* -webkit-box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 1px 1px rgba(0, 0, 0, 0.06);
     -moz-box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 1px 1px rgba(0, 0, 0, 0.06);
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 1px 1px rgba(0, 0, 0, 0.06);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 1px 1px rgba(0, 0, 0, 0.06); */
 }
 .item-me .msg-text {
     float: right;
@@ -388,6 +389,7 @@ html, body {
     position: relative;
     padding: 7px 12px;
     zoom: 1;
+        border-radius: 4px;
 }
 .msg .box:before {
     background-position: 0 -40px;
@@ -404,6 +406,7 @@ html, body {
     word-wrap: break-word;
     word-break: break-all;
     font-size: 14px;
+    border-radius: 4px;
 }
 .msg .cnt img {
     width: 100%;
@@ -646,7 +649,7 @@ html, body {
     top:50%;
     left: 50%;
     margin-left: -193px;
-    margin-top:-126px; 
+    margin-top:-126px;
     width: 386px;
     height: 252px;
     background-color: #fff;
@@ -715,10 +718,10 @@ html, body {
 /*添加好友（不是好友）*/
 .m-dialog.noFriend .btns .cancel,.m-dialog.noFriend .btns .search,.m-dialog.noFriend .btns .done,.m-dialog.noFriend .btns .chat，.m-dialog.noFriend .btns .blacklist{
     display: none;
-} 
+}
 .m-dialog.noFriend .btns .back,.m-dialog.noFriend .btns .add{
     display: inline-block;
-}                                                                          
+}
 .m-dialog.noFriend .content .ipt,.m-dialog.noFriend .content .tip{
     display: none;
 }
@@ -728,10 +731,10 @@ html, body {
 /*添加好友（是好友）*/
 .m-dialog.friend .btns .cancel,.m-dialog.friend .btns .search,.m-dialog.friend .btns .done,.m-dialog.friend .btns .add,.m-dialog.friend .btns .blacklist{
     display: none;
-} 
+}
 .m-dialog.friend .btns .back,.m-dialog.friend .btns .chat{
     display: inline-block;
-}                                                                          
+}
 .m-dialog.friend .content .ipt,.m-dialog.friend .content .tip{
     display: none;
 }
@@ -747,7 +750,7 @@ html, body {
 }
 .m-dialog.done .btns .cancel,.m-dialog.done .btns .search,.m-dialog.done .btns .add,.m-dialog.done .btns .chat,.m-dialog.done .btns .blacklist{
     display: none;
-} 
+}
 .m-dialog.done .btns .back,.m-dialog.done .btns .done{
     display: inline-block;
 }
@@ -761,10 +764,10 @@ html, body {
 }
 .m-dialog.blacklist .btns .cancel,.m-dialog.blacklist .btns .search,.m-dialog.blacklist .btns .add,.m-dialog.blacklist .btns .chat,.m-dialog.blacklist .btns .done{
     display: none;
-} 
+}
 .m-dialog.blacklist .btns .back,.m-dialog.blacklist .btns .blacklist{
     display: inline-block;
-} 
+}
 /*搜高级群 在群里*/
 .m-dialog.inTeam .info{
     display: block;
@@ -923,7 +926,7 @@ html, body {
 }
 .m-card .editUI .item{
     top:6px;
-} 
+}
 .m-card .infos .sign{
     margin-top: -4px;
     line-height: 22px;
@@ -967,7 +970,7 @@ html, body {
     text-overflow: ellipsis;
     white-space: nowrap;
     width: 200px;
-   
+
 }
 .m-card .alias .item{
     top:10px;
@@ -979,7 +982,7 @@ html, body {
     height: 16px;
     padding: 5px 10px;
     border-radius: 4px;
-    margin-left: 24px;    
+    margin-left: 24px;
     background-color: #0888ff;
     color:#fff;
 }
@@ -1224,7 +1227,7 @@ html, body {
     width: 230px;
     height: 42px;
     padding: 18px 0;
-    border-bottom:1px solid #e4e9ee; 
+    border-bottom:1px solid #e4e9ee;
 }
 .m-blacklist .items .head{
     float: left;
@@ -1282,7 +1285,7 @@ html, body {
     height: 305px;
     background-color: #e4e9ee;
     z-index: 999;
-   
+
 }
 .m-modifyAvatar .choseFileCtn .choseFile{
     position: absolute;
@@ -1335,7 +1338,7 @@ width: 40px;
 }
 .m-modifyAvatar .btns .btn{
     margin-left: 15px;
-    margin-right: 0px; 
+    margin-right: 0px;
 }
 
 .m-unread .u-unread{
@@ -1364,7 +1367,7 @@ width: 40px;
     color: #fff;
 }
 .u-switch .off{
-   color: #8496a9;   
+   color: #8496a9;
 }
 .m-card .btns{
     padding-top: 18px;
@@ -1721,7 +1724,7 @@ width: 40px;
     height: 94px;
 }
 
-/* 通话方式选择弹框样式 */ 
+/* 通话方式选择弹框样式 */
 .team-box h2{
     text-align: center;
     font-size: 18px;
@@ -2368,7 +2371,7 @@ width: 40px;
     margin:auto;
     justify-content: center;
     height: 240px;
-    
+
 }
 .netcall-box.fullscreen .netcall-show-video{
     height: 480px;
@@ -2696,7 +2699,7 @@ width: 40px;
     background-position: center;
     background-size: cover;
     background-blend-mode: darken;
-    position: relative;    
+    position: relative;
     overflow: hidden;
     box-sizing: border-box;
     color: #fff;
@@ -2858,7 +2861,7 @@ width: 40px;
 .netcall-meeting-box .option-box .tip{
     float: right;
 }
-/* 多人全屏模式 */ 
+/* 多人全屏模式 */
 .netcall-meeting-box.fullscreen .member-list{
     position: absolute;
     bottom: 50px;
@@ -2891,3 +2894,145 @@ width: 40px;
 .dialog-team-container .icon-micro.cur{
     background-position: -22px -262px;
 }
+
+/* --------- */
+/*
+.box-content,.box-title{
+  width: 100%;
+  float: left;
+}
+.box-content .box-content-icon{
+  position: absolute;
+  transform: translate(-50%, 0%);
+  margin-left: 20px;
+}
+.box-content-icon i{
+  font-size: 25px;
+  color: #fff;
+}
+.box-content-inner{
+  float: left;
+  margin-left: 45px;
+}
+.box-content-inner span{
+  display: inline-block;
+  float: left;
+  width: 100%;
+  color: #fff;
+}
+.box-content-inner span:first-child{
+  font-size: 14px;
+}
+.box-content-inner span:last-child{
+  font-size: 12px;
+  margin-top: 5px;
+}
+.msg-idcard .portrait{
+  width: 30px;
+  height: 30px;
+  border-radius: 5px;
+  margin: 0;
+}
+
+
+
+.item-you .msg-transfer,
+.item-you .msg-receipt,
+.item-you .msg-creditReport,
+.item-you .msg-owe,
+.item-you .msg-idcard{
+  width: 40%;
+  float: left;
+  color: #6b8299;
+  background: #fff;
+  border-color: #eee;
+}
+.msg-transfer .box,
+.msg-receipt .box,
+.msg-creditReport .box,
+.msg-owe .box,
+.msg-idcard .box{
+  padding:0;
+  width: 100%;
+  display: inline-block;
+  border-radius: 5px;
+}
+.msg-transfer .box-content,
+.msg-receipt .box-content,
+.msg-creditReport .box-content,
+.msg-owe .box-content,
+.msg-idcard .box-content{
+  padding: 10px 0 10px 0;
+  position:relative;
+      min-height: 30px;
+}
+.msg-transfer .icon,
+.msg-receipt .icon,
+.msg-creditReport .icon,
+.msg-owe .icon,
+.msg-idcard .icon{
+  background-image: none;
+  width: auto;
+  height: auto;
+}
+.msg-transfer .box-title,
+.msg-receipt .box-title,
+.msg-creditReport .box-title,
+.msg-owe .box-title,
+.msg-idcard .box-title{
+  height: 30px;
+  line-height: 30px;
+  background-color: #fff;
+  font-size: 14px;
+  color: #333;
+  font-size: 14px;
+}
+.msg-transfer .box-title span,
+.msg-receipt .box-title span,
+.msg-creditReport .box-title span,
+.msg-owe .box-title span,
+.msg-idcard .box-title span{
+  margin-left: 10px;
+}
+
+
+.item-you .msg-transfer:before{
+  border-right: 5px solid #e6494e;
+}
+.item-you .msg-receipt:before{
+  border-right: 5px solid #4d7bfe;
+}
+.item-you .msg-creditReport:before{
+}
+.item-you .msg-idcard:before{
+}
+.item-you .msg-owe:before{
+  border-right: 5px solid #ff9808;
+}
+.msg-transfer .box{
+  background-color: #e6494e;
+}
+.msg-receipt .box{
+  background-color: #4d7bfe;
+}
+.msg-creditReport .box{
+  background-color: #fff;
+}
+.msg-idcard .box{
+  background-color: #fff;
+}
+.msg-owe .box{
+  background-color: #ff9808;
+}
+.msg-creditReport .box-content-inner span,
+.msg-idcard .box-content-inner span{
+  color: #333;
+}
+.msg-creditReport .box-content-icon i,
+.msg-idcard .box-content-icon i{
+  color: #4d7bfe;
+}
+.msg-creditReport .box-title,
+.msg-idcard .box-title{
+  border-top: 1px solid #ddd;
+} */

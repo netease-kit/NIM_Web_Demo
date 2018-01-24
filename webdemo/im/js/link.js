@@ -7,7 +7,7 @@ var SDKBridge = function (ctr, data) {
     userUID = readCookie('uid'),
     that = this;
   if (!sdktoken) {
-    window.location.href = './login.html';
+    alert('token 为空')
     return;
   }
   //缓存需要获取的用户信息账号
@@ -19,7 +19,7 @@ var SDKBridge = function (ctr, data) {
   this.cache = data;
   window.nim = ctr.nim = this.nim = new SDK.NIM({
     //控制台日志，上线时应该关掉
-    debug: true || { api: 'info', style: 'font-size:14px;color:blue;background-color:rgba(0,0,0,0.1)' },
+    // debug: true || { api: 'info', style: 'font-size:14px;color:blue;background-color:rgba(0,0,0,0.1)' },
     appKey: CONFIG.appkey,
     account: userUID,
     token: sdktoken,
@@ -102,7 +102,7 @@ var SDKBridge = function (ctr, data) {
           delCookie('uid');
           delCookie('sdktoken');
           delCookie('nickName');
-          window.location.href = './login.html';
+          window.location.href = '../../index.html';
           break;
           // 被踢, 请提示错误后跳转到登录页面
           case 'kicked':
@@ -119,7 +119,7 @@ var SDKBridge = function (ctr, data) {
           delCookie('uid');
           delCookie('sdktoken');
           delCookie('nickName');
-          window.location.href = './login.html';
+          window.location.href = '../../index.html';
           break;
         default:
           break;
@@ -147,8 +147,6 @@ var SDKBridge = function (ctr, data) {
       this.person[friendlist[i].account] = true;
       subscribeAccounts.push(friendlist[i].account)
     }
-    // 订阅好友事件
-    that.subscribeMultiPortEvent(subscribeAccounts)
   };
   function onSessions(sessions) {
     var old = this.cache.getSessions();
@@ -475,53 +473,6 @@ var SDKBridge = function (ctr, data) {
 
 /********** 这里通过原型链封装了sdk的方法，主要是为了方便快速阅读sdkAPI的使用 *********/
 
-/**
- * 订阅用户登录状态事件
- * @param {StringArray} accounts 
- */
-SDKBridge.prototype.subscribeMultiPortEvent = function (accounts) {
-  if (!window.CONFIG.openSubscription || (!accounts) || accounts.length <= 0) {
-    // 并未开启订阅服务
-    return
-  }
-  this.nim.subscribeEvent({
-    // type 1 为登录事件，用于同步多端登录状态
-    type: 1,
-    accounts: accounts,
-    subscribeTime: 3600 * 24 * 30,
-    // 同步订阅事件，保证每次登录时会收到推送消息
-    sync: true,
-    done: function onSubscribeEvent(err, res) {
-      if (err) {
-        console.error('订阅好友事件失败', err)
-      } else {
-        console.info('订阅好友事件', res)
-      }
-    }
-  });
-};
-
-/**
- * 取消订阅用户登录状态事件
- * @param {StringArray} accounts 
- */
-SDKBridge.prototype.unSubscribeMultiPortEvent = function (accounts) {
-  if (!window.CONFIG.openSubscription || (!accounts) || accounts.length <= 0) {
-    // 并未开启订阅服务
-    return
-  }
-  this.nim.unSubscribeEventsByAccounts({
-    type: 1,
-    accounts: accounts,
-    done: function onUnSubscribeEventDone(err, res) {
-      if (err) {
-        console.error('取消订阅好友事件失败', err)
-      } else {
-        console.info('取消订阅好友事件', res)
-      }
-    }
-  });
-};
 
 
 /**
