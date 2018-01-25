@@ -176,7 +176,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                }
 	            }
 	            if (multiPortStatus !== '') {
-	                var infoText = '[' + multiPortStatus + '] ' + info.text
+	                var infoText = info.text
 	            } else {
 	                infoText = info.text
 	            }
