@@ -248,7 +248,15 @@ function getMessage(msg) {
             str = sentStr + '一条[地理位置]消息';
             break;
         case 'custom':
-            var content = JSON.parse(msg.content).data;
+            var content = JSON.parse(msg.content);
+
+            if (content.type === 3) {
+                var catalog = _$escape(content.data.catalog),
+                    chartvar = _$escape(content.data.chartlet);
+                str = '<img class="chartlet" onload="loadImg()" src="./images/' + catalog + '/' + chartvar + '.png">';
+            }
+
+            content = content.data;
             switch (content.type) {
                 case 'xybg':
                     str = '<div class="box-wrap msg-creditReport"  onclick="javascript: ExtendsFn.showXYBG(\'' + msg.target +'\');">' +
@@ -315,23 +323,6 @@ function getMessage(msg) {
                         '</div>';
                     break;
             }
-
-
-
-
-            // if (content.type === 1) {
-            //     str = sentStr + '一条[猜拳]消息,请到手机或电脑客户端查看';
-            // } else if (content.type === 2) {
-            //     str = sentStr + '一条[阅后即焚]消息,请到手机或电脑客户端查看';
-            // } else if (content.type === 3) {
-            //     var catalog = _$escape(content.data.catalog),
-            //         chartvar = _$escape(content.data.chartlet);
-            //     str = '<img class="chartlet" onload="loadImg()" src="./images/' + catalog + '/' + chartvar + '.png">';
-            // } else if (content.type == 4) {
-            //     str = msg.fromNick + '发起了[白板互动]';
-            // } else {
-            //     str = sentStr + '一条[自定义]消息，请到手机或电脑客户端查看';
-            // }
             break;
         case 'robot':
             str = sentStr + '一条[机器人]消息,请到手机或电脑客户端查看';
@@ -526,7 +517,7 @@ function transNotification(item) {
     } else { // 既不是群，也不是讨论组， p2p 音视频通话相关消息
         var netcallType = item.attach.netcallType;
         var netcallTypeText = netcallType === Netcall.NETCALL_TYPE_VIDEO ? '视频' : '音频';
-        console.log(item);
+        // console.log(item);
         switch (type) {
             case 'netcallMiss':
                 return '未接听';

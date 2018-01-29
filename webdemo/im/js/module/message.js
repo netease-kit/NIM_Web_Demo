@@ -111,7 +111,7 @@ YX.fn.initEmoji = function () {
     var that = this,
         emojiConfig = {
             'emojiList': emojiList,  //普通表情
-            // 'pinupList': pinupList,  //贴图
+            'pinupList': pinupList,  //贴图
             'width': 500,
             'height': 300,
             'imgpath': './images/',

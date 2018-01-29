@@ -219,6 +219,7 @@ var SDKBridge = function (ctr, data) {
   function onMsg(msg) {
     //涉及UI太多放到main.js里去处理了
     console.log('收到------------tip');
+    console.log(msg);
     this.controller.doMsg(msg);
   };
 
