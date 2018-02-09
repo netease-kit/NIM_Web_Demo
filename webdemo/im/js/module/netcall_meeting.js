@@ -428,8 +428,7 @@ fn.createChannel = function () {
     this.netcall.channelName = this.yx.crtSession + '-' + Date.now();
     // this.netcall.channelName = "a";
     this.netcall.createChannel({
-        channelName: this.netcall.channelName,
-        webrtcEnable: this.isWebRTCEnable
+        channelName: this.netcall.channelName
     }).then(function (obj) {
         that.log('createChannel', JSON.stringify(obj))
         var mcall = that.meetingCall;

@@ -23,6 +23,10 @@ var SDKBridge = function (ctr, data) {
     appKey: CONFIG.appkey,
     account: userUID,
     token: sdktoken,
+    // secure: CONFIG.secure || true,
+    // lbsUrl: CONFIG.lbsUrl || null,
+    // uploadUrl: CONFIG.uploadUrl || null,
+    // downloadUrl: CONFIG.downloadUrl + '/{bucket}/{object}',
     // syncSessionUnread: true,
     //连接
     onconnect: onConnect.bind(this),

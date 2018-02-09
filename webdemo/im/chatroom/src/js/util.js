@@ -22,7 +22,16 @@ var util ={
     getAvatar:function(url) {
         var re=/^((http|https|ftp):\/\/)?(\w(\:\w)?@)?([0-9a-z_-]+\.)*?([a-z0-9-]+\.[a-z]{2,6}(\.[a-z]{2})?(\:[0-9]{2,6})?)((\/[^?#<>\/\\*":]*)+(\?[^#]*)?(#.*)?)?$/i;
         if(re.test(url)){
-            return url+"?imageView&thumbnail=80x80&quality=85";
+            return page.link.room.viewImageSync({
+                url: url,
+                quality: 85, // 图片质量 0 - 100 可选填
+                thumbnail: { // 生成缩略图， 可选填
+                    width: 80,
+                    height: 80,
+                    mode: 'cover'
+                }
+            })
+            // return url+"?imageView&thumbnail=80x80&quality=85";
         }else{
             return "../images/default-icon.png"
         } 

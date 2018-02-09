@@ -4,7 +4,6 @@
  * 1. 发起通话时提供方案选择:WebRTC和PC Agent
  * 
  * @param {string} option.callMethod 方法选择
- * @param {boolean} option.isWebRTCEnable 是否开启webrtc
  * @param {fn} option.cbConfirm 确认回调
  * @param {fn} option.cbCancel 取消回调
  */
@@ -13,7 +12,6 @@ NetcallBridge.fn.dialog_call = {
     open: function (option) {
 
         this.callMethod = option.callMethod
-        this.isWebRTCEnable = option.isWebRTCEnable
         this.cbConfirm = option.cbConfirm || function () { };
         this.cbCancel = option.cbCancel || function () { };
         this.yx = option.yx || {}
@@ -35,11 +33,10 @@ NetcallBridge.fn.dialog_call = {
             if ($(this).hasClass('disabled')) return;
 
             var type = $('.J-all-type-box .radio.active').data('type')
-            var isWebRTCEnable = !!$('.J-all-type-box .J-webrtc.active').length
             var isRemeber = !!('.J-all-type-box .J-remember.active').length
             that.close()
 
-            that.cbConfirm.call(that.env, { type: type, isWebRTCEnable: isWebRTCEnable, isRemeber: isRemeber });
+            that.cbConfirm.call(that.env, { type: type, isRemeber: isRemeber });
 
         });
         $dialog.on('click', '.j-close', function (e) {
@@ -88,7 +85,6 @@ NetcallBridge.fn.dialog_call = {
             }
             
             $dialog.find('.J-webrtc').toggleClass('hide', !that.callMethod || that.callMethod === 'webrtc')
-            $('.J-webrtc').toggleClass('active', that.isWebRTCEnable)
             $dialog.removeClass('hide')
             that.yx.$mask.removeClass('hide')
             $dialog.find('.j-confirm').toggleClass('disabled', $dialog.find('.radio.active').length === 0)

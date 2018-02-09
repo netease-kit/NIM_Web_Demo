@@ -190,8 +190,14 @@ function buildSessionMsg(msg) {
  * @return {string} str
  */
 function getMessage(msg) {
-    var str = '',
-        url = msg.file ? _$escape(msg.file.url) : ''
+    var str = ''
+    var url = msg.file ? _$escape(msg.file.url) : ''
+    if (url) {
+        url = nim.viewImageSync({
+            url: url
+        })
+        console.log('new url', url)
+    }
     var sentStr = (msg.flow === 'in') ? "收到" : "发送";
     switch (msg.type) {
         case 'text':
@@ -206,8 +212,12 @@ function getMessage(msg) {
             if (msg.status === -1) {
                 str = '<p>[' + msg.message.message + ']</p>';
             } else {
-                msg.file.url = _$escape(msg.file.url);
-                str = '<a href="' + msg.file.url + '?imageView" target="_blank"><img onload="loadImg()" data-src="' + msg.file.url + '" src="' + msg.file.url + '?imageView&thumbnail=200x0&quality=85"/></a>';
+                // msg.file.url = _$escape(msg.file.url);
+                // msg.file.url = nim.viewImageSync({
+                //     url: msg.file.url
+                // })
+                // str = '<a href="' + msg.file.url + '?imageView" target="_blank"><img onload="loadImg()" data-src="' + msg.file.url + '" src="' + msg.file.url + '?imageView&thumbnail=200x0&quality=85"/></a>';
+                str = '<a href="' + url + '?imageView" target="_blank"><img onload="loadImg()" data-src="' + url + '" src="' + url + '?imageView&thumbnail=200x0&quality=85"/></a>';
             }
             break;
         case 'file':
@@ -215,8 +225,12 @@ function getMessage(msg) {
                 str = '<p>[' + msg.message.message + ']</p>';
             } else {
                 if (/png|jpg|bmp|jpeg|gif/i.test(msg.file.ext)) {
-                    msg.file.url = _$escape(msg.file.url);
-                    str = '<a class="f-maxWid" href="' + msg.file.url + '?imageView" target="_blank"><img data-src="' + msg.file.url + '" src="' + msg.file.url + '?imageView&thumbnail=200x0&quality=85"/></a>';
+                    // msg.file.url = _$escape(msg.file.url);
+                    // msg.file.url = nim.viewImageSync({
+                    //     url: msg.file.url
+                    // })
+                    // str = '<a class="f-maxWid" href="' + msg.file.url + '?imageView" target="_blank"><img data-src="' + msg.file.url + '" src="' + msg.file.url + '?imageView&thumbnail=200x0&quality=85"/></a>';
+                    str = '<a class="f-maxWid" href="' + url + '?imageView" target="_blank"><img data-src="' + url + '" src="' + url + '?imageView&thumbnail=200x0&quality=85"/></a>';
                 } else if (!/exe|bat/i.test(msg.file.ext)) {
                     url += msg.file ? '?download=' + encodeURI(_$escape(msg.file.name)) : '';
                     str = '<a href="' + url + '" target="_blank" class="download-file f-maxWid"><span class="icon icon-file2"></span>' + _$escape(msg.file.name) + '</a>';
@@ -231,7 +245,6 @@ function getMessage(msg) {
         case 'video':
             // str = '<a href="' + url + '" target="_blank" class="download-file"><span class="icon icon-file2"></span>[你收到了一条视频消息]</a>';
             str = '<video src= "' + url + '" controls>您的浏览器不支持 video 标签。</video>';
-
             break;
         case 'audio':
             if (!!window.Audio) {
@@ -618,6 +631,9 @@ function loadImg() {
 function getAvatar(url) {
     var re = /^((http|https|ftp):\/\/)?(\w(\:\w)?@)?([0-9a-z_-]+\.)*?([a-z0-9-]+\.[a-z]{2,6}(\.[a-z]{2})?(\:[0-9]{2,6})?)((\/[^?#<>\/\\*":]*)+(\?[^#]*)?(#.*)?)?$/i;
     if (re.test(url)) {
+        url = nim.viewImageSync({
+            url: url
+        })
         return url + "?imageView&thumbnail=80x80&quality=85";
     } else {
         return "images/default-icon.png"

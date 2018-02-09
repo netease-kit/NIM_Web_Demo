@@ -81,8 +81,7 @@ window.yunXin.WB = new window.Vue({
               type: window.WhiteBoard.WB_TYPE_TCP,
               netcallType: window.WhiteBoard.CALL_TYPE_AUDIO,
               account: that.account,
-              sessionConfig: that.sessionConfig,
-              webrtcEnable: data.type === 'webrtc' ? true : data.isWebRTCEnable
+              sessionConfig: that.sessionConfig
             })
             .then(
               function() {
@@ -600,10 +599,8 @@ window.yunXin.WB = new window.Vue({
       var that = this;
       NETCALL.dialog_call.open({
         callMethod: this.callMethod,
-        isWebRTCEnable: this.isWebRTCEnable || false,
         cbConfirm: function(data) {
           that.callMethod = data.type;
-          that.isWebRTCEnable = data.isWebRTCEnable;
           if (data.type === 'webrtc') {
             this.audio = NETCALL.webrtc;
           } else {

@@ -556,7 +556,7 @@ fn.checkNetcallSupporting = function (done, platformReject, agentReject, onlyChe
 fn.checkPlatform = function (done, failure) {
     failure = failure || function () { };
     if (platform.os.family.indexOf("Windows") !== -1 && (platform.os.version === "10" || platform.os.version === "7")) { // 判断是否是win7或win10
-        if (platform.name === "Chrome" || platform.name === "Microsoft Edge" || (platform.name === "IE" && platform.version === "11.0")) { // 判断是否是Chrome, Edge, IE 11
+        if (/Chrome/gi.test(platform.name) || platform.name === "Microsoft Edge" || (platform.name === "IE" && platform.version === "11.0")) { // 判断是否是Chrome, Edge, IE 11
             done();
         } else {
             // alert("只支持Chrome、Edge、IE 11");
@@ -869,7 +869,6 @@ fn.displayCallMethodUI = function (cbSuccess, cbFail) {
     function next(data) {
 
         console.log('选择情况', data)
-        that.isWebRTCEnable = data.isWebRTCEnable;
 
         // 检查WebRTC情况
         if (data.type === 'webrtc') {
@@ -878,7 +877,7 @@ fn.displayCallMethodUI = function (cbSuccess, cbFail) {
             if (!that.isRtcSupported) {
                 minAlert.alert({
                     type: 'error',
-                    msg: '当前浏览器不支持WebRTC功能或H264的编解码格式, 无法使用音视频功能, 请使用最新版Chrome浏览器',
+                    msg: '当前浏览器不支持WebRTC功能或H264的编解码格式, 无法使用音视频功能, 请使用最新版Chrome、Firefox浏览器',
                     confirmBtnMsg: '知道了，挂断',
                     cbConfirm: function () {
                         cbFail && cbFail(data)
@@ -893,7 +892,7 @@ fn.displayCallMethodUI = function (cbSuccess, cbFail) {
                 that.isRtcSupported = false
                 minAlert.alert({
                     type: 'error',
-                    msg: '当前浏览器不支持完整的WebAudio功能, 无法使用音视频功能, 请使用最新版chrome浏览器',
+                    msg: '当前浏览器不支持完整的WebAudio功能, 无法使用音视频功能, 请使用最新版chrome、Firefox浏览器',
                     confirmBtnMsg: '知道了，挂断',
                     cbConfirm: function () {
                         cbFail && cbFail(data)
@@ -913,7 +912,6 @@ fn.displayCallMethodUI = function (cbSuccess, cbFail) {
     }
     this.dialog_call.open({
         callMethod: this.callMethod,
-        isWebRTCEnable: this.isWebRTCEnable,
         cbConfirm: next,
         yx: this.yx,
         env: this,
@@ -921,9 +919,10 @@ fn.displayCallMethodUI = function (cbSuccess, cbFail) {
 };
 
 fn.checkRtcBrowser = function () {
-    var test = platform.ua.match(/(chrome)\/(\d+)/i)
+    var test = platform.ua.match(/(chrome|firefox)\/(\d+)/i)
     if (!test || /Edge\/([\d.]+)/.test(platform.ua)) return false
     var name = test[1], version = test[2]
-    return (/chrome/i.test(name) && version > 49 || /firefox/i.test(name) && version > 52)
+    return (/chrome/i.test(name) && version > 57 || /firefox/i.test(name) && version > 56)
 }
+
 /****方案选择的UI弹框 */

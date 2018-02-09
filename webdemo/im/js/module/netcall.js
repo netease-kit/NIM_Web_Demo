@@ -70,8 +70,7 @@ function NetcallBridge(yx) {
     // 本地agent连接状态
     this.signalInited = false;
     // agent程序下载地址
-    this.agentDownloadUrl = "http://yx-web.nos.netease.com/package%2FWebAgent_Setup_V2.3.1.0118.zip";
-    // this.agentDownloadUrl = "../3rd/WebAgent_Setup_V2.1.0.83.exe";
+    this.agentDownloadUrl = "http://yx-web.nos.netease.com/package%2FWebAgent_Setup_V2.4.0.208.zip";
     // 多人音视频的缓存对象
     this.meetingCall = {};
     // 当前视频状态，是桌面共享还是视频: video / window / screen
@@ -79,8 +78,6 @@ function NetcallBridge(yx) {
 
     this.isRtcSupported = false;
     // this.signalInited = false;
-    // isWebRTCEnable 开关
-    this.isWebRTCEnable = false;
 
     // 通话方式选择，是WebRTC还是Netcall，每次发起通话都要进行选择, 值有: WebRTC / Netcall
     this.callMethod = "";
@@ -708,7 +705,7 @@ fn.beingAskSwitchToVideo = function () {
             this.startRemoteStream();
         }
 
-
+        this.$videoRemoteBox.toggleClass("empty", false).find(".message").text("");
         this.updateVideoShowSize(true, true);
         this.type = Netcall.NETCALL_TYPE_VIDEO;
         this.showConnectedUI(Netcall.NETCALL_TYPE_VIDEO);
@@ -1345,7 +1342,6 @@ fn.doCalling = function (type) {
             pushPayload: '',
             sound: '',
         },
-        webrtcEnable: this.isWebRTCEnable,
         sessionConfig: this.sessionConfig
     }).then(function (obj) {
         this.log("发起通话成功，等待对方接听");

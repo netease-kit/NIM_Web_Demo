@@ -350,7 +350,14 @@ YX.fn.showPreAvatar = function (url) {
         $cropImg = $cropImgContainer.find("img")
     $choseFileCtn.addClass("hide")
     this.avatarUrl =url
-    preUrl = url+"?imageView&thumbnail=300y300"
+    preUrl = nim.viewImageSync({
+        url: url,
+        thumbnail: { // 生成缩略图， 可选填
+            width: 300,
+            height: 300,
+            mode: 'cover'
+        }
+    })
     $preBig.attr("src",preUrl).removeClass("hide")
     $preSmall.attr("src",preUrl).removeClass("hide")
     $cropImg.attr("src",preUrl).removeClass("hide")
