@@ -17,5 +17,5 @@
     };
     window.CONFIG = configMap[envir];
     // 是否开启订阅服务
-    window.CONFIG.openSubscription = true
+    window.CONFIG.openSubscription = true;
 }())
