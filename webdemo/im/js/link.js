@@ -155,9 +155,9 @@ var SDKBridge = function (ctr, data) {
       if (sessions[i].scene==="p2p") {
         var tmpUser = sessions[i].to
         // 如果会话列表不是好友，需要订阅关系
-        if (!this.cache.isFriend(tmpUser)) {
-          that.subscribeMultiPortEvent([tmpUser])
-        }
+        // if (!this.cache.isFriend(tmpUser)) {
+        //   that.subscribeMultiPortEvent([tmpUser])
+        // }
         this.person[tmpUser] = true;
       } else if (sessions[i].scene==="team") {
         this.team.push(sessions[i].to);
@@ -292,7 +292,7 @@ var SDKBridge = function (ctr, data) {
             })
           } else {
             // 订阅好友登录事件
-            that.subscribeMultiPortEvent([msg.friend])
+            // that.subscribeMultiPortEvent([msg.friend])
             cache.addFriend(msg.friend);
             ctr.buildFriends();
           }
