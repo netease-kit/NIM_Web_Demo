@@ -1,0 +1,36 @@
+.extend-transference {
+  position: absolute;
+  z-index: 5;
+  width: 120px;
+  height: 50px;
+  top: 30px;
+  left: 0;
+  background: #ffffff;
+  border-top-right-radius: 50px;
+  border-bottom-right-radius: 50px;
+}
+
+.extend-transference .transference-btn {
+  width: 100%;
+  height: 50px;
+  font-size: 21px;
+  color: #1bb8f9;
+  text-align: center;
+  line-height: 50px;
+  background: none;
+  border: none;
+}
+
+#extend-transference-iframe {
+  width: 80%;
+  height: 90%;
+  position: absolute;
+  top: 5%;
+  left: 10%;
+  z-index: 111;
+  background: #ffffff;
+}
+
+.extend-close {
+  display: none;
+}

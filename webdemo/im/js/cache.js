@@ -503,6 +503,7 @@ var Cache = (function(){
   Cache.prototype.addToMutelist= function (data) {
      this.mutelist.push(data);
   }
+
   Cache.prototype.removeFromMutelist = function(account){
     for (var i = this.mutelist.length - 1; i >= 0; i--) {
       if(this.mutelist[i].account == account){
@@ -512,6 +513,7 @@ var Cache = (function(){
     };
     return false;
   }
+  
   Cache.prototype.setBlacklist= function (data) {
      this.blacklist = data;
   };

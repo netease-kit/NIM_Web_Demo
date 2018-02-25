@@ -29,6 +29,7 @@ YX.fn.myInfoEvt = function () {
     this.$modifyAvatar.delegate('.j-upload','change', this.viewAvatar.bind(this))
     
 }
+
 YX.fn.showMyInfo = function () {
     var user = this.cache.getUserById(userUID)
     var $node = this.$myInfo.data({info:user})
@@ -51,11 +52,13 @@ YX.fn.showMyInfo = function () {
     $node.removeClass('hide')
     this.$mask.removeClass('hide')
 }
+
 YX.fn.hideMyInfoBox = function(){
     this.$myInfo.addClass('hide')
     this.$myInfo.removeClass('edit')
     this.$mask.addClass('hide')
 }
+
 YX.fn.showEditMyInfo = function(){
     var $node = this.$myInfo,
         user = $node.data("info")
@@ -75,6 +78,7 @@ YX.fn.showEditMyInfo = function(){
     }
     this.$myInfo.addClass('edit')
 }
+
 YX.fn.hideEditMyInfo = function(){
     this.$myInfo.removeClass('edit')
 }
@@ -110,9 +114,11 @@ YX.fn.cbSaveMyInfo = function(err,data){
 
     }
 }
+
 /*****************************
  * 用户信息
  ******************************/
+
 YX.fn.personInfoEvt = function () {
     //用户信息
     this.$personCard = $('#personCard')
@@ -130,12 +136,14 @@ YX.fn.personInfoEvt = function () {
     this.$personCard.delegate('.blacklist>.u-switch', 'click', this.doBlacklist.bind(this))
     this.$personCard.delegate('.mute>.u-switch', 'click', this.doMute.bind(this))
 }
+
  // 好友备注
 YX.fn.addFriendAlias = function () {
     var account = this.$personCard.data("account")
     var alias = this.$personCard.find(".e-alias").val().trim()
     this.mysdk.updateFriend(account,alias,this.cbAddFriendAlias.bind(this))
 }
+
 YX.fn.cbAddFriendAlias = function(err,data){
     if(!err){
         alert("修改备注成功")
@@ -156,6 +164,7 @@ YX.fn.cbAddFriendAlias = function(err,data){
         alert("修改备注失败")
     }
 }
+
 YX.fn.addFriendInBox = function(){
     // if(this.$personCard.is(".blacklist")){
     //     return
@@ -163,6 +172,7 @@ YX.fn.addFriendInBox = function(){
     var account = this.$personCard.data("account")
     this.mysdk.addFriend(account,this.cbAddFriendInBox.bind(this))
 }
+
 YX.fn.cbAddFriendInBox = function(error, params){
     if(!error){
        this.hideInfoBox()
@@ -174,6 +184,7 @@ YX.fn.cbAddFriendInBox = function(error, params){
         alert("添加好友失败")
    }
 }
+
 YX.fn.removeFriend = function(){
     if(window.confirm("确定要删除")){
         var account = this.$personCard.data("account")
@@ -181,6 +192,7 @@ YX.fn.removeFriend = function(){
     }
     
 }
+
 YX.fn.cbRemoveFriend = function(error, params){
    if(!error){
        this.hideInfoBox()
@@ -195,6 +207,7 @@ YX.fn.cbRemoveFriend = function(error, params){
     alert("删除好友失败")
    }
 }
+
 YX.fn.doChat = function(){
     var account = this.$personCard.data("account")
     this.hideInfoBox()
@@ -215,6 +228,7 @@ YX.fn.doChat = function(){
 
     this.openChatBox(account,"p2p")
 }
+
 YX.fn.doMutelist = function () {
     if(this.$personCard.is(".blacklist")){
         return
@@ -224,6 +238,7 @@ YX.fn.doMutelist = function () {
     this.mysdk.markInMutelist(account,status,this.cbDoMutelist.bind(this))
 
 }
+
 YX.fn.cbDoMutelist = function(err,data){
     if(!err){
         if(data.isAdd){
@@ -238,11 +253,13 @@ YX.fn.cbDoMutelist = function(err,data){
         alert("操作失败")
     }
 }
+
 YX.fn.doBlacklist = function(){
     var account = this.$personCard.data("account"),
         status = !this.$personCard.data("inBlacklist")
         this.mysdk.markInBlacklist(account,status,this.cbDoBlacklist.bind(this))
 }
+
 YX.fn.cbDoBlacklist = function(err,data){
     if(!err){
         if(data.isAdd){
@@ -266,6 +283,7 @@ YX.fn.cbDoBlacklist = function(err,data){
         alert("操作失败")
     }
 }
+
 //群静音
 YX.fn.doMute = function(){
     var account = this.$personCard.data("account"),
