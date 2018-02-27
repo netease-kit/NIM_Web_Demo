@@ -40,6 +40,7 @@ var Cache = (function(){
   Cache.prototype.updateAvatar = function(url){
     this.personlist[userUID].avatar = url;
   };
+
   Cache.prototype.updatePersonlist = function(list){
     if(!this.personlist[list.account]){
       this.personlist[list.account] = list;
@@ -61,9 +62,11 @@ var Cache = (function(){
   Cache.prototype.setFriends = function(list){
     this.friendslist = list;
   };
+
   Cache.prototype.getFriends = function(list){
     return this.friendslist;
   };
+
   // 获取好友备注名
   Cache.prototype.getFriendAlias = function(account){
     for (var i = this.friendslist.length-1; i >= 0; i--) {
@@ -71,7 +74,8 @@ var Cache = (function(){
         return this.friendslist[i].alias||"";
       }
     };
-  }
+  };
+
   Cache.prototype.updateFriendAlias = function(account,alias){
     for (var i = this.friendslist.length-1; i >= 0; i--) {
       if(this.friendslist[i].account == account){
@@ -79,12 +83,14 @@ var Cache = (function(){
         return;
       }
     };
-  }
+  };
+
   Cache.prototype.addFriend = function(list){
     if(!this.isFriend(list.account)){
       this.friendslist.push(list);
     }
   };
+  
   Cache.prototype.removeFriend = function(account){
     for (var i = this.friendslist.length-1; i >= 0; i--) {
       if(this.friendslist[i].account == account){

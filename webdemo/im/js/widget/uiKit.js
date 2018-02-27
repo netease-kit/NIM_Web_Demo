@@ -405,11 +405,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	          multiPortStatus = (personSubscribes[account][1].multiPortStatus) || '离线'
 	          multiPortStatus = '[' + multiPortStatus + ']'
 	        }
-	      }
+		  }
+		  
 	            html += ['<li class="panel_item '+(info.crtSession===info.target?'active':'')+'" data-scene="p2p" data-account="' + info.account + '">',
 	                        '<div class="panel_avatar"><img class="panel_image" src="'+info.avatar+'"/></div>',
 	                        '<div class="panel_text">',
-	                            '<p class="panel_single-row">' + info.nick + '</p>',
+								'<p class="panel_single-row">' + info.nick + " ( " + info.account + " )" + '</p>',
 	                        '</div>',
 	                    '</li>'].join("");
 			}	
