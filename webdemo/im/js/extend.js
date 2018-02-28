@@ -37,7 +37,6 @@ var ExtendSearch = {
     var self = this;
     self.refreshData();
     var keyword = _this.value;  //获取关键字
-    console.log(keyword);
     
     //遍历对比
     for (var person in self.personlist) {
