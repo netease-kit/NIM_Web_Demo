@@ -231,7 +231,7 @@ YX.fn.doPoint = function () {
             return this
         }})
     if ($active.length) {
-        var top = $active.offset().top - $container.offset().top + 60
+        var top = $active.offset().top - $container.offset().top + 90
         this.$chatVernier.css('top', top).removeClass("hide")
     }else{
         this.$chatVernier.addClass("hide") 
