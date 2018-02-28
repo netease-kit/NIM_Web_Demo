@@ -61,6 +61,22 @@ var ExtendSearch = {
         }      
       });
     });
-    
+
+    $('#sessions>ul>li').each(function (index, dom) {
+      $(this).attr('data-account', function (index, attr) {
+
+        // console.log(self.list.indexOf(attr));
+
+        switch (self.list.indexOf(attr)) {
+          case -1:
+            // console.log(this);
+            $(this).attr('class', 'panel_item hide');
+            break;
+          default:
+            // console.log(this);
+            $(this).attr('class', 'panel_item');
+        }
+      });
+    });
   }
 }

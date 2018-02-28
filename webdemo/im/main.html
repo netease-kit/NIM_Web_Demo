@@ -31,7 +31,7 @@
 					<img src="" alt="" width="56" height="56" class="radius-circle avatar" id="userPic" /><span id="userName">&nbsp;</span>
 					<span><img src="images/pen.png" class="u-modify" id="showMyInfo"></span>
 					<div class="input-group">
-						<input type="text" class="input-control" oninput="javascript: ExtendSearch.search(this);">
+						<input type="text" id="search-input" class="input-control" oninput="javascript: ExtendSearch.search(this);">
 					</div>
 				</div>
 				<div class="m-devices hide">正在使用云信web版</div>
@@ -220,6 +220,9 @@
 					<div class="chat-editor box-sizing" id="chatEditor" data-disabled="1">
 						<div id="emojiTag" class="m-emojiTag"></div>
 						<a class="chat-btn u-emoji" id="showEmoji"></a>
+						<!-- <span class="chat-btn msg-type" id="chooseFileBtn">
+							<a class="icon icon-file" data-type="file"></a>
+						</span> -->
 						<a class="chat-btn u-netcall-audio-link" id="showNetcallAudioLink">&nbsp;</a>
 						<a class="chat-btn u-netcall-video-link" id="showNetcallVideoLink">&nbsp;</a>
 						<!-- 在netcall_ui.js的fn.whenOpenChatBox中隐藏 -->
