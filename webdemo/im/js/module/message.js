@@ -160,11 +160,22 @@ YX.fn.uploadFile = function () {
     var that = this,
         scene = this.crtSessionType,
         to = this.crtSessionAccount,
-        fileInput = this.$fileInput.get(0)
-    if (fileInput.files[0].size == 0) {
+        fileInput = this.$fileInput.get(0);
+
+    var currentFile = fileInput.files[0];
+    console.log(currentFile);
+    
+    if (currentFile.size == 0) {
         alert("不能传空文件")
         return
     }
+
+    if (currentFile.type !== 'image/png' && currentFile.type !== 'image/jpeg') {
+        alert("请发送png或者jpg格式的图片")
+        return
+    }
+
+
     this.mysdk.sendFileMessage(scene, to, fileInput, this.sendMsgDone.bind(this))
 }
 
