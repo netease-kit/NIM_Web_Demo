@@ -79,3 +79,11 @@ var ExtendSearch = {
     });
   }
 }
+
+var ExtendChat = {
+  copy: function (_this) {
+    $(_this).find('.f-maxWid').text(function (index, content) {
+      $('#messageText').val(content);
+    });
+  },
+}

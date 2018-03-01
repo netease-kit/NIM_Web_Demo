@@ -75,16 +75,18 @@ var appUI = {
                 '<p class="u-notice tc item ' + (from == userUID && message.idServer ? "j-msgTip" : "") + '" data-time="' + message.time + '" data-id="' + message.idClient + '" data-idServer="' + message.idServer + '"><span class="radius5px">' + getMessage(message) + '</span></p>',
                     '</div>'].join('');
             } else {
-                msgHtml = ['<div data-time="' + message.time + '" data-id="' + message.idClient + '" id="' + message.idClient + '" data-idServer="' + message.idServer + '" class="item item-' + buildSender(message) + '">',
-                '<img class="img j-img" src="' + getAvatar(avatar) + '" data-account="' + from + '"/>',
-                showNick ? '<p class="nick">' + getNick(from) + '</p>' : '',
-                    '<div class="msg msg-text j-msg">',
-                    '<div class="box">',
-                    '<div class="cnt">',
-                getMessage(message),
-                    '</div>',
-                    '</div>',
-                    '</div>']
+                msgHtml = [
+                    '<div data-time="' + message.time + '" data-id="' + message.idClient + '" id="' + message.idClient + '" data-idServer="' + message.idServer + '" class="item item-' + buildSender(message) + '">',
+                        '<img class="img j-img" src="' + getAvatar(avatar) + '" data-account="' + from + '"/>',
+                        showNick ? '<p class="nick">' + getNick(from) + '</p>' : '',
+                        '<div class="msg msg-text j-msg">', // ondblclick="javascript: ExtendChat.copy(this);"
+                            '<div class="box">',
+                                '<div class="cnt">',
+                                    getMessage(message),
+                                '</div>',
+                            '</div>',
+                        '</div>'
+                ]
                 if (message.blacked) {
                     msgHtml.push('<span class="error" data-session="' + message.sessionId + '" data-id="' + message.idClient + '"><i class="icon icon-error"></i>发送失败,已被拉黑</span>')
                 } else if (message.status === 'fail') {

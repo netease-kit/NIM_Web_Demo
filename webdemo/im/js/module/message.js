@@ -19,45 +19,45 @@ YX.fn.message = function () {
     //语音播发
     this.$chatContent.delegate('.j-mbox', 'click', this.playAudio)
     //聊天面板右键菜单
-    $.contextMenu({
-        selector: '.j-msg',
-        callback: function (key, options) {
-            if (key === 'delete') {
-                var id = options.$trigger.parent().data('id')
-                var msg = this.cache.findMsg(this.crtSession, id)
-                if (!msg || options.$trigger.hasClass('j-msg')) {
-                }
-                if (msg.flow !== 'out' && msg.scene === 'p2p') {
-                    alert('点对点场景，只能撤回自己发的消息')
-                    return
-                }
-                if (!this.cache.isCurSessionTeamManager && msg.flow !== 'out' && msg.scene === 'team') {
-                    alert('群会话场景，非管理员不能撤回别人发的消息')
-                    return
-                }
-                options.$trigger.removeClass('j-msg')
-                this.nim.deleteMsg({
-                    msg: msg,
-                    done: function (err) {
-                        options.$trigger.addClass('j-msg')
-                        if (err) {
-                            if (err.code === 508) {
-                                alert('发送时间超过2分钟的消息，不能被撤回')
-                            } else {
-                                alert(err.message || '操作失败')
-                            }
-                        } else {
-                            msg.opeAccount = userUID
-                            this.backoutMsg(id, {msg: msg})
-                        }
-                    }.bind(this)
-                })
-            }
-        }.bind(this),
-        items: {
-            "delete": { name: "撤回", icon: "delete" }
-        }
-    })
+    // $.contextMenu({
+    //     selector: '.j-msg',
+    //     callback: function (key, options) {
+    //         if (key === 'delete') {
+    //             var id = options.$trigger.parent().data('id')
+    //             var msg = this.cache.findMsg(this.crtSession, id)
+    //             if (!msg || options.$trigger.hasClass('j-msg')) {
+    //             }
+    //             if (msg.flow !== 'out' && msg.scene === 'p2p') {
+    //                 alert('点对点场景，只能撤回自己发的消息')
+    //                 return
+    //             }
+    //             if (!this.cache.isCurSessionTeamManager && msg.flow !== 'out' && msg.scene === 'team') {
+    //                 alert('群会话场景，非管理员不能撤回别人发的消息')
+    //                 return
+    //             }
+    //             options.$trigger.removeClass('j-msg')
+    //             this.nim.deleteMsg({
+    //                 msg: msg,
+    //                 done: function (err) {
+    //                     options.$trigger.addClass('j-msg')
+    //                     if (err) {
+    //                         if (err.code === 508) {
+    //                             alert('发送时间超过2分钟的消息，不能被撤回')
+    //                         } else {
+    //                             alert(err.message || '操作失败')
+    //                         }
+    //                     } else {
+    //                         msg.opeAccount = userUID
+    //                         this.backoutMsg(id, {msg: msg})
+    //                     }
+    //                 }.bind(this)
+    //             })
+    //         }
+    //     }.bind(this),
+    //     items: {
+    //         "delete": { name: "撤回", icon: "delete" }
+    //     }
+    // })
 
     //表情贴图模块
     this.initEmoji()

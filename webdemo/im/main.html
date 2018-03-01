@@ -32,7 +32,10 @@
 					<img src="" alt="" width="56" height="56" class="radius-circle avatar" id="userPic" /><span id="userName">&nbsp;</span>
 					<span><img src="images/pen.png" class="u-modify" id="showMyInfo"></span>
 					<div class="input-group">
-						<input type="text" id="search-input" class="input-control" oninput="javascript: ExtendSearch.search(this);">
+						<div class="group-sign">
+							<i class="iconfont icon-sousuo"></i>
+						</div>
+						<input type="text" id="search-input" placeholder="搜索" class="input-control" oninput="javascript: ExtendSearch.search(this);">
 					</div>
 				</div>
 				<div class="m-devices hide">正在使用云信web版</div>
@@ -182,7 +185,6 @@
 							<div class="op">
 								<button class="hangupButton netcall-button red">挂断</button>
 							</div>
-
 						</div>
 						<!-- 多人音视频互动界面 -->
 						<div class="netcall-meeting-box hide" id="netcallMeetingBox"></div>
@@ -523,6 +525,25 @@
 	</div>
 	<div id="mask" class="mask hide"></div>
 
+	<!-- 快捷发送 -->
+	<section class="extends-quickSend">
+		<div class="quickSend-header">
+			<div class="header-title">
+				<span></span>
+				<i></i>
+			</div>
+			<div class="input-group">
+				<div class="group-sign">
+					<i class="iconfont icon-sousuo"></i>
+				</div>
+				<input type="text" id="quickSend-search-input" placeholder="搜索" class="input-control" oninput="javascript: ExtendSearch.search(this);">
+			</div>
+		</div>
+		<ul class="quickSend-list">
+			<li class=""></li>
+		</ul>
+	</section>
+
 	<!-- transference 转接按钮 -->
 	<!-- <section class="extend-transference">
 		<button class="transference-btn" onclick="javascript: ExtendTransference.showTransference();">转接</button>
@@ -586,8 +607,8 @@
 	<script src="js/3rd/jquery-ui.min.js"></script>
 	<script src="../3rd/rangeslider.min.js"></script>
 	<!-- 右键菜单-->
-	<script src="js/3rd/contextMenu/jquery.ui.position.js"></script>
-	<script src="js/3rd/contextMenu/jquery.contextMenu.js"></script>
+	<!-- <script src="js/3rd/contextMenu/jquery.ui.position.js"></script> -->
+	<!-- <script src="js/3rd/contextMenu/jquery.contextMenu.js"></script> -->
 
 	<script src="js/extend.js"></script>
 	<script src="js/config.js"></script>
