@@ -96,7 +96,7 @@ html, body {
 .wrapper {
     position: relative;
     overflow: visible;
-    min-width: 1000px;
+    min-width: 1500px;
     min-height: 720px;
     width: 1002px;
     padding: 100px 0;
@@ -264,12 +264,14 @@ html, body {
 
 .right-panel {
     margin-left: 292px;
-    height: 620px;
+    width: 720px;
+    height: 650px;
     background-color: #fff;
     position:relative;
 }
 .chat-box {
     position: relative;
+    width: 720px;
     height: 100%;
 }
 .chat-box .title .img{

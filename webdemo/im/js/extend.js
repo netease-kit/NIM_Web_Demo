@@ -87,3 +87,95 @@ var ExtendChat = {
     });
   },
 }
+
+
+var ExtendQuickSend = {
+  textarea: $('#entry-textarea'),
+  input: $('#messageText'),
+  sendBtn: $('#sendBtn'),
+  list: $('#extends-quickSend-list'),
+  max: 0,
+  current: 0,
+  content: {},
+  type: 'add',
+  init: function () {
+    var self = this;
+    var data = localStorage.getItem("quickSend");
+    if (!data || data == '{}') {
+      this.content = {};
+    }
+    else {
+      this.content = JSON.parse(data);
+    }
+    var htmlStr = "";
+    for (var index in this.content) {
+      htmlStr += this.setHtml(index, self.content[index]);
+      this.max = index * 1 > this.max ? index * 1 : this.max;
+    }
+    this.list.html(htmlStr);
+  },
+  send: function (_this) {
+    if ($('#rightPanel').hasClass('hide')) return;
+    var self = this;
+    this.input.val($(_this).find('.item-content').text());
+    this.sendBtn.click();
+  },
+  add: function () {
+    var self = this;
+    var content = this.textarea.val();
+    this.textarea.val('');
+    $('#extends-quickSend-btn').text('添加');
+    if (!content) {
+      this.type = 'add';
+      alert('内容不能为空，请重试');
+      return;
+    }
+    switch (this.type) {
+      case 'add':
+        this.content[++this.max] = content;
+        var html = this.setHtml(self.max, content);
+        this.list.append(html);
+        break;
+      case 'modify':
+        this.content[this.current] = content;
+        $('#extends-QuickSend-' + this.current).find('.item-content').text(content);
+        $('#extends-QuickSend-' + this.current).attr('title', content);
+        break;
+    }
+    this.type = 'add';
+    localStorage.setItem('quickSend', JSON.stringify(self.content));
+  },
+  remove: function (_this) {
+    var self = this;
+    var index = $(_this).attr('data-index');
+    delete self.content[index];
+    localStorage.setItem('quickSend', JSON.stringify(self.content));
+    $('#extends-QuickSend-' + index).remove();
+  },
+  modify: function (_this) {
+    this.type = 'modify';
+    this.current = $(_this).attr('data-index');
+    var self = this;
+    var content = $('#extends-QuickSend-' + self.current).find('.item-content').text();
+    this.textarea.val(content);
+    $('#extends-quickSend-btn').text('修改');
+  },
+  setHtml: function (index, content) {
+    var htmlStr = '<li class="list-item" title="' + content + '" id="extends-QuickSend-' + index + '" ondblclick="javascript: ExtendQuickSend.send(this);">' +
+      '<p class="item-content">' + content + '</p>' +
+      '<div class="item-operation">' +
+        '<div class="operation-group">' +
+          '<div class="iconfont-wrap" title="修改" data-index="' + index + '" onclick="javascript: ExtendQuickSend.modify(this);">' +
+            '<i class="iconfont icon-xiugai-copy"></i>' +
+          '</div>' +
+          '<div class="iconfont-wrap" title="删除" data-index="' + index + '" onclick="javascript: ExtendQuickSend.remove(this);">' +
+            '<i class="iconfont icon-shanchu3"></i>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+    '</li>';
+    return htmlStr;
+  },
+}
+
+ExtendQuickSend.init();

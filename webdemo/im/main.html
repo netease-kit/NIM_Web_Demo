@@ -18,7 +18,8 @@
 	<link rel="stylesheet" href="css/extends.css" />
 	<link rel="stylesheet" href="icon/iconfont.css" />
 	<link rel="stylesheet" href="css/extend-transference.css"/>
-	<link rel="stylesheet" href="extends-icon/iconfont.css"/>
+	<link rel="stylesheet" href="extends-icon/iconfont.css?version=1.0.0"/>
+	<link rel="stylesheet" href="css/extends-quickSend.css?version=1.0.0">
 	<link rel="icon" href="images/icon.ico" type="image/x-icon" />
 </head>
 
@@ -525,29 +526,23 @@
 	</div>
 	<div id="mask" class="mask hide"></div>
 
-	<!-- 快捷发送 -->
-	<section class="extends-quickSend">
-		<div class="quickSend-header">
-			<div class="header-title">
-				<span></span>
-				<i></i>
-			</div>
-			<div class="input-group">
-				<div class="group-sign">
-					<i class="iconfont icon-sousuo"></i>
-				</div>
-				<input type="text" id="quickSend-search-input" placeholder="搜索" class="input-control" oninput="javascript: ExtendSearch.search(this);">
-			</div>
-		</div>
-		<ul class="quickSend-list">
-			<li class=""></li>
-		</ul>
-	</section>
+
 
 	<!-- transference 转接按钮 -->
-	<!-- <section class="extend-transference">
+	<section class="extend-transference hide">
 		<button class="transference-btn" onclick="javascript: ExtendTransference.showTransference();">转接</button>
-	</section> -->
+	</section>
+
+
+	<!-- 快捷发送 -->
+	<section class="extends-quickSend hide" id="extends-quickSend">
+		<h4 class="quickSend-header">快捷回复短语</h4>
+		<ul class="quickSend-list" id="extends-quickSend-list"></ul>
+		<div class="quickSend-entry">
+			<textarea id="entry-textarea" class="entry-wrap"></textarea>
+			<div class="entry-btn" id="extends-quickSend-btn" onclick="javascript: ExtendQuickSend.add();">添加</div>
+		</div>
+	</section>
 
 	<!-- transference-iframe 转接iframe -->
 	<!-- <iframe src="" class="extend-close" id="extend-transference-iframe" class="extend-close"></iframe> -->
@@ -610,7 +605,7 @@
 	<!-- <script src="js/3rd/contextMenu/jquery.ui.position.js"></script> -->
 	<!-- <script src="js/3rd/contextMenu/jquery.contextMenu.js"></script> -->
 
-	<script src="js/extend.js"></script>
+	<script src="js/extend.js?version=1.0.0"></script>
 	<script src="js/config.js"></script>
 	<script src="js/emoji.js"></script>
 	<script src="js/util.js?v=2"></script>
@@ -619,7 +614,7 @@
 	<script src="js/ui.js?v=2"></script>
 	<script src="js/widget/uiKit.js?v=2"></script>
 	<script src="js/widget/minAlert.js"></script>
-	<script src="js/module/base.js"></script>
+	<script src="js/module/base.js?version=1.0.0"></script>
 	<script src="js/module/message.js"></script>
 	<script src="js/module/sysMsg.js"></script>
 	<script src="js/module/personCard.js"></script>

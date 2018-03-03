@@ -31,6 +31,7 @@ YX.fn.initBase = function () {
     this.$chatTitle = $('#chatTitle')
     this.$chatContent = $('#chatContent')
     this.$nickName = $('#nickName')
+    this.$quickSend = $('#extends-quickSend')
 	//切换面板
     this.$switchPanel = $('#switchPanel')
     this.$switchPanel.on('click', 'a', this.switchPanel.bind(this))
@@ -129,6 +130,7 @@ YX.fn.openChatBox = function (account, scene) {
     this.$rightPanel.find(".u-chat-notice").addClass("hide")
     this.$rightPanel.find(".chat-mask").addClass("hide")
     this.$rightPanel.removeClass('hide') 
+    this.$quickSend.removeClass('hide')
     this.$messageText.val('')
 
     // 让netcall.js感知到打开聊天框的操作，做一些UI层的控制
@@ -209,7 +211,7 @@ YX.fn.switchPanel = function (evt) {
     } else {
         this.buildTeams()
     }
-    ExtendSearch.search(document.getElementById('search-input'));
+    $('#search-input').val('');
 }
 /**
  * 导航圆点显示
