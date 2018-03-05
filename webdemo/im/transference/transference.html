@@ -6,6 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="stylesheet" href="../css/uiKit.css">
   <link rel="stylesheet" href="./transference.css">
+  <link rel="stylesheet" href="../extends-icon/iconfont.css" />
   <title></title>
 </head>
 <body>
@@ -13,8 +14,28 @@
     <div class="title-item">客户列表</div>
     <div class="title-item">客服列表</div>
   </div>
-  <ul class="m-panel customer-list" id="customer-list"></ul>
-  <ul class="m-panel waiter-list" id="waiter-list"></ul>
+  <section class="customer-list-wrap">
+    <div class="list-search">
+      <div class="search-group">
+        <div class="group-sign">
+          <i class="iconfont icon-sousuo"></i>
+        </div>
+        <input type="text" id="customer-input" placeholder="搜索" class="input-control" oninput="javascript: searchCustomer(this);">
+      </div>
+    </div>
+    <ul class="m-panel customer-list" id="customer-list"></ul>
+  </section>
+  <section class="waiter-list-wrap">
+    <div class="list-search">
+      <div class="search-group">
+        <div class="group-sign">
+          <i class="iconfont icon-sousuo"></i>
+        </div>
+        <input type="text" id="waiter-input" placeholder="搜索" class="input-control" oninput="javascript: searchWaitet(this);">
+      </div>
+    </div>
+    <ul class="m-panel waiter-list" id="waiter-list"></ul>
+  </section>
   <div class="btn-group">
     <div class="btn-item btn-confirm" onclick="javascript: confirm();">确认</div>
     <div class="btn-item btn-cancel" onclick="javascript: cancel();">取消</div>

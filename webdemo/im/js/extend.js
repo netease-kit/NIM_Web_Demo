@@ -16,10 +16,12 @@ var ExtendsFn = {
 var ExtendTransference = {
   showTransference: function () {
     $("#extend-transference-iframe")
-      .toggleClass("extend-close")
-      .attr('src', function (index, value) {
-        return value ? '' : './transference/transference.html';
-      });
+    .attr('src', function (index, value) {
+      return value ? '' : './transference/transference.html';
+    });
+    
+    $("#extend-transference").toggleClass("extend-close")
+    
   }
 }
 
