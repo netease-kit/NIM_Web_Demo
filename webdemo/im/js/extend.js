@@ -19,9 +19,12 @@ var ExtendTransference = {
     .attr('src', function (index, value) {
       return value ? '' : './transference/transference.html';
     });
-    
     $("#extend-transference").toggleClass("extend-close")
-    
+  },
+  //移除客户 （只是页面上和本地数据中删除，并不处理后台数据，后台数据在后台修改）
+  removeCustomer: function (person) {
+    $('#friends').find('[data-account="' + person + '"]').remove();
+    $('#sessions').find('[data-account="' + person + '"]').remove();
   }
 }
 
@@ -179,5 +182,8 @@ var ExtendQuickSend = {
     return htmlStr;
   },
 }
+
+
+
 
 ExtendQuickSend.init();

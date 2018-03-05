@@ -3,14 +3,37 @@ var waiterList = {};
 var removeList = {}; // 要删除（转接）的客户都在里面
 var friends = window.parent.yunXin.cache.friendslist;
 var persons = window.parent.yunXin.cache.personlist;
+var sessionsList = window.parent.yunXin.cache.sessions;
+var sessions = {};
 var oldDom = null;
 var waiter = null;    //选中的客服
+var count = 0;
+
+function init() {
+  setCustomerList();
+  setWaiterList();
+  setSessions();
+}
+
+function setSessions() {
+  for (var i = 0; i < sessionsList.length; i++) {
+    sessions[sessionsList[i].id.split('-')[1]] = i;
+  }
+}
+
 
 //选择客户
 function selectedCustomer (_this) {
   $(_this).find('.circular').toggleClass('active');
   $(_this).attr('data-account', function (index, account){
-    removeList[account] ? delete removeList[account] : removeList[account] = persons[account];
+    if (removeList[account]) {
+      delete removeList[account];
+      --count;
+    }
+    else {
+      removeList[account] = persons[account];
+      ++count;
+    }
   });
 }
 
@@ -28,10 +51,7 @@ function selectedWaiter (_this) {
 }
 
 
-function init () {
-  setCustomerList();
-  setWaiterList();
-}
+
 
 //初始化客户列表
 function setCustomerList () {
@@ -82,12 +102,16 @@ function removeCustomer() {
   for (var person in removeList) {
     delete window.parent.yunXin.cache.friendslist[person];
     delete window.parent.yunXin.cache.personlist[person];
+    if (sessions[person] !== 'undefined') {
+      window.parent.yunXin.cache.sessions.splice(sessions[person], 1);
+    }
 
-    window.parent.$('#friends>ul>li [data-account="' + person + '"]').remove();
-    window.parent.$('#sessions>ul>li [data-account="' + person + '"]').remove();
+    window.parent.ExtendTransference.removeCustomer(person);
   }
 }
 
+
+//搜索客户
 function searchCustomer(_this) {
   var keyword = _this.value;  //获取关键字
   
@@ -103,6 +127,7 @@ function searchCustomer(_this) {
   });
 }
 
+//搜索客服
 function searchWaitet(_this) {
   var keyword = _this.value;  //获取关键字
 
@@ -118,17 +143,20 @@ function searchWaitet(_this) {
   });
 }
 
-
-var ExtendSearch = {
-  userUID: null,
-  personlist: null,
-  list: null,
-  search: function (_this) {
-    // var self = this;
-    // self.refreshData();
-
-
+function confirm() {
+  if (!waiter) {
+    alert('请选择客服');
+    return;
   }
+
+  if (!count) {
+    alert('请选择客户');
+    return;
+  }
+
+  removeCustomer();
+  cancel();
 }
+
 
 init();
