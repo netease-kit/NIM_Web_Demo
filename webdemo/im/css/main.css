@@ -498,20 +498,14 @@ html, body {
     color:#fff;
 }
 
-.Quick{
-
+.quick{
      width: 460px;
-    
      background: #e5f4ff;
      position: absolute;
      display: none;
-
-
 }
 
-.Quick .Melist li{
-
-
+.quick .melist li{
     height: 30px;
     line-height: 30px;
     cursor: pointer;
@@ -519,10 +513,8 @@ html, body {
 
 }
 
-.Quick .Melist li:hover{
-
+.quick .melist li:hover{
      background: #0888ff;
-
 }
 
 

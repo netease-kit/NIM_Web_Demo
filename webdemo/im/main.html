@@ -234,7 +234,7 @@
 						<a class="chat-btn u-netcall-audio-link" id="showNetcallAudioLink">&nbsp;</a>
 						<a class="chat-btn u-netcall-video-link" id="showNetcallVideoLink">&nbsp;</a>
 						<!-- 在netcall_ui.js的fn.whenOpenChatBox中隐藏 -->
-						<textarea onclick="messages.init(event);" id="message" class="chat-btn msg-input box-sizing radius5px p2p" rows="1" autofocus="autofocus" maxlength="500"></textarea>
+						<textarea onclick="messages.init(event);" id="messageText" class="chat-btn msg-input box-sizing radius5px p2p" rows="1" autofocus="autofocus" maxlength="500"></textarea>
 						<a class="btn-send radius5px" id="sendBtn">发送</a>
 						<form action="#" id="uploadForm">
 							<input multiple="multiple" type="file" name="file" id="uploadFile" class="hide" />
@@ -242,8 +242,8 @@
 					</div>
 				</div>
 			<!--  快捷回复用语 -->
-			<div class="Quick" id="Quick-message-list">	
-				<ul class="Melist"></ul>
+			<div class="quick" id="quick-message-list">	
+				<ul class="melist"></ul>
 			</div>
 						<!-- s 信用报告 -->
 				<div class="extends-information-report-content" id="extends-information-report-content">

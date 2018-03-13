@@ -1596,9 +1596,9 @@ var messages = {
     init:function(event){
         event.stopPropagation();
         
-        this.Quick = document.getElementById("Quick-message-list");
-        this.message = document.getElementById("message");
-        this.event(this.Quick);
+        this.Quick = document.getElementById("quick-message-list");
+        this.message = document.getElementById("messageText");
+        this.event(this.Quick,this.message);
         this.initMessageList(this.Quick,this.message);
         this.clickHideMessge(this.Quick);
 
@@ -1640,10 +1640,10 @@ var messages = {
 
     },
 
-     event:function(obj){
+     event:function(obj,obj1){
 
-        var L = document.getElementById("message").offsetLeft;
-        var T = document.getElementById("message").offsetTop;
+        var L = obj1.offsetLeft;
+        var T = obj1.offsetTop;
         
         obj.style.left = L + 'px';
         
