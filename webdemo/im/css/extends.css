@@ -187,15 +187,15 @@
   right:-360px;
   width: 50%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
-  display: -webkit-box;
+  /*background-color: rgba(0, 0, 0, 0.7);*/
+  /*display: -webkit-box;
   display: -webkit-flex;
   align-items: center;
   -webkit-box-align: center;
   -webkit-align-items: center;
   justify-content: center;
   -webkit-box-pack: center;
-  -webkit-justify-content: center;
+  -webkit-justify-content: center;*/
   -webkit-user-select: none;
           user-select: none;
 }
@@ -203,6 +203,7 @@
 .extends-information-report-content .content-wrap {
   width: 300px;
   height: 320px;
+  margin-left: 30px;
 }
 .extends-information-report-content .content-wrap .content-table {
   width: 100%;
@@ -257,3 +258,24 @@
   right: 30px;
   color: #ffffff;
 }
+
+
+#extend-quick-message-list {
+     width: 460px;
+     background: #e5f4ff;
+     position: absolute;
+     display: none;
+}
+
+#extend-quick-message-list  .messgeList li{
+    height: 30px;
+    line-height: 30px;
+    cursor: pointer;
+    padding-left: 8px;
+
+}
+
+#extend-quick-message-list   .messgeList li:hover{
+     background: #0888ff;
+}
+

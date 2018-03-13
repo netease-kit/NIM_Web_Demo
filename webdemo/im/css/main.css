@@ -479,6 +479,7 @@ html, body {
     vertical-align: middle;
     position: relative;
     margin-right: 2px;
+    margin-top: 15px;
 }
 .btn-send {
     background-color: #0888ff;
@@ -498,31 +499,19 @@ html, body {
     color:#fff;
 }
 
-.quick{
-     width: 460px;
-     background: #e5f4ff;
-     position: absolute;
-     display: none;
-}
-
-.quick .melist li{
-    height: 30px;
-    line-height: 30px;
-    cursor: pointer;
-    padding-left: 8px;
-
-}
-
-.quick .melist li:hover{
-     background: #0888ff;
-}
-
 
 .msg-type {
     /*position: absolute;
     top: 15px;
     left: 44px;*/
     margin-top: 5px;
+}
+.messagebox{
+
+    float:right;
+    margin-right: 80px;
+    margin-top: -5px
+
 }
 .msg-input {
     font: 14px/1.5 Helvetica, Arial, Tahoma, '微软雅黑';

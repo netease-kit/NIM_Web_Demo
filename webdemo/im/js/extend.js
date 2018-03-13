@@ -11,9 +11,7 @@ var ExtendsFn = {
   showQT: function (id) {     //展示欠条
 
   },
-}
-
-
+};
 
 
 var ExtendTransference = {
@@ -185,6 +183,97 @@ var ExtendQuickSend = {
   },
 }
 
+
+var ExtendInfomessages = {
+
+    onOff : true,
+    quickDom: null,
+    messageDom: null,
+    init:function(event){
+        event.stopPropagation();
+        this.quickDom = document.getElementById("extend-quick-message-list");
+        this.messageDom = document.getElementById("messageText");
+        this.eventsDom(this.quickDom,this.messageDom);
+        this.initMessageList(this.quickDom,this.messageDom);
+        this.clickHideMessge(this.quickDom);
+
+    },
+
+    initMessageList:function(quickDom,messageDom){
+     var arrList = ["快捷回复11111111","快捷回复22221222","快捷回复33333333","快捷回复44444444","快捷回复55555555"];
+     var html = "";
+     var ullist = quickDom.children[0];
+     var $this = this;
+      for(var i=0;i<arrList.length;i++){
+
+        html+= '<li>' + arrList[i] + '</li>';
+      };
+
+      ullist.innerHTML = html;
+      var newsList = ullist.children;
+
+      $(newsList).click(function(){
+           messageDom.value = this.innerText;
+           $(quickDom).addClass("hide");
+      })
+
+    },
+
+     eventsDom:function(quickDom,messageDom){
+        var left = messageDom.offsetLeft;
+        var top = messageDom.offsetTop;
+        var cName = quickDom.className;
+        quickDom.style.left = left + 'px';
+
+        if(this.onOff){
+
+            $(quickDom).addClass("show");
+            
+
+        }else{
+
+            $(quickDom).addClass("hide");
+
+        }
+        this.onOff = !this.onOff;
+        
+
+
+     },
+     getStyle: function(obj,attr){
+
+
+          if(obj.currentStyle){
+
+
+             return obj.currentStyle[attr];
+
+
+          }else{
+
+
+            return getComputedStyle(obj,false)[attr];
+
+          }
+
+
+     },
+     clickHideMessge:function(obj){
+
+        var wrapper = document.body.children[1];
+        var chatContent = document.getElementById("chatContent");
+        var cName = obj.className;
+
+        wrapper.onclick = chatContent.onclick = function(){
+
+            $(obj).removeClass("show");
+
+        }
+
+     }
+
+};
+
 var ExtendInformationReport = {
   show: function () { //展示
     //当前聊天对象
@@ -216,7 +305,4 @@ var ExtendInformationReport = {
 }
 
 
-
-
 ExtendQuickSend.init();
-

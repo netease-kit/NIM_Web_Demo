@@ -97,10 +97,6 @@
 					<div class="title" id="chatTitle">
 						<img src="" width="56" height="56" class="radius-circle img" id="headImg" />
 						<span id="nickName"></span>
-						<div class="extends-information-report" onclick="javascript: ExtendInformationReport.show();">
-							<i class="icon icon-team-info"></i>
-							<p>信息报告</p>
-						</div>
 						<div class="cloudMsg tc radius4px" data-record-id="" id="cloudMsg"><i class="icon icon-team-info"></i>
 							<p>云记录</p>
 						</div>
@@ -234,17 +230,20 @@
 						<a class="chat-btn u-netcall-audio-link" id="showNetcallAudioLink">&nbsp;</a>
 						<a class="chat-btn u-netcall-video-link" id="showNetcallVideoLink">&nbsp;</a>
 						<!-- 在netcall_ui.js的fn.whenOpenChatBox中隐藏 -->
-						<textarea onclick="messages.init(event);" id="messageText" class="chat-btn msg-input box-sizing radius5px p2p" rows="1" autofocus="autofocus" maxlength="500"></textarea>
+						<div class="messagebox">
+							<textarea onclick="ExtendInfomessages.init(event);" id="messageText" class="chat-btn msg-input box-sizing radius5px p2p" rows="1" autofocus="autofocus" maxlength="500"></textarea>
+							<div class="extends-quick-messageList-content" id="extend-quick-message-list">	
+								<ul class="messgeList"></ul>
+							</div>
+						</div>
 						<a class="btn-send radius5px" id="sendBtn">发送</a>
 						<form action="#" id="uploadForm">
 							<input multiple="multiple" type="file" name="file" id="uploadFile" class="hide" />
 						</form>
+							<!--  快捷回复用语 -->
 					</div>
 				</div>
-			<!--  快捷回复用语 -->
-			<div class="quick" id="quick-message-list">	
-				<ul class="melist"></ul>
-			</div>
+			
 						<!-- s 信用报告 -->
 				<div class="extends-information-report-content" id="extends-information-report-content">
 					<div class="content-wrap">
@@ -283,7 +282,6 @@
 						</ul>
 						<div class="content-fail">最长逾期时间为0天</div>
 					</div>
-					<i class="iconfont icon-shanchu3 content-close" onclick="javascript: ExtendInformationReport.close();"></i>
 				</div>
 				<!-- e 信用报告 -->
 			</div>						
