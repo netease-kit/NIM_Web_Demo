@@ -97,6 +97,10 @@
 					<div class="title" id="chatTitle">
 						<img src="" width="56" height="56" class="radius-circle img" id="headImg" />
 						<span id="nickName"></span>
+						<div class="extends-information-report" onclick="javascript: ExtendInformationReport.show();">
+							<i class="icon icon-team-info"></i>
+							<p>信息报告</p>
+						</div>
 						<div class="cloudMsg tc radius4px" data-record-id="" id="cloudMsg"><i class="icon icon-team-info"></i>
 							<p>云记录</p>
 						</div>
@@ -237,6 +241,47 @@
 						</form>
 					</div>
 				</div>
+				<!-- s 信用报告 -->
+				<div class="extends-information-report-content hide" id="extends-information-report-content">
+					<div class="content-wrap">
+						<div class="content-header">借条大师信息报告</div>
+						<ul class="content-table" id="extends-information-report-content-table">
+							<li class="table-item">
+								<div class="item-unit">状态</div>
+								<div class="item-unit">笔数</div>
+								<div class="item-unit">金额</div>
+							</li>
+							<li class="table-item">
+								<div class="item-unit">当前逾期</div>
+								<div class="item-unit">2</div>
+								<div class="item-unit">605.0</div>
+							</li>
+							<li class="table-item">
+								<div class="item-unit">借给Ta</div>
+								<div class="item-unit">18</div>
+								<div class="item-unit">5840.0</div>
+							</li>
+							<li class="table-item">
+								<div class="item-unit">待还</div>
+								<div class="item-unit">2</div>
+								<div class="item-unit">605.0</div>
+							</li>
+							<li class="table-item">
+								<div class="item-unit">还款</div>
+								<div class="item-unit">16</div>
+								<div class="item-unit">5235.0</div>
+							</li>
+							<li class="table-item">
+								<div class="item-unit">总借款</div>
+								<div class="item-unit">18</div>
+								<div class="item-unit">5840.0</div>
+							</li>
+						</ul>
+						<div class="content-fail">最长逾期时间为0天</div>
+					</div>
+					<i class="iconfont icon-shanchu3 content-close" onclick="javascript: ExtendInformationReport.close();"></i>
+				</div>
+				<!-- e 信用报告 -->
 			</div>
 			<div class="right-panel hide radius5px devices-container" id="devices">
 				<!-- 设备管理面板 -->
@@ -529,7 +574,7 @@
 
 
 	<!-- transference 转接按钮 -->
-	<section class="extend-transference">
+	<section class="extend-transference hide">
 		<button class="transference-btn" onclick="javascript: ExtendTransference.showTransference();">转接</button>
 	</section>
 

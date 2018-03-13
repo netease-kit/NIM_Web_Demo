@@ -93,7 +93,6 @@ var ExtendChat = {
   },
 }
 
-
 var ExtendQuickSend = {
   textarea: $('#entry-textarea'),
   input: $('#messageText'),
@@ -181,6 +180,36 @@ var ExtendQuickSend = {
     '</li>';
     return htmlStr;
   },
+}
+
+var ExtendInformationReport = {
+  show: function () { //展示
+    //当前聊天对象
+    var account = yunXin.crtSessionAccount;
+    $('#extends-information-report-content').removeClass('hide');
+  },
+  close: function () {  //关闭
+    $('#extends-information-report-content').addClass('hide');
+  },
+  fillContent: function (data) {  //插入html
+    var htmlStr = '<li class="table-item">' +
+      '<div class="item-unit">状态</div>' +
+      '<div class="item-unit">笔数</div>' +
+      '<div class="item-unit">金额</div>' +
+    '</li>';
+
+    for (var i = 0; i < data.length; i++) {
+      htmlStr += this.setHtml(data[i]);
+    }
+    $('#extends-information-report-content-table').html(htmlStr);
+  },
+  setHtml: function (data) {    //设置html字符串
+    return '<li class="table-item">' +
+      '<div class="item-unit">' + data.state + '</div>' +
+      '<div class="item-unit">' + data.count + '</div>' +
+      '<div class="item-unit">' + data.money + '</div>' +
+    '</li>';
+  }
 }
 
 

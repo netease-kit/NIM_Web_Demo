@@ -12,7 +12,7 @@
             appkey: ''
         },
         online: {
-            appkey: ''
+            appkey: '4632c2096f11c7027f5c3a5aef4bda31'
         }
     };
     window.CONFIG = configMap[envir];
