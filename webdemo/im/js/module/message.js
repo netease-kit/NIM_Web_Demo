@@ -6,7 +6,7 @@
 
 YX.fn.message = function () {
     this.$sendBtn = $('#sendBtn')
-    this.$messageText = $('#messageText')
+    this.$messageText = $('#message')
     this.$chooseFileBtn = $('#chooseFileBtn')
     this.$fileInput = $('#uploadFile')
 

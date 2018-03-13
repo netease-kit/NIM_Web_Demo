@@ -497,6 +497,35 @@ html, body {
 .btn-send:hover {
     color:#fff;
 }
+
+.Quick{
+
+     width: 460px;
+    
+     background: #e5f4ff;
+     position: absolute;
+     display: none;
+
+
+}
+
+.Quick .Melist li{
+
+
+    height: 30px;
+    line-height: 30px;
+    cursor: pointer;
+    padding-left: 8px;
+
+}
+
+.Quick .Melist li:hover{
+
+     background: #0888ff;
+
+}
+
+
 .msg-type {
     /*position: absolute;
     top: 15px;

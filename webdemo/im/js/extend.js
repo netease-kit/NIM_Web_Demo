@@ -13,6 +13,9 @@ var ExtendsFn = {
   },
 }
 
+
+
+
 var ExtendTransference = {
   showTransference: function () {
     $("#extend-transference-iframe")
@@ -91,7 +94,7 @@ var ExtendChat = {
       $('#messageText').val(content);
     });
   },
-}
+};
 
 var ExtendQuickSend = {
   textarea: $('#entry-textarea'),
@@ -216,3 +219,4 @@ var ExtendInformationReport = {
 
 
 ExtendQuickSend.init();
+

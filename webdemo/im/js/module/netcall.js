@@ -1590,5 +1590,114 @@ fn.log = function () {
 };
 
 
+var messages = {
+
+    onOff : true,
+    init:function(event){
+        event.stopPropagation();
+        
+        this.Quick = document.getElementById("Quick-message-list");
+        this.message = document.getElementById("message");
+        this.event(this.Quick);
+        this.initMessageList(this.Quick,this.message);
+        this.clickHideMessge(this.Quick);
+
+
+
+    },
+
+    initMessageList:function(obj,obj1){
+
+     var arrList = ["快捷回复11111111","快捷回复2222222","快捷回复3333333","快捷回复44444444","快捷回复55555555"];
+     var html = "";
+     var Melist = obj.children[0];
+      for(var i=0;i<arrList.length;i++){
+
+        html+= "<li>"+arrList[i]+"</li>";
+
+
+      };
+
+
+      Melist.innerHTML = html;
+
+      var list = Melist.children;
+
+      for(var i=0;i<list.length;i++){
+
+
+        list[i].onclick = function(){
+
+           obj1.value = this.innerText;
+           obj.style.display = "none";
+
+
+        }
+
+      }
+
+
+
+    },
+
+     event:function(obj){
+
+        var L = document.getElementById("message").offsetLeft;
+        var T = document.getElementById("message").offsetTop;
+        
+        obj.style.left = L + 'px';
+        
+        if(this.onOff){
+
+            obj.style.display = "block";
+
+        }else{
+
+            obj.style.display = "none";
+
+        }
+        this.onOff = !this.onOff;
+
+
+     },
+     getStyle: function(obj,attr){
+
+
+          if(obj.currentStyle){
+
+
+             return obj.currentStyle[attr];
+
+
+          }else{
+
+
+            return getComputedStyle(obj,false)[attr];
+
+          }
+
+
+     },
+     clickHideMessge:function(obj){
+
+        var wrapper = document.body.children[1];
+
+        var chatContent = document.getElementById("chatContent");
+
+        wrapper.onclick = chatContent.onclick = function(){
+
+            obj.style.display = "none";
+
+        }
+
+
+
+
+     }
+
+
+
+}
+
 
 
