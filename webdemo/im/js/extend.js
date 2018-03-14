@@ -1,20 +1,30 @@
 var ExtendsFn = {
-    dialogNetcall: document.getElementById("extend-dialog-netcall"),
-    released: document.getElementById("extends-released"),
-    Transfer: $(".Transfer"),
+    init:function(){
+      this.dialogNetcall = document.getElementById('extend-dialog-netcall'),
+      this.released = document.getElementById('extends-released'),
+      this.Transfer = document.getElementById('chatBox').getElementsByClassName('Transfer')[0];
+      var arr = [this.dialogNetcall,this.released,this.Transfer];
+      return  arr;
+    },
     showZZ: function (id) {     //展示转账记录
     },
     showXYBG: function (phone) {  //展示信用报告
-         $(this.dialogNetcall).removeClass("hide");
+        var dom = this.init()[0];
+        $(dom).removeClass('hide');
+        
     },
     hideXYBG: function (event) { // 隐藏信用报告
-        $(event.parentElement.parentElement).addClass("hide");
+        var dom = document.getElementById(event);
+        var classNames = dom.className;
+        dom.className = classNames+' '+'hide';
     },
     showJT: function (id) {     //展示借条
-        $(this.released).removeClass("hide");
+         var dom = this.init()[1];
+        $(dom).removeClass('hide');
     },
     showQT: function (id) {     //展示欠条
-        this.Transfer.removeClass("hide");
+       var dom = this.init()[2];
+        $(dom).removeClass('hide');
     }
 };
 var ExtendTransference = {
