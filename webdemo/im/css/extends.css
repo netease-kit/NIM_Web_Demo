@@ -211,69 +211,276 @@
   background-color: #fff;
 }
 
-.extends-information-report-content .content-wrap .content-table .table-item {
-  width: 100%;
-  height: 40px;
-  text-align: center;
-  line-height: 40px;
-}
+        .extends-information-report-content .content-wrap .content-table .table-item {
+          width: 100%;
+          height: 40px;
+          text-align: center;
+          line-height: 40px;
+        }
 
-.extends-information-report-content .content-wrap .content-table .table-item .item-unit {
-  width: 100px;
-  height: 100%;
-  text-align: center;
-  line-height: 40px;
-  float: left;
-  box-sizing: border-box;
-  border-top: 1px solid #ddd;
-}
+        .extends-information-report-content .content-wrap .content-table .table-item .item-unit {
+          width: 100px;
+          height: 100%;
+          text-align: center;
+          line-height: 40px;
+          float: left;
+          box-sizing: border-box;
+          border-top: 1px solid #ddd;
+        }
 
-.extends-information-report-content .content-wrap .content-table .table-item .item-unit:nth-of-type(2) {
-  border-left: 1px solid #ddd;
-  border-right: 1px solid #ddd;
-}
+        .extends-information-report-content .content-wrap .content-table .table-item .item-unit:nth-of-type(2) {
+          border-left: 1px solid #ddd;
+          border-right: 1px solid #ddd;
+        }
 
-.extends-information-report-content .content-wrap .content-fail {
-  width: 100%;
-  height: 40px;
-  text-align: center;
-  line-height: 40px;
-  background-color: #6599ff;
-  box-sizing: border-box;
-  border-top: 1px solid #ddd;
-}
+        .extends-information-report-content .content-wrap .content-fail {
+          width: 100%;
+          height: 40px;
+          text-align: center;
+          line-height: 40px;
+          background-color: #6599ff;
+          box-sizing: border-box;
+          border-top: 1px solid #ddd;
+        }
 
-.extends-information-report-content .content-wrap .content-header {
-  width: 100%;
-  height: 40px;
-  text-align: center;
-  line-height: 40px;
-  background-color: #6599ff;
-}
+        .extends-information-report-content .content-wrap .content-header {
+          width: 100%;
+          height: 40px;
+          text-align: center;
+          line-height: 40px;
+          background-color: #6599ff;
+        }
 
-.extends-information-report-content .content-close {
-  font-size: 30px;
-  position: absolute;
-  top: 30px;
-  right: 30px;
-  color: #ffffff;
-}
+        .extends-information-report-content .content-close {
+          font-size: 30px;
+          position: absolute;
+          top: 30px;
+          right: 30px;
+          color: #ffffff;
+        }
 
 
-#extend-quick-message-list {
- width: 460px;
- background: #e5f4ff;
- position: absolute;
-}
+        #extend-quick-message-list {
+         width: 460px;
+         background: #e5f4ff;
+         position: absolute;
+         height:120px;
+         overflow-y:auto;
+        }
 
-#extend-quick-message-list  .messgeList li{
-height: 30px;
-line-height: 30px;
-cursor: pointer;
-padding-left: 8px;
-}
+        #extend-quick-message-list  .messgeList li{
+        height: 30px;
+        line-height: 30px;
+        cursor: pointer;
+        padding-left: 8px;
+        }
 
-#extend-quick-message-list   .messgeList li:hover{
-     background: #0888ff;
-}
+        #extend-quick-message-list   .messgeList li:hover{
+             background: #0888ff;
+        }
+
+        #chatBox .extends-netcall-dialog {
+            width: 480px;
+            height: 302px;
+            background: #fff;
+            position: absolute;
+            box-shadow: 0px 0px 10px #333;
+            border-radius:8px;
+            left:100px;
+            top:180px;
+        }
+        #chatBox .extends-netcall-dialog .netcall-dialog-head {
+            height: 32px;
+            border-radius: 8px 8px 0 0;
+            background: #f0f1f5
+        }
+
+        #chatBox .extends-netcall-dialog .netcall-dialog-head img {
+            float: left;
+            margin: 7px 0 0 10px
+        }
+
+        #chatBox .extends-netcall-dialog .netcall-dialog-head p {
+            display: inline-block;
+            margin-left: 5px;
+            line-height: 30px
+        }
+
+        #chatBox .extends-netcall-dialog .netcall-dialog-head .xybgclose {
+            float: right;
+            margin-right: 15px;
+            font-size: 16px;
+            line-height: 30px
+        }
+
+        #chatBox .extends-netcall-dialog .netcall-dialog-content li {
+            padding-left: 31px;
+            line-height: 30px
+        }
+
+        #chatBox .extends-netcall-dialog .netcall-dialog-content li.font16 {
+            font-size: 16px
+        }
+
+        #chatBox .extends-netcall-dialog .netcall-dialog-content li.fontWight {
+            font-weight: 700
+        }
+
+        #chatBox .extends-netcall-dialog .netcall-dialog-content li:first-child {
+            margin-top: 10px
+        }
+
+        #chatBox .extends-netcall-dialog .netcall-dialog-content .more {
+            display: block;
+            margin: 5px auto;
+            width: 0;
+            height: 0;
+            border-top: 5px solid #333;
+            border-right: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+            border-left: 5px solid transparent;
+            cursor: pointer
+        }
+
+        #chatBox .extends-Loandetails {
+            position: absolute;
+            top: 150px;
+            left: 100px;
+            width: 330px;
+            height: 382px;
+            border-radius: 10px 10px 10px 10px;
+            background: #fff;
+            box-shadow: 1px 1px 10px #333
+        }
+
+        #chatBox .extends-Loandetails .LoandetailsHead {
+            height: 30px;
+            border-radius: 10px 10px 0 0;
+            background: #f0f1f5
+        }
+
+        #chatBox .extends-Loandetails .LoandetailsHead img {
+            float: left;
+            margin: 5px 0 0 10px
+        }
+
+        #chatBox .extends-Loandetails .LoandetailsHead .loan {
+            float: left;
+            margin-left: 5px;
+            line-height: 28px
+        }
+
+        #chatBox .extends-Loandetails .close {
+            float: right;
+            margin-right: 15px;
+            font-size: 16px;
+            line-height: 30px
+        }
+
+        #chatBox .extends-netcall-dialog .close {
+            float: right;
+            margin-right: 15px;
+            font-size: 16px;
+            line-height: 30px
+        }
+
+        #chatBox .extends-Loandetails .loandetailsContent .iconphoto {
+            margin: 20px auto;
+            width: 50px;
+            height: 50px;
+            background: url(../images/Loan1.png)
+        }
+
+        #chatBox .extends-Loandetails .loandetailsContent .iconText {
+            margin-top: 10px;
+            color: #111;
+            text-align: center;
+            font-size: 32px
+        }
+
+        #chatBox .extends-Loandetails .loandetailsContent .Loan-send {
+            text-align: center;
+            font-size: 16px
+        }
+
+        #chatBox .extends-Loandetails .loandetailsContent ul {
+            margin-top: 35px
+        }
+
+            #chatBox .extends-Loandetails .loandetailsContent ul li {
+                margin-top: 15px;
+                padding-left: 18px
+            }
+
+        #chatBox .extends-Loandetails .loandetailsContent ul li span {
+            font-weight: 700
+        }
+
+        #chatBox .extends-Loandetails .loanfoot {
+            padding-left: 150px;
+            height: 35px;
+            border-radius: 0 0 10px 10px;
+            background: #e5eff7
+        }
+
+        #chatBox .extends-Loandetails .loanfoot a {
+            display: inline-block;
+            margin-top: 5px;
+            margin-right: 10px;
+            width: 70px;
+            height: 25px;
+            border: 1px solid #0588fe;
+            border-radius: 3px;
+            text-align: center;
+            line-height: 25px
+        }
+
+        #chatBox .extends-Loandetails .loanfoot a.active {
+            background: #0588fe
+        }
+
+        #chatBox .extends-Loandetails2 .loandetailsContent .iconphoto {
+            margin: 20px auto;
+            width: 50px;
+            height: 50px;
+            background: url(../images/overdue.png)
+        }
+
+        #chatBox .Transfer {
+            position: absolute;
+            left: 100px;
+            width: 330px;
+            height: 380px;
+            background: #fff
+        }
+
+    #chatBox .Transfer .loandetailsContent {
+        margin-top: 45px
+    }
+
+    #chatBox .Transfer .TranHead {
+        height: 32px;
+        background: #f0f1f5
+    }
+
+    #chatBox .Transfer .loandetailsContent ul {
+        margin-top: 20px
+    }
+
+    #chatBox .extends-Loandetails2 ul {
+        margin: 20px auto 10px
+    }
+
+    #chatBox .accounts {
+        height: 302px
+    }
+
+    #chatBox .Transfer .loandetailsContent .iconphoto {
+        margin: 20px auto;
+        width: 50px;
+        height: 50px;
+        background: url(../images/waitfor.png)
+    }
+
+
 

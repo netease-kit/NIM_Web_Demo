@@ -1,19 +1,22 @@
 var ExtendsFn = {
-  showZZ: function (id) {     //展示转账记录
-    
-  },
-  showXYBG: function (phone) {  //展示信用报告
-    
-  },
-  showJT: function (id) {     //展示借条
-    
-  },
-  showQT: function (id) {     //展示欠条
-
-  },
+    dialogNetcall: document.getElementById("extend-dialog-netcall"),
+    released: document.getElementById("extends-released"),
+    Transfer: $(".Transfer"),
+    showZZ: function (id) {     //展示转账记录
+    },
+    showXYBG: function (phone) {  //展示信用报告
+         $(this.dialogNetcall).removeClass("hide");
+    },
+    hideXYBG: function (event) { // 隐藏信用报告
+        $(event.parentElement.parentElement).addClass("hide");
+    },
+    showJT: function (id) {     //展示借条
+        $(this.released).removeClass("hide");
+    },
+    showQT: function (id) {     //展示欠条
+        this.Transfer.removeClass("hide");
+    }
 };
-
-
 var ExtendTransference = {
   showTransference: function () {
     $("#extend-transference-iframe")
@@ -270,3 +273,4 @@ var ExtendInformationReport = {
 
 
 ExtendQuickSend.init();
+

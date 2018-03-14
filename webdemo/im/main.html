@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 
 <head>
@@ -25,266 +25,373 @@
 
 <body>
 	<div class="bad-network hide tc radius5px" id="errorNetwork">已与服务器断开，请检查网络连接</div>
-	<div class="wrapper box-sizing">
-		<div class="content">
-			<div class="left-panel radius5px" id="left-panel">
-				<div class="hide loading" id="loading"></div>
-				<div class="title">
-					<img src="" alt="" width="56" height="56" class="radius-circle avatar" id="userPic" /><span id="userName">&nbsp;</span>
-					<span><img src="images/pen.png" class="u-modify" id="showMyInfo"></span>
-					<div class="input-group">
-						<div class="group-sign">
-							<i class="iconfont icon-sousuo"></i>
-						</div>
-						<input type="text" id="search-input" placeholder="搜索" class="input-control" oninput="javascript: ExtendSearch.search(this);">
-					</div>
-				</div>
-				<div class="m-devices hide">正在使用云信web版</div>
-				<div class="panel" id="switchPanel">
-					<a class="box-sizing tc m-unread panel_tab cur" data-type="sessions"><span class="icon icon-session"></span><b class="u-unread hide"> </b></a>
-					<a class="box-sizing tc panel_tab" data-type="friends"><span class="icon icon-friend"></span></a>
-				</div>
-				<div class="item" id="sessionsWrap" data-type="sessions">
-					<!-- 最近联系人 -->
-					<div class="list">
-						<div class="m-panel">
-							<div class="panel_item m-sysMsg" id="showNotice">
-								<div class="panel_avatar">
-									<img class="panel_image" src="images/notice.png" alt="消息中心" />
-								</div>
-								<div class="panel_text">
-									<p class="panel_single-row">消息中心</p>
-								</div>
-								<b class="count j-sysMsgCount hide"></b>
-							</div>
-						</div>
-						<div id="sessions">
-							<p>正在获取最近联系人...</p>
-						</div>
-					</div>
-				</div>
-				<div class="item hide" id="friendsWrap" data-type="friends">
-					<!-- 通讯录 -->
-					<div class="list">
-						<div class="m-panel">
-							<div class="panel_item" id="addFriend">
-								<div class="panel_avatar">
-									<img class="panel_image" src="images/addFriend.png" alt="添加好友" />
-								</div>
-								<div class="panel_text">
-									<p class="panel_single-row">添加好友</p>
-								</div>
-							</div>
-							<div class="panel_item" id="showBlacklist">
-								<div class="panel_avatar">
-									<img class="panel_image" src="images/black.png" alt="黑名单" />
-								</div>
-								<div class="panel_text">
-									<p class="panel_single-row">黑名单</p>
-								</div>
-							</div>
-						</div>
-						<div id="friends">
-							<p>正在获取通讯录...</p>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="chatVernier" id="chatVernier"><span class="radius-circle hide"></span></div>
-			<div class="right-panel hide radius5px" id="rightPanel">
-				<!-- 聊天面板 -->
-				<div class="chat-box show-netcall-box" id="chatBox">
-					<div class="title" id="chatTitle">
-						<img src="" width="56" height="56" class="radius-circle img" id="headImg" />
-						<span id="nickName"></span>
-						<div class="cloudMsg tc radius4px" data-record-id="" id="cloudMsg"><i class="icon icon-team-info"></i>
-							<p>云记录</p>
-						</div>
-						<div class="team-info hide tc radius4px" data-team-id="" id="teamInfo"><i class="icon icon-team-info"></i>
-							<p>资料</p>
-						</div>
-					</div>
-					<div class="netcall-box" id="netcallBox">
-						<div class="netcall-mask hide">
-							<div class="netcallTip"></div>
-						</div>
-						<div class="top hide">
-							<span class="transferAudioAndVideo switchToAudio" id="switchToAudio">切换音频</span>
-							<span class="transferAudioAndVideo switchToVideo" id="switchToVideo">切换视频</span>
-							<span class="fullScreenIcon toggleFullScreenButton" id="toggleFullScreenButton" title="切换全屏">&nbsp;</span>
-						</div>
-						<!-- p2p呼叫界面 -->
-						<div class="netcall-calling-box hide">
-							<img alt="用户头像" class="avatar">
-							<div class="nick"></div>
-							<div class="tip">等待对方接听...</div>
-							<div class="op">
-								<button id="callingHangupButton" class="netcall-button red">挂断</button>
-							</div>
-						</div>
-						<!-- p2p视频界面 -->
-						<div class="netcall-show-video hide">
-							<div class="netcall-video-left">
-								<div class="netcall-video-remote bigView">
-									<div class="message"></div>
-									<span class="switchViewPositionButton"></span>
-								</div>
-							</div>
-							<div class="netcall-video-right">
-								<div class="netcall-video-local smallView">
-									<div class="message"></div>
-									<span class="switchViewPositionButton"></span>
-								</div>
-								<div class="operation">
-									<div class="control">
-										<div class="microphone control-item">
-											<div class="slider hide">
-												<div class="txt">10</div>
-												<input class="microSliderInput" id="microSliderInput1" type="range" min="0" max="10" step="1" value="10" data-orientation="vertical">
-											</div>
-											<span class="icon-micro"></span>
-										</div>
-										<div class="volume control-item">
-											<div class="slider hide">
-												<div class="txt">10</div>
-												<input class="volumeSliderInput" id="volumeSliderInput1" type="range" min="0" max="10" step="1" value="10" data-orientation="vertical">
-											</div>
-											<span class="icon-volume"></span>
-										</div>
-										<div class="camera control-item">
-											<span class="icon-camera"></span>
-										</div>
-									</div>
-									<div class="op">
-										<button class="hangupButton netcall-button red">挂断</button>
-									</div>
-									<div class="tip">00 : 00</div>
-								</div>
-							</div>
-						</div>
-						<!-- p2p音频界面 -->
-						<div class="netcall-show-audio hide">
-							<img alt="用户头像" class="avatar">
-							<div class="nick">test</div>
-							<div class="tip">00 : 00</div>
-							<div class="control">
-								<div class="microphone control-item ">
-									<div class="slider hide">
-										<div class="txt">10</div>
-										<input class="microSliderInput" id="microSliderInput" type="range" min="0" max="10" step="1" value="10" data-orientation="vertical">
-									</div>
-									<span class="icon-micro"></span>
-								</div>
-								<div class="volume control-item">
-									<div class="slider hide">
-										<div class="txt">10</div>
-										<input class="volumeSliderInput" id="volumeSliderInput" type="range" min="0" max="10" step="1" value="10" data-orientation="vertical">
-									</div>
-									<span class="icon-volume"></span>
-								</div>
-							</div>
-							<div class="op">
-								<button class="hangupButton netcall-button red">挂断</button>
-							</div>
-						</div>
-						<!-- 多人音视频互动界面 -->
-						<div class="netcall-meeting-box hide" id="netcallMeetingBox"></div>
-						<!-- 被叫界面 -->
-						<div class="netcall-becalling-box hide">
-							<img alt="用户头像" class="avatar">
-							<div class="nick"></div>
-							<p id="becallingText" class="tip"></p>
-							<div class="op">
-								<div class="normal">
-									<div class="checking-tip">检查插件中...<span class="netcall-icon-checking"></span></div>
-									<button class="netcall-button blue beCallingAcceptButton" id="beCallingAcceptButton">
+    <div class="wrapper box-sizing">
+        <div class="content">
+            <div class="left-panel radius5px" id="left-panel">
+                <div class="hide loading" id="loading"></div>
+                <div class="title">
+                    <img src="" alt="" width="56" height="56" class="radius-circle avatar" id="userPic" /><span id="userName">&nbsp;</span>
+                    <span><img src="images/pen.png" class="u-modify" id="showMyInfo"></span>
+                    <div class="input-group">
+                        <div class="group-sign">
+                            <i class="iconfont icon-sousuo"></i>
+                        </div>
+                        <input type="text" id="search-input" placeholder="搜索" class="input-control" oninput="javascript: ExtendSearch.search(this);">
+                    </div>
+                </div>
+                <div class="m-devices hide">正在使用云信web版</div>
+                <div class="panel" id="switchPanel">
+                    <a class="box-sizing tc m-unread panel_tab cur" data-type="sessions"><span class="icon icon-session"></span><b class="u-unread hide"> </b></a>
+                    <a class="box-sizing tc panel_tab" data-type="friends"><span class="icon icon-friend"></span></a>
+                </div>
+                <div class="item" id="sessionsWrap" data-type="sessions">
+                    <!-- 最近联系人 -->
+                    <div class="list">
+                        <div class="m-panel">
+                            <div class="panel_item m-sysMsg" id="showNotice">
+                                <div class="panel_avatar">
+                                    <img class="panel_image" src="images/notice.png" alt="消息中心" />
+                                </div>
+                                <div class="panel_text">
+                                    <p class="panel_single-row">消息中心</p>
+                                </div>
+                                <b class="count j-sysMsgCount hide"></b>
+                            </div>
+                        </div>
+                        <div id="sessions">
+                            <p>正在获取最近联系人...</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="item hide" id="friendsWrap" data-type="friends">
+                    <!-- 通讯录 -->
+                    <div class="list">
+                        <div class="m-panel">
+                            <div class="panel_item" id="addFriend">
+                                <div class="panel_avatar">
+                                    <img class="panel_image" src="images/addFriend.png" alt="添加好友" />
+                                </div>
+                                <div class="panel_text">
+                                    <p class="panel_single-row">添加好友</p>
+                                </div>
+                            </div>
+                            <div class="panel_item" id="showBlacklist">
+                                <div class="panel_avatar">
+                                    <img class="panel_image" src="images/black.png" alt="黑名单" />
+                                </div>
+                                <div class="panel_text">
+                                    <p class="panel_single-row">黑名单</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="friends">
+                            <p>正在获取通讯录...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="chatVernier" id="chatVernier"><span class="radius-circle hide"></span></div>
+            <div class="right-panel hide radius5px" id="rightPanel">
+                <!-- 聊天面板 -->
+                <div class="chat-box show-netcall-box" id="chatBox">
+                    <div class="title" id="chatTitle">
+                        <img src="" width="56" height="56" class="radius-circle img" id="headImg" />
+                        <span id="nickName"></span>
+                        <div class="cloudMsg tc radius4px" data-record-id="" id="cloudMsg">
+                            <i class="icon icon-team-info"></i>
+                            <p>云记录</p>
+                        </div>
+                        <div class="team-info hide tc radius4px" data-team-id="" id="teamInfo">
+                            <i class="icon icon-team-info"></i>
+                            <p>资料</p>
+                        </div>
+                    </div>
+                    <div class="netcall-box" id="netcallBox">
+                        <div class="netcall-mask hide">
+                            <div class="netcallTip"></div>
+                        </div>
+                        <div class="top hide">
+                            <span class="transferAudioAndVideo switchToAudio" id="switchToAudio">切换音频</span>
+                            <span class="transferAudioAndVideo switchToVideo" id="switchToVideo">切换视频</span>
+                            <span class="fullScreenIcon toggleFullScreenButton" id="toggleFullScreenButton" title="切换全屏">&nbsp;</span>
+                        </div>
+                        <!-- p2p呼叫界面 -->
+                        <div class="netcall-calling-box hide">
+                            <img alt="用户头像" class="avatar">
+                            <div class="nick"></div>
+                            <div class="tip">等待对方接听...</div>
+                            <div class="op">
+                                <button id="callingHangupButton" class="netcall-button red">挂断</button>
+                            </div>
+                        </div>
+                        <!-- p2p视频界面 -->
+                        <div class="netcall-show-video hide">
+                            <div class="netcall-video-left">
+                                <div class="netcall-video-remote bigView">
+                                    <div class="message"></div>
+                                    <span class="switchViewPositionButton"></span>
+                                </div>
+                            </div>
+                            <div class="netcall-video-right">
+                                <div class="netcall-video-local smallView">
+                                    <div class="message"></div>
+                                    <span class="switchViewPositionButton"></span>
+                                </div>
+                                <div class="operation">
+                                    <div class="control">
+                                        <div class="microphone control-item">
+                                            <div class="slider hide">
+                                                <div class="txt">10</div>
+                                                <input class="microSliderInput" id="microSliderInput1" type="range" min="0" max="10" step="1" value="10" data-orientation="vertical">
+                                            </div>
+                                            <span class="icon-micro"></span>
+                                        </div>
+                                        <div class="volume control-item">
+                                            <div class="slider hide">
+                                                <div class="txt">10</div>
+                                                <input class="volumeSliderInput" id="volumeSliderInput1" type="range" min="0" max="10" step="1" value="10" data-orientation="vertical">
+                                            </div>
+                                            <span class="icon-volume"></span>
+                                        </div>
+                                        <div class="camera control-item">
+                                            <span class="icon-camera"></span>
+                                        </div>
+                                    </div>
+                                    <div class="op">
+                                        <button class="hangupButton netcall-button red">挂断</button>
+                                    </div>
+                                    <div class="tip">00 : 00</div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- p2p音频界面 -->
+                        <div class="netcall-show-audio hide">
+                            <img alt="用户头像" class="avatar">
+                            <div class="nick">test</div>
+                            <div class="tip">00 : 00</div>
+                            <div class="control">
+                                <div class="microphone control-item ">
+                                    <div class="slider hide">
+                                        <div class="txt">10</div>
+                                        <input class="microSliderInput" id="microSliderInput" type="range" min="0" max="10" step="1" value="10" data-orientation="vertical">
+                                    </div>
+                                    <span class="icon-micro"></span>
+                                </div>
+                                <div class="volume control-item">
+                                    <div class="slider hide">
+                                        <div class="txt">10</div>
+                                        <input class="volumeSliderInput" id="volumeSliderInput" type="range" min="0" max="10" step="1" value="10" data-orientation="vertical">
+                                    </div>
+                                    <span class="icon-volume"></span>
+                                </div>
+                            </div>
+                            <div class="op">
+                                <button class="hangupButton netcall-button red">挂断</button>
+                            </div>
+                        </div>
+                        <!-- 多人音视频互动界面 -->
+                        <div class="netcall-meeting-box hide" id="netcallMeetingBox"></div>
+                        <!-- 被叫界面 -->
+                        <div class="netcall-becalling-box hide">
+                            <img alt="用户头像" class="avatar">
+                            <div class="nick"></div>
+                            <p id="becallingText" class="tip"></p>
+                            <div class="op">
+                                <div class="normal">
+                                    <div class="checking-tip">检查插件中...<span class="netcall-icon-checking"></span></div>
+                                    <button class="netcall-button blue beCallingAcceptButton" id="beCallingAcceptButton">
                                         <span class="txt">接听</span>
                                         <span class="netcall-icon-checking"></span>
                                     </button>
-									<button class="netcall-button red beCallingRejectButton" id="beCallingRejectButton">
+                                    <button class="netcall-button red beCallingRejectButton" id="beCallingRejectButton">
                                         拒绝
                                     </button>
-								</div>
-								<div class="exception">
-									<button class="netcall-button blue" id="downloadAgentButton">下载音视频插件</button><br/>
-									<button class="netcall-button red beCallingRejectButton">拒绝</button>
-									<div class="exception-tip">拒绝调用插件申请会导致无法唤起插件,需重启浏览器</div>
-								</div>
-							</div>
-						</div>
-						<div class="dialogs hide">
-						</div>
-					</div>
-					<div id="whiteboard"></div>
-					<div class="chat-content box-sizing" id="chatContent">
-						<!-- 聊天记录 -->
-					</div>
-					<div class="u-chat-notice">您已退出</div>
-					<div class="chat-mask"></div>
-					<div class="chat-editor box-sizing" id="chatEditor" data-disabled="1">
-						<div id="emojiTag" class="m-emojiTag"></div>
-						<a class="chat-btn u-emoji" id="showEmoji"></a>
-						<span class="chat-btn msg-type" id="chooseFileBtn">
-							<a class="iconfont icon-tupian" data-type="file"></a>
-						</span>
-						<a class="chat-btn u-netcall-audio-link" id="showNetcallAudioLink">&nbsp;</a>
-						<a class="chat-btn u-netcall-video-link" id="showNetcallVideoLink">&nbsp;</a>
-						<!-- 在netcall_ui.js的fn.whenOpenChatBox中隐藏 -->
-						<div class="messagebox">
-							<textarea onclick="ExtendInfomessages.init(event);" id="messageText" class="chat-btn msg-input box-sizing radius5px p2p" rows="1" autofocus="autofocus" maxlength="500"></textarea>
-							<div class="extends-quick-messageList-content" id="extend-quick-message-list">	
-								<ul class="messgeList"></ul>
-							</div>
-						</div>
-						<a class="btn-send radius5px" id="sendBtn">发送</a>
-						<form action="#" id="uploadForm">
-							<input multiple="multiple" type="file" name="file" id="uploadFile" class="hide" />
-						</form>
-							<!--  快捷回复用语 -->
-					</div>
-				</div>
-			
-						<!-- s 信用报告 -->
-				<div class="extends-information-report-content" id="extends-information-report-content">
-					<div class="content-wrap">
-						<div class="content-header">借条大师信息报告</div>
-						<ul class="content-table" id="extends-information-report-content-table">
-							<li class="table-item">
-								<div class="item-unit">状态</div>
-								<div class="item-unit">笔数</div>
-								<div class="item-unit">金额</div>
-							</li>
-							<li class="table-item">
-								<div class="item-unit">当前逾期</div>
-								<div class="item-unit">2</div>
-								<div class="item-unit">605.0</div>
-							</li>
-							<li class="table-item">
-								<div class="item-unit">借给Ta</div>
-								<div class="item-unit">18</div>
-								<div class="item-unit">5840.0</div>
-							</li>
-							<li class="table-item">
-								<div class="item-unit">待还</div>
-								<div class="item-unit">2</div>
-								<div class="item-unit">605.0</div>
-							</li>
-							<li class="table-item">
-								<div class="item-unit">还款</div>
-								<div class="item-unit">16</div>
-								<div class="item-unit">5235.0</div>
-							</li>
-							<li class="table-item">
-								<div class="item-unit">总借款</div>
-								<div class="item-unit">18</div>
-								<div class="item-unit">5840.0</div>
-							</li>
-						</ul>
-						<div class="content-fail">最长逾期时间为0天</div>
-					</div>
-				</div>
-				<!-- e 信用报告 -->
-			</div>						
+                                </div>
+                                <div class="exception">
+                                    <button class="netcall-button blue" id="downloadAgentButton">下载音视频插件</button><br />
+                                    <button class="netcall-button red beCallingRejectButton">拒绝</button>
+                                    <div class="exception-tip">拒绝调用插件申请会导致无法唤起插件,需重启浏览器</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dialogs hide">
+                        </div>
+                    </div>
+                    <div id="whiteboard"></div>
+                    <div class="chat-content box-sizing" id="chatContent">
+                        <!-- 聊天记录 -->
+                    </div>
+                    <div class="u-chat-notice">您已退出</div>
+                    <div class="chat-mask"></div>
+                    <div class="chat-editor box-sizing" id="chatEditor" data-disabled="1">
+                        <div id="emojiTag" class="m-emojiTag"></div>
+                        <a class="chat-btn u-emoji" id="showEmoji"></a>
+                        <span class="chat-btn msg-type" id="chooseFileBtn">
+                            <a class="iconfont icon-tupian" data-type="file"></a>
+                        </span>
+                        <a class="chat-btn u-netcall-audio-link" id="showNetcallAudioLink">&nbsp;</a>
+                        <a class="chat-btn u-netcall-video-link" id="showNetcallVideoLink">&nbsp;</a>
+                        <!-- 在netcall_ui.js的fn.whenOpenChatBox中隐藏 -->
+                        <div class="messagebox">
+                            <textarea onclick="ExtendInfomessages.init(event);" id="messageText" class="chat-btn msg-input box-sizing radius5px p2p" rows="1" autofocus="autofocus" maxlength="500"></textarea>
+                            <div class="extends-quick-messageList-content hide" id="extend-quick-message-list">
+                                <ul class="messgeList"></ul>
+                            </div>
+                        </div>
+                        <a class="btn-send radius5px" id="sendBtn">发送</a>
+                        <form action="#" id="uploadForm">
+                            <input multiple="multiple" type="file" name="file" id="uploadFile" class="hide" />
+                        </form>
+                        <!--  快捷回复用语 -->
+                    </div>
+                    <!-- s 信用报告弹出层 -->
+                    <div class="extends-netcall-dialog hide" id="extend-dialog-netcall">
+                        <div class="netcall-dialog-head">
+                            <img src="./images/details.jpg" alt="Alternate Text" />
+                            <p class="details">信用报告</p>
+                            <a onclick="javascript:ExtendsFn.hideXYBG(this);" class="close">X</a>
+                        </div>
+                        <div class="netcall-dialog-content">
+                            <ul>
+                                <li class="font16 fontWight">个人基本信息</li>
+                                <li>姓名: admin</li>
+                                <li>身份证号: 340824199008625860</li>
+                                <li>申请编号: 201712110351833697</li>
+                                <li>报告时间: 2017-12-11 10:44:55</li>
+                                <li class="font16 fontWight">风险排查</li>
+                                <li>[被多少机构标记最大逾期天数小于等于30天]</li>
+                                <li>[被多少机构标记最大逾期天数大于30天]</li>
+                            </ul>
+                            <span class="more"></span>
+                        </div>
+                    </div>
+                    <!-- e 信用报告弹出层 -->
+                    <!-- s借款详情弹出层 -->
+                    <div class="extends-Loandetails hide" id="extends-released">
+                        <div class="LoandetailsHead">
+                            <img src="./images/Loan.png" alt="Alternate Text" />
+                            <p class="loan">借款详情</p>
+                            <a onclick="javascript:ExtendsFn.hideXYBG(this);" class="close">X</a>
+                        </div>
+                        <div class="loandetailsContent">
+                            <div class="iconphoto"></div>
+                            <p class="Loan-send">已放款</p>
+                            <p class="iconText">￥500.00</p>
+                            <ul>
+                                <li>本金: <span>450.00</span></li>
+                                <li>年利率: <span>10%</span></li>
+                                <li>其他费用: <span>50.00</span></li>
+                                <li>借款时间: <span>2018-03-08 09:35:12</span></li>
+                                <li>到期时间: <span>2018-03-08 09:35:12</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- e借款详情弹出层 -->
+                    <!-- s借款详情逾期弹出层 -->
+                    <div class="extends-Loandetails2 extends-Loandetails hide">
+                        <div class="LoandetailsHead">
+                            <img src="./images/Loan.png" alt="Alternate Text" />
+                            <p class="loan">借款详情</p>
+                            <a onclick="javascript:ExtendsFn.hideXYBG(this);" class="close">X</a>
+                        </div>
+                        <div class="loandetailsContent">
+                            <div class="iconphoto"></div>
+                            <p class="Loan-send">已逾期7天</p>
+                            <p class="iconText">￥500.00</p>
+                            <ul>
+                                <li>本金: <span>450.00</span></li>
+                                <li>年利率: <span>10%</span></li>
+                                <li>其他费用: <span>50.00</span></li>
+                                <li>借款时间: <span>2018-03-08 09:35:12</span></li>
+                                <li>到期时间: <span>2018-03-08 09:35:12</span></li>
+                            </ul>
+                        </div>
+                        <div class="loanfoot">
+                            <a href="javascript:;">销账</a>
+                            <a href="javascript:;" class="active">展期</a>
+                        </div>
+                    </div>
+                    <!-- e借款详情逾期弹出层 -->
+                    <!-- s等待对方收款 -->
+                    <div class="extends-Loandetails Transfer hide">
+                        <div class="LoandetailsHead">
+                            <img src="./images/Loan.png" alt="转账详情" />
+                            <p class="loan">欠条详情</p>
+                            <a onclick="javascript:ExtendsFn.hideXYBG(this);" class="close">X</a>
+                        </div>
+                        <div class="loandetailsContent">
+                            <div class="iconphoto"></div>
+                            <p class="Loan-send">还有5天到期</p>
+                            <p class="iconText">￥500.00</p>
+                            <ul>
+                                <li>本金: <span>450.00</span></li>
+                                <li>年利率: <span>10%</span></li>
+                                <li>其他费用:<span>50.00</span></li>
+                                <li>借款时间: <span>2018-03-08 09:35:12</span></li>
+                                <li>到期日期: <span>2018-03-08 09:35:12</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- e等待对方收款 -->
+                    <!-- s转账详情-->
+                    <div class="extends-Loandetails accounts hide">
+                        <div class="LoandetailsHead">
+                            <img src="./images/Loan.png" alt="转账详情" />
+                            <p class="loan">欠条详情</p>
+                            <a onclick="javascript:ExtendsFn.hideXYBG(this);" class="close">X</a>
+                        </div>
+                        <div class="loandetailsContent">
+                            <div class="iconphoto"></div>
+                            <p class="Loan-send">等待对方收款</p>
+                            <p class="iconText">￥500.00</p>
+                            <ul>
+                                <li>转给: <span>李云豪</span></li>
+                                <li>备注: <span>本金加利息</span></li>
+                                <li>时间:<span>2018-03-08 09:35:12</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- e转账详情-->
+                </div>
+        <div class="extends-information-report-content" id="extends-information-report-content">
+            <div class="content-wrap">
+                <div class="content-header">借条大师信息报告</div>
+                <ul class="content-table" id="extends-information-report-content-table">
+                    <li class="table-item">
+                        <div class="item-unit">状态</div>
+                        <div class="item-unit">笔数</div>
+                        <div class="item-unit">金额</div>
+                    </li>
+                    <li class="table-item">
+                        <div class="item-unit">当前逾期</div>
+                        <div class="item-unit">2</div>
+                        <div class="item-unit">605.0</div>
+                    </li>
+                    <li class="table-item">
+                        <div class="item-unit">借给Ta</div>
+                        <div class="item-unit">18</div>
+                        <div class="item-unit">5840.0</div>
+                    </li>
+                    <li class="table-item">
+                        <div class="item-unit">待还</div>
+                        <div class="item-unit">2</div>
+                        <div class="item-unit">605.0</div>
+                    </li>
+                    <li class="table-item">
+                        <div class="item-unit">还款</div>
+                        <div class="item-unit">16</div>
+                        <div class="item-unit">5235.0</div>
+                    </li>
+                    <li class="table-item">
+                        <div class="item-unit">总借款</div>
+                        <div class="item-unit">18</div>
+                        <div class="item-unit">5840.0</div>
+                    </li>
+                </ul>
+                <div class="content-fail">最长逾期时间为0天</div>
+            </div>
+        </div>
+    </div>						
 			<div class="right-panel hide radius5px devices-container" id="devices">
 				<!-- 设备管理面板 -->
 				<div class="info-box">
