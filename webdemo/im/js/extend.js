@@ -189,39 +189,39 @@ var ExtendInfomessages = {
   quickDom: null,
   messageDom: null,
   init: function(event) {
+        // 阻止冒泡防止点击的时候会把事件传向父级元素
         event.stopPropagation();
+        // 获取快捷回复元素
         this.quickDom = document.getElementById("extend-quick-message-list");
+        // 获取聊天框
         this.messageDom = document.getElementById("messageText");
+        // 用于给聊天框设定位置以及点击显示隐藏
         this.eventsDom(this.quickDom, this.messageDom);
+        // 添加快捷用语
         this.initMessageList(this.quickDom, this.messageDom);
+        // 点击其他元素隐藏快捷用语
         this.clickHideMessge(this.quickDom)
   },
   initMessageList: function(quickDom, messageDom) {
     var arrList = ["快捷回复11111111", "快捷回复22221222", "快捷回复33333333", "快捷回复44444444", "快捷回复55555555"];
-    var html = "";
-    var ullist = quickDom.children[0];
-    var $this = this;
+    var html = "",ullist = quickDom.children[0],$this = this;
     for (var i = 0; i < arrList.length; i++) {
-      html += '<li>' + arrList[i] + '</li>'
+      html += '<li onclick="ExtendInfomessages.addClick(this)">' + arrList[i] + '</li>'
     };
     ullist.innerHTML = html;
-    var newsList = ullist.children;
-    $(newsList).click(function() {
-      messageDom.value = this.innerText;
-      $(quickDom).addClass("hide")
-    })
+  },
+  addClick:function($this){
+    $("#messageText").val($this.innerText);
   },
   eventsDom: function(quickDom, messageDom) {
-    var left = messageDom.offsetLeft;
-    var top = messageDom.offsetTop;
-    var cName = quickDom.className;
+    var left = messageDom.offsetLeft, top = messageDom.offsetTop,cName = quickDom.className;
     quickDom.style.left = left + 'px';
     if (this.onOff) {
-      $(quickDom).addClass("show")
+      $(quickDom).removeClass("hide");
     } else {
-      $(quickDom).addClass("hide")
+      $(quickDom).addClass("hide");
     }
-    this.onOff = !this.onOff
+    this.onOff = !this.onOff;
   },
   getStyle: function(obj, attr) {
     if (obj.currentStyle) {
@@ -231,11 +231,9 @@ var ExtendInfomessages = {
     }
   },
   clickHideMessge: function(obj) {
-    var wrapper = document.body.children[1];
-    var chatContent = document.getElementById("chatContent");
-    var cName = obj.className;
+    var wrapper = document.body.children[1],chatContent = document.getElementById("chatContent"),cName = obj.className;
     wrapper.onclick = chatContent.onclick = function() {
-      $(obj).removeClass("show")
+      $(obj).addClass("hide");
     }
   }
 };

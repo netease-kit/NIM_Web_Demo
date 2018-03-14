@@ -261,18 +261,16 @@
 
 
 #extend-quick-message-list {
-     width: 460px;
-     background: #e5f4ff;
-     position: absolute;
-     display: none;
+ width: 460px;
+ background: #e5f4ff;
+ position: absolute;
 }
 
 #extend-quick-message-list  .messgeList li{
-    height: 30px;
-    line-height: 30px;
-    cursor: pointer;
-    padding-left: 8px;
-
+height: 30px;
+line-height: 30px;
+cursor: pointer;
+padding-left: 8px;
 }
 
 #extend-quick-message-list   .messgeList li:hover{
