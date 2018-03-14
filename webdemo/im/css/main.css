@@ -479,6 +479,7 @@ html, body {
     vertical-align: middle;
     position: relative;
     margin-right: 2px;
+    margin-top: 15px;
 }
 .btn-send {
     background-color: #0888ff;
@@ -497,11 +498,20 @@ html, body {
 .btn-send:hover {
     color:#fff;
 }
+
+
 .msg-type {
     /*position: absolute;
     top: 15px;
     left: 44px;*/
     margin-top: 5px;
+}
+.messagebox{
+
+    float:right;
+    margin-right: 80px;
+    margin-top: -5px
+
 }
 .msg-input {
     font: 14px/1.5 Helvetica, Arial, Tahoma, '微软雅黑';

@@ -439,3 +439,8 @@ YX.fn.playAudio = function(){
         new window.Audio(btn.attr("data-src")+"?audioTrans&type=mp3").play()
     }
 }
+
+
+
+
+
