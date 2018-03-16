@@ -507,7 +507,6 @@ html, body {
     margin-top: 5px;
 }
 .messagebox{
-
     float:right;
     margin-right: 80px;
     margin-top: -5px
@@ -540,10 +539,10 @@ html, body {
 }
 .cloud-msg-container,.team-info-container {
     margin-left: 292px;
-    height: 620px;
+    height: 590px;
     background-color: #fff;
     position: absolute;
-    width: 710px;
+    width: 720px;
     top: 100px;
     z-index: 2;
     border-radius:5px;
@@ -552,7 +551,7 @@ html, body {
 }
 .cloud-msg-container .info-content{
     border: none;
-    height: 520px;
+    height: 465px;
 }
 .dialog-team-container {
     position: fixed;
