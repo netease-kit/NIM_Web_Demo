@@ -53,7 +53,7 @@ function logAddress(server, type) {
 function log(obj) {
     if (!obj) return
     if (typeof obj === 'string') {
-        if (obj.length > 100) {
+        if (obj.length > 100) {1
             return;
         }
         obj = [obj];
