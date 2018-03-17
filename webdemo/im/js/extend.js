@@ -21,50 +21,64 @@ var ExtendsFn = {
   showQT: function (id) { //展示欠条
     this.getData('ioudata');
   },
+  htmlstr: function (json, data, state) {
+    // 通用的借条和欠条头部
+    var dialogHtml = '<div class="extends-Loandetails" id=' + json.id + '>' + '<div class="LoandetailsHead">' +
+      '<img src="./images/Loan.png" alt="Alternate Text">' + '<p class="loan">' + json.title + '</p>' +
+      '<a onclick="javascript:ExtendsFn.hideXYBG(\'+json.id+\');" class="close">X</a>' + '</div>' + '<div class="loandetailsContent">',
+      loadfootHtml = '';
+    // 转账
+    var accountsdialog = '<div class="extends-Loandetails accounts" id="extends-Loandetails">' +
+      '<div class="LoandetailsHead">' + '<img src="./images/Loan.png" alt="转账详情" />' +
+      '<p class="loan">转账详情</p>' + '<a onclick="javascript:ExtendsFn.hideXYBG(\'extends-Loandetails\');" class="close">X</a>' +
+      '</div>' + '<div class="loandetailsContent">';
+    // 判断后台返回状态
+    switch (state) {
+      case '已放款':
+        dialogHtml += '<div class="success"></div>' + '<p class="Loan-send">' + data.state + '</p>';
+        break;
+      case '已逾期':
+        // 已逾期加按钮
+        loadfootHtml = '<a href="javascript:;" class="details">销账</a>' + '<a href="javascript:;" class="details">展期</a>';
+        dialogHtml += '<div class="success overdue"></div>' + '<p class="Loan-send">' + data.state + '</p>';
+        break;
+      case '待收款':
+        dialogHtml += '<div class="success waitfor"></div>' + '<p class="Loan-send">' + data.state + '</p>';
+        break;
+      case '等待对方收款':
+        accountsdialog += '<div class="success waitfor"></div>' + '<p class="Loan-send">' + data.state + '</p>';
+        break;
+      case '已收款':
+        accountsdialog += '<div class="success"></div>' + '<p class="Loan-send">' + data.state + '</p>';
+        break;
+    };
+    // 借条和欠条上的用户信息
+    var messageHtml = '<p class="iconText">￥' + data.capital + '.00</p>' +
+      '<ul>' + '<li>本金: <span>' + data.capital + '.00</span></li>' + '<li>年利率: <span>' + data.rate + '%</span></li>' +
+      '<li>其他费用: <span>' + data.otherMoney + '.00</span></li>' + '<li>借款时间: <span>20' + data.startDate + ' 09:35:12</span></li>' +
+      '<li>到期时间: <span>20' + data.endDate + ' 09:35:12</span></li>' + '</ul>' + '</div>' + '<div class="loanfoot ">' + '<a href="javascript:;" class="details">详情</a>' + loadfootHtml + '</div>' + '</div>';
+    // 转账用户数据
+    accountsdialog += '<p class="iconText">￥' + data.capital + '.00</p>' + '<ul>' + '<li>转给: <span>' + data.name + '</span></li>' + '<li>备注: <span>' + data.note + '</span></li>' +
+      '<li>时间:<span>20' + data.date + ' 09:35:12</span></li>' + '</ul>' + '</div>' + '<div class="loanfoot">' + '<a href="javascript:;" class="details">详情</a>' + '</div>';
+    return {
+      newHtml: dialogHtml + messageHtml, // 借条和欠条
+      accountsdialog: accountsdialog // 转账弹出层
+    };
+  },
   render: function (type, data) {
     var html = '<div id="extends-details-modal" class="extends-details-modal">';
-    switch (type) { // 借款详情已放款
-      case 'loanDetails':
-        html += '<div class="extends-Loandetails" id="extends-released">' +
-          '<div class="LoandetailsHead">' +
-          '<img src="./images/Loan.png" alt="Alternate Text">' +
-          '<p class="loan">借款详情</p>' +
-          '<a onclick="javascript:ExtendsFn.hideXYBG(\'extends-released\');" class="close">X</a>' +
-          '</div>' +
-          '<div class="loandetailsContent">' +
-          '<div class="iconphoto"></div>' +
-          '<p class="Loan-send">' + data.state + '</p>' +
-          '<p class="iconText">￥' + data.capital + '.00</p>' +
-          '<ul>' +
-          '<li>本金: <span>' + data.capital + '.00</span></li>' +
-          '<li>年利率: <span>' + data.rate + '%</span></li>' +
-          '<li>其他费用: <span>' + data.otherMoney + '.00</span></li>' +
-          '<li>借款时间: <span>20' + data.startDate + ' 09:35:12</span></li>' +
-          '<li>到期时间: <span>20' + data.endDate + ' 09:35:12</span></li>' +
-          '</ul>' +
-          '</div>' +
-          '</div>';
+    switch (type) { // 借款详情
+      case 'released':
+        html += this.htmlstr({
+          title: '借款详情',
+          id: 'extends-released'
+        }, data, data.state).newHtml;
         break;
-      case 'ioudata': // 欠条
-        html += '<div class="extends-Loandetails transfer" id="extends-Transfer">' +
-          '<div class="LoandetailsHead">' +
-          '<img src="./images/Loan.png" alt="转账详情" />' +
-          '<p class="loan">欠条详情</p>' +
-          '<a onclick="javascript:ExtendsFn.hideXYBG(\'extends-Transfer\');" class="close">X</a>' +
-          '</div>' +
-          '<div class="loandetailsContent">' +
-          '<div class="iconphoto"></div>' +
-          '<p class="Loan-send">已放款</p>' +
-          '<p class="iconText">￥' + data.capital + '.00</p>' +
-          '<ul>' +
-          '<li>本金: <span>' + data.capital + '.00</span></li>' +
-          '<li>年利率: <span>' + data.capital + '%</span></li>' +
-          '<li>其他费用:<span>' + data.otherMoney + '.00</span></li>' +
-          '<li>借款时间: <span>20' + data.startDate + ' 09:35:12</span></li>' +
-          '<li>到期日期: <span>20' + data.endDate + '  09:35:12</span></li>' +
-          '</ul>' +
-          '</div>' +
-          '</div>';
+      case 'ioudata': // 欠条 
+        html += this.htmlstr({
+          title: "欠条详情",
+          id: 'extends-Transfer'
+        }, data, data.state).newHtml;
         break;
       case 'creditUrl': // 信用报告
         html += '<div class="extends-netcall-dialog" id="extend-dialog-netcall">' +
@@ -88,53 +102,14 @@ var ExtendsFn = {
           '</div>' +
           '</div>';
         break;
-      case 'details': // 借款详情已逾期
-        html += '<div class="extends-Loandetails2 extends-Loandetails" id="extends-Loandetails2">' +
-          '<div class="LoandetailsHead">' +
-          '<img src="./images/Loan.png" alt="Alternate Text" />' +
-          '<p class="loan">借款详情</p>' +
-          '<a onclick="javascript:ExtendsFn.hideXYBG(\'extends-Loandetails2\');" class="close">X</a>' +
-          '</div>' +
-          '<div class="loandetailsContent">' +
-          '<div class="iconphoto"></div>' +
-          '<p class="Loan-send">' + data.state + '7天</p>' +
-          '<p class="iconText">￥' + data.capital + '.00</p>' +
-          '<ul>' +
-          '<li>本金: <span>' + data.capital + '.00</span></li>' +
-          '<li>年利率: <span>' + data.rate + '%</span></li>' +
-          '<li>其他费用: <span>' + data.otherMoney + '.00</span></li>' +
-          '<li>借款时间: <span>' + data.startDate + ' 09:35:12</span></li>' +
-          '<li>到期时间: <span>' + data.endDate + ' 09:35:12</span></li>' +
-          '</ul>' +
-          '</div>' +
-          '<div class="loanfoot">' +
-          '<a href="javascript:;">销账</a>' +
-          '<a href="javascript:;" class="active">展期</a>' +
-          '</div>' +
-          '</div>';
-        break;
       case 'transfer': // 展示转账记录
-        html += '<div class="extends-Loandetails accounts" id="extends-Loandetails">' +
-          '<div class="LoandetailsHead">' +
-          '<img src="./images/Loan.png" alt="转账详情" />' +
-          '<p class="loan">欠条详情</p>' +
-          '<a onclick="javascript:ExtendsFn.hideXYBG(\'extends-Loandetails\');" class="close">X</a>' +
-          '</div>' +
-          '<div class="loandetailsContent">' +
-          '<div class="iconphoto"></div>' +
-          '<p class="Loan-send">已收款</p>' +
-          '<p class="iconText">￥500.00</p>' +
-          '<ul>' +
-          '<li>转给: <span>' + data.name + '</span></li>' +
-          '<li>备注: <span>' + data.note + '</span></li>' +
-          '<li>时间:<span>20' + data.date + ' 09:35:12</span></li>' +
-          '</ul>' +
-          '</div>' +
-          '</div>';
+        html += this.htmlstr({
+          title: '转账详情',
+          id: 'extends-Loandetails'
+        }, data, data.state).accountsdialog;
         break;
     }
     html += '</div>';
-    console.log(html)
     $('#chatBox').append(html);
   },
   getData: function (type) {
@@ -336,7 +311,7 @@ var ExtendInfomessages = {
     // 添加快捷用语
     this.initMessageList(this.quickDom, this.messageDom);
     // 点击其他元素隐藏快捷用语
-    this.clickHideMessge(this.quickDom)
+    this.clickHideMessge(this.quickDom);
   },
   initMessageList: function (quickDom, messageDom) {
     var arrList = ["快捷回复11111111", "快捷回复22221222", "快捷回复33333333", "快捷回复44444444", "快捷回复55555555"];
