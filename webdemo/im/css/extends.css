@@ -485,5 +485,11 @@
   background: url(../images/waitfor.png)
 }
 
-
+#chatBox .extends-details-modal{
+  width:100%;
+  height: 100%;
+  position: absolute;
+  background:transparent;
+  z-index: 199;
+}
 

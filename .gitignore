@@ -1,5 +1,0 @@
-node_modules/*
-webdemo/im/chatroom/node_modules/*
-npm-debug.log
-.vscode
-yarn.*
