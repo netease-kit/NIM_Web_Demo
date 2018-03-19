@@ -386,18 +386,6 @@
   line-height: 30px
 }
 
-#chatBox .extends-Loandetails .loandetailsContent .success {
-  margin: 20px auto;
-  width: 50px;
-  height: 50px;
-  background: url(../images/success.png)
-}
-
-#chatBox .extends-Loandetails .loandetailsContent .overdue{
-  background: url(../images/overdue.png)!important
-}
-
-
 #chatBox .extends-Loandetails .loandetailsContent .iconText {
   margin-top: 10px;
   color: #111;
@@ -446,13 +434,17 @@
   background: #0588fe
 }
 
-#chatBox .extends-Loandetails2 .loandetailsContent .success {
-  background: url(../images/overdue.png)!important
+#chatBox  .success {
+  background: url(../images/success.png)!important
 }
 
-#chatBox .extends-Loandetails2 .loandetailsContent .waitfor{
+#chatBox  .waitfor{
 background: url(../images/waitfor.png)!important
 
+}
+
+#chatBox .overdue{
+  background: url(../images/overdue.png)!important
 }
 
 #chatBox #extends-Transfer {
@@ -478,12 +470,10 @@ background: url(../images/waitfor.png)!important
 #chatBox .extends-Loandetails2 ul {
   margin: 20px auto 10px
 }
-
-#chatBox .accounts {
+#chatBox #extends-Loandetails {
   height: 302px;
   z-index:10;
 }
-
 #chatBox #extends-Transfer,#extends-Loandetails,#extends-Loandetails2 .loandetailsContent .waitfor,.success{
   margin: 20px auto;
   width: 50px;
@@ -505,4 +495,3 @@ background: url(../images/waitfor.png)!important
 .paddingzero{
   padding: 0;
 }
-
