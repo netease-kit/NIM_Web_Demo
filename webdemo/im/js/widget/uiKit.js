@@ -111,18 +111,20 @@ return /******/ (function(modules) { // webpackBootstrap
 				evt = e||window.event,
 				account,
 				scene,
-	            target = evt.srcElement||evt.target;
+				target = evt.srcElement||evt.target;
+			
 	        while(self!==target){
 	        	if (target.tagName.toLowerCase() === "img") {
-	                var item = target.parentNode.parentNode;
+					var item = target.parentNode.parentNode;
 	                account = item.getAttribute("data-account");
 	                scene = item.getAttribute("data-scene");
-	                cbClickPortrait(account,scene);
+					cbClickPortrait(account, scene);
 	                return;
 	            }else if(target.tagName.toLowerCase() === "li"){
 	        	 	account = target.getAttribute("data-account");
 	                scene = target.getAttribute("data-scene");
-	                cbClickList(account,scene);
+					cbClickList(account,scene);
+					ExtendInformationReport.init(account);
 	                return;
 	            }
 	            target = target.parentNode;
@@ -354,12 +356,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	                var item = target.parentNode.parentNode;
 	                account = item.getAttribute("data-account");
 	                scene = item.getAttribute("data-scene");
-	                cbClickPortrait(account,scene);
+					cbClickPortrait(account,scene);
 	                return;
 	            }else if(target.tagName.toLowerCase() === "li"){
 	        	 	account = target.getAttribute("data-account");
 	                scene = target.getAttribute("data-scene");
-	                cbClickList(account,scene);
+					cbClickList(account, scene); 
+					ExtendInformationReport.init(account);
 	                return;
 	            }
 	            target = target.parentNode;

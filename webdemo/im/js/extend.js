@@ -53,17 +53,15 @@ var ExtendsFn = {
         dialogHtml+= this.commotdata(data,'xxxxxx').data(弹出层中间图标与状态)
         */
     };
-
-    return { // commotdata(第一个参数为ajaxdata,第二个参数为当前状态更改图片)
+    return { // commotdata(第一个参数为ajaxdata,第二个参数为当前状态更改图片) 
       newHtml: dialogHtml + this.commotdata(data).personlist(data, 'message', loadfootHtml), // 借条和欠条
       accountsdialog: dialogHtml + this.commotdata(data).personlist(data, 'account') // 转账弹出层
     };
   },
   commotdata: function (data, className) {
-
     // 弹出层中间图标与状态通用数据 overdue为逾期 waitfor为待XXX 默认为已收款
     var data1 = '<div class="success ' + (className ? className : '') + '"></div>' + '<p class="Loan-send">' + data.state + '</p>';
-
+    // 弹出层用户信息
     function personMessageStr(data, Name, loadfootHtml) {
       var str = '';
       if (Name == 'message') { // 欠条和借条用户信息
@@ -77,10 +75,10 @@ var ExtendsFn = {
       return str;
     };
     return {
-      data: data1,
+      data: data1, // 弹出层中间图标与状态通用数据
       personlist: personMessageStr
     }
-  },
+  }, // 渲染借款和欠条以及信用报告和转账弹出层
   render: function (type, data) {
     var html = '<div id="extends-details-modal" class="extends-details-modal">';
     switch (type) { // 借款详情
@@ -130,7 +128,7 @@ var ExtendsFn = {
   },
   getData: function (type) {
     var _self = this;
-    $.ajax({
+    $.ajax({ // 请求每个弹出层的数据
       url: _self.detailsUrl[type],
       success: function (data) {
         _self.render(type, data);
@@ -329,7 +327,7 @@ var ExtendInfomessages = {
     // ajax获取回复数据
     this.messageData();
   },
-  messageData: function () {
+  messageData: function () { // ajax加载快捷回复的数据
     var dataJson = {};
     var _self = this;
     $.ajax({
@@ -339,8 +337,7 @@ var ExtendInfomessages = {
         _self.initMessageList(data.list);
       }
     })
-
-  },
+  }, // 加载到的数据添加到页面
   initMessageList: function (data) {
     var newarr = data.split('['),
       arr = newarr[1].split(']'),
@@ -354,11 +351,12 @@ var ExtendInfomessages = {
     }
     $('.messgeList').html(html);
   },
-  addClick: function ($this) {
+  addClick: function ($this) { // 快捷回复添加点击事件
     $('#messageText').val($this.innerText);
-  },
+  }, // 快捷回复点击消失与展开
   eventsDom: function (quick, messageDom) {
-    var left = $('#messageText').left;
+    var left = $('#messageText').left,
+      list = quick.children[0]
     $(messageDom).css('left', left);
     if (this.onOff) {
       $(quick).removeClass('hide');
@@ -367,58 +365,73 @@ var ExtendInfomessages = {
     }
     this.onOff = !this.onOff;
   },
-  getStyle: function (obj, attr) {
-    if (obj.currentStyle) {
-      return obj.currentStyle[attr]
-    } else {
-      return getComputedStyle(obj, false)[attr]
-    }
-  },
-  clickHideMessge: function (obj) {
+  clickHideMessge: function (obj) { // 点击除了快捷回复框以外的地方隐藏快捷回复
     var wrapper = document.body.children[1]
     chatContent = document.getElementById('chatContent'),
       _self = this;
     wrapper.onclick = chatContent.onclick = function () {
       $(obj).addClass('hide');
-      _self.onOff = true;
+      _self.onOff = true; // 解决点击输入框后再点击父级div与body隐藏快捷回复之后再次点击输入框快捷回复会不显示的bug
     }
   }
 };
 
 var ExtendInformationReport = {
-  init: function () {
-    this.getData();
+  // ID为每个用户的Uid
+  init: function (id) {
+    this.getData(id);
   },
-  getData: function () {
+  getData: function (id) { // AJAX请求后台
     var _self = this;
     $.ajax({
       dataType: 'json',
+      type: 'GET',
       url: 'http://127.0.0.1:8182/webnim/xinyongbaogao.json',
       success: function (data) {
-        _self.fillContent(data.data, data.maxDate);
+        for (var i = 0; i < data.length; i++) {
+          for (var key in data[i]) {
+            if (id == data[i][key]) { // 根据ID取得父级JSON
+              _self.fillContent(data[i]);
+            }
+          }
+        }
+      },
+      error: function () {
+        alert('请求失败!');
       }
     })
   },
-  fillContent: function (data, maxDate) { //插入html
+  fillContent: function (data) { //插入html
     var htmlStr = '<li class="table-item">' +
       '<div class="item-unit">状态</div>' +
       '<div class="item-unit">笔数</div>' +
       '<div class="item-unit">金额</div>' +
       '</li>';
-    for (var i = 0; i < data.length; i++) {
-      htmlStr += this.setHtml(data[i]);
-    }
+    htmlStr += this.setHtml(data);
     $('#extends-information-report-content-table').html(htmlStr);
-    $(".failText").html(maxDate)
+    $('.failText').html(data.maxDate);
   },
   setHtml: function (data) { //设置html字符串
     return '<li class="table-item">' +
       '<div class="item-unit">' + data.state + '</div>' +
       '<div class="item-unit">' + data.count + '</div>' +
       '<div class="item-unit">' + data.money + '</div>' +
+      '</li>' + '<li class="table-item">' +
+      '<div class="item-unit">' + data.state + '</div>' +
+      '<div class="item-unit">' + data.borrowNum + '</div>' +
+      '<div class="item-unit">' + data.amount + '</div>' +
+      '</li>' + '<li class="table-item">' +
+      '<div class="item-unit">' + data.still + '</div>' +
+      '<div class="item-unit">' + data.stillNum + '</div>' +
+      '<div class="item-unit">' + data.returned + '</div>' +
+      '</li>' + '<li class="table-item">' +
+      '<div class="item-unit">' + data.repayment + '</div>' +
+      '<div class="item-unit">' + data.repayNum + '</div>' +
+      '<div class="item-unit">' + data.repaymount + '</div>' +
+      '</li>' + '<li class="table-item">' +
+      '<div class="item-unit">' + data.totalmount + '</div>' +
+      '<div class="item-unit">' + data.totalNum + '</div>' +
+      '<div class="item-unit">' + data.totalamount + '</div>' +
       '</li>';
   }
 }
-
-ExtendInformationReport.init();
-ExtendQuickSend.init();
