@@ -60,17 +60,18 @@ var ExtendsFn = {
   },
   commotdata: function (data, className) {
     // 弹出层中间图标与状态通用数据 overdue为逾期 waitfor为待XXX 默认为已收款
-    var data1 = '<div class="success ' + (className ? className : '') + '"></div>' + '<p class="Loan-send">' + data.state + '</p>';
+    var data1 = '<div class="success' + '"><img src=./images/' + (className ? className : 'success') + '.png>' + '</div>' + '<p class="Loan-send">' + data.state + '</p>';
+    var _self = this;
     // 弹出层用户信息
     function personMessageStr(data, Name, loadfootHtml) {
       var str = '';
       if (Name == 'message') { // 欠条和借条用户信息
-        str += '<p class="iconText">￥' + data.capital + '.00</p>' + '<ul>' + '<li>本金: <span>' + data.capital + '.00</span></li>' + '<li>年利率: <span>' + data.rate + '%</span></li>' +
-          '<li>其他费用: <span>' + data.otherMoney + '.00</span></li>' + '<li>借款时间: <span>20' + data.startDate + ' 09:35:12</span></li>' +
-          '<li>到期时间: <span>20' + data.endDate + ' 09:35:12</span></li>' + '</ul>' + '</div>' + '<div class="loanfoot">' + '<a href="javascript:;" class="details">详情</a>' + loadfootHtml + '</div>' + '</div>';
+        str += '<p class="iconText">￥' + data.capital + '.00</p>' + '<ul>' + '<li>本金: <span>' + data.capital + '</span></li>' + '<li>年利率: <span>' + data.rate + '%</span></li>' +
+          '<li>其他费用: <span>' + data.otherMoney + '.00</span></li>' + '<li>借款时间: <span>20' + _self.addzero(data.startDate) + '</span></li>' +
+          '<li>到期时间: <span>20' + _self.addzero(data.endDate) + '</span></li>' + '</ul>' + '</div>' + '<div class="loanfoot">' + '<a href="javascript:;" class="details">详情</a>' + loadfootHtml + '</div>' + '</div>';
       } else if (Name == 'account') { // 转账用户信息
         str += '<p class="iconText">￥' + data.capital + '.00</p>' + '<ul>' + '<li>转给: <span>' + data.name + '</span></li>' + '<li>备注: <span>' + data.note + '</span></li>' +
-          '<li>时间:<span>20' + data.date + ' 09:35:12</span></li>' + '</ul>' + '</div>' + '<div class="loanfoot">' + '<a href="javascript:;" class="details">详情</a>' + '</div>';
+          '<li>时间:<span>20' + _self.addzero(data.date) + ' </span></li>' + '</ul>' + '</div>' + '<div class="loanfoot">' + '<a href="javascript:;" class="details">详情</a>' + '</div>';
       }
       return str;
     };
@@ -78,7 +79,19 @@ var ExtendsFn = {
       data: data1, // 弹出层中间图标与状态通用数据
       personlist: personMessageStr
     }
-  }, // 渲染借款和欠条以及信用报告和转账弹出层
+  },
+  addzero: function (obj) { // 小于10补0
+    if (obj) {
+      var arr = obj.split('-');
+      for (var i = 0; i < arr.length; i++) {
+        if (arr[i] < 10) {
+          arr[i] = '0' + (arr[i])
+        }
+      }
+      return arr.join('-')
+    }
+  },
+  // 渲染借款和欠条以及信用报告和转账弹出层
   render: function (type, data) {
     var html = '<div id="extends-details-modal" class="extends-details-modal">';
     switch (type) { // 借款详情
@@ -313,26 +326,26 @@ var ExtendInfomessages = {
   onOff: true,
   quickDom: null,
   messageDom: null,
+  url: '/webnim/reply.json',
   init: function (event) {
     // 阻止冒泡防止点击的时候会把事件传向父级元素
     event.stopPropagation();
     // 获取快捷回复元素
-    this.quickDom = $("#extend-quick-message-list")[0];
+    this.quickDom = $('#extend-quick-message-list')[0];
     // 获取聊天框
-    this.messageDom = $("#messageText")[0];
+    this.messageDom = $('#messageText')[0];
     // 用于给聊天框设定位置以及点击显示隐藏
     this.eventsDom(this.quickDom, this.messageDom);
     // 点击其他元素隐藏快捷用语
     this.clickHideMessge(this.quickDom);
     // ajax获取回复数据
-    this.messageData();
+    this.messageData(this.url);
   },
-  messageData: function () { // ajax加载快捷回复的数据
-    var dataJson = {};
+  messageData: function (url) { // ajax加载快捷回复的数据
     var _self = this;
     $.ajax({
       dataType: 'json',
-      url: '/webnim/reply.json',
+      url: url,
       success: function (data) {
         _self.initMessageList(data.list);
       }
@@ -342,7 +355,7 @@ var ExtendInfomessages = {
     var newarr = data.split('['),
       arr = newarr[1].split(']'),
       html = '',
-      newarr = [arr[0]];
+      newarr = arr[0];
     for (var i = 0; i < newarr.length; i++) {
       var newarrs = newarr[i].split(',');
       for (var j = 0; j < newarrs.length; j++) {
@@ -353,10 +366,10 @@ var ExtendInfomessages = {
   },
   addClick: function ($this) { // 快捷回复添加点击事件
     $('#messageText').val($this.innerText);
-  }, // 快捷回复点击消失与展开
-  eventsDom: function (quick, messageDom) {
+  },
+  eventsDom: function (quick, messageDom) { // 快捷回复点击消失与展开
     var left = $('#messageText').left,
-      list = quick.children[0]
+      list = quick.children[0];
     $(messageDom).css('left', left);
     if (this.onOff) {
       $(quick).removeClass('hide');
@@ -366,8 +379,8 @@ var ExtendInfomessages = {
     this.onOff = !this.onOff;
   },
   clickHideMessge: function (obj) { // 点击除了快捷回复框以外的地方隐藏快捷回复
-    var wrapper = document.body.children[1]
-    chatContent = document.getElementById('chatContent'),
+    var wrapper = document.body.children[1],
+      chatContent = document.getElementById('chatContent'),
       _self = this;
     wrapper.onclick = chatContent.onclick = function () {
       $(obj).addClass('hide');
@@ -377,16 +390,17 @@ var ExtendInfomessages = {
 };
 
 var ExtendInformationReport = {
+  url: '/webnim/xinyongbaogao.json',
   // ID为每个用户的Uid
   init: function (id) {
-    this.getData(id);
+    this.getData(id, this.url);
   },
-  getData: function (id) { // AJAX请求后台
+  getData: function (id, url) { // AJAX请求后台
     var _self = this;
     $.ajax({
       dataType: 'json',
       type: 'GET',
-      url: 'http://127.0.0.1:8182/webnim/xinyongbaogao.json',
+      url: url,
       success: function (data) {
         for (var i = 0; i < data.length; i++) {
           for (var key in data[i]) {
