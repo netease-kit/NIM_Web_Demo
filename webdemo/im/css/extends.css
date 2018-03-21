@@ -129,23 +129,23 @@
   border-right: 5px solid #ff9808;
 }
 
-.msg-transfer{
+.msg-transfer {
   background-color: #e6494e;
 }
 
-.msg-receipt{
+.msg-receipt {
   background-color: #4d7bfe;
 }
 
-.msg-creditReport{
+.msg-creditReport {
   background-color: #fff;
 }
 
-.msg-idcard{
+.msg-idcard {
   background-color: #fff;
 }
 
-.msg-owe{
+.msg-owe {
   background-color: #ff9808;
 }
 
@@ -163,11 +163,12 @@
 .msg-idcard .box-title {
   border-top: 1px solid #ddd;
 }
-.box-wrap{
+
+.box-wrap {
   width: 210px;
   display: inline-block;
+  cursor: pointer;
 }
-
 
 .extends-information-report {
   position: absolute;
@@ -184,7 +185,7 @@
 .extends-information-report-content {
   position: absolute;
   top: 0;
-  right:-360px;
+  right: -360px;
   width: 50%;
   height: 100%;
   /*background-color: rgba(0, 0, 0, 0.7);*/
@@ -197,7 +198,7 @@
   -webkit-box-pack: center;
   -webkit-justify-content: center;*/
   -webkit-user-select: none;
-          user-select: none;
+  user-select: none;
 }
 
 .extends-information-report-content .content-wrap {
@@ -205,6 +206,7 @@
   height: 320px;
   margin-left: 30px;
 }
+
 .extends-information-report-content .content-wrap .content-table {
   width: 100%;
   height: 240px;
@@ -259,24 +261,23 @@
   color: #ffffff;
 }
 
-
 #extend-quick-message-list {
   width: 460px;
   background: #e5f4ff;
   position: absolute;
-  height:120px;
-  overflow-y:auto;
+  height: 120px;
+  overflow-y: auto;
 }
 
-#extend-quick-message-list  .messgeList li{
+#extend-quick-message-list .messgeList li {
   height: 30px;
   line-height: 30px;
   cursor: pointer;
   padding-left: 8px;
 }
 
-#extend-quick-message-list   .messgeList li:hover{
- background: #0888ff;
+#extend-quick-message-list .messgeList li:hover {
+  background: #0888ff;
 }
 
 #chatBox .extends-netcall-dialog {
@@ -285,11 +286,12 @@
   background: #fff;
   position: absolute;
   box-shadow: 0px 0px 10px #333;
-  border-radius:8px;
-  top:180px;
+  border-radius: 8px;
+  top: 180px;
   left: 120px;
   z-index: 10;
 }
+
 #chatBox .extends-netcall-dialog .netcall-dialog-head {
   height: 32px;
   border-radius: 8px 8px 0 0;
@@ -386,18 +388,6 @@
   line-height: 30px
 }
 
-#chatBox .extends-Loandetails .loandetailsContent .success {
-  margin: 20px auto;
-  width: 50px;
-  height: 50px;
-  background: url(../images/success.png)
-}
-
-#chatBox .extends-Loandetails .loandetailsContent .overdue{
-  background: url(../images/overdue.png)!important
-}
-
-
 #chatBox .extends-Loandetails .loandetailsContent .iconText {
   margin-top: 10px;
   color: #111;
@@ -446,20 +436,19 @@
   background: #0588fe
 }
 
-#chatBox .extends-Loandetails2 .loandetailsContent .success {
-  background: url(../images/overdue.png)!important
-}
-
-#chatBox .extends-Loandetails2 .loandetailsContent .waitfor{
-background: url(../images/waitfor.png)!important
-
+#chatBox .success,
+.waitfor,
+.overdue {
+  margin: 20px auto;
+  width: 50px;
+  height: 50px;
 }
 
 #chatBox #extends-Transfer {
   position: absolute;
-  width: 330px!important;
-  height: 389px!important;
-  background: #fff!important
+  width: 330px !important;
+  height: 402px !important;
+  background: #fff !important
 }
 
 #chatBox #extends-Transfer .loandetailsContent {
@@ -479,30 +468,23 @@ background: url(../images/waitfor.png)!important
   margin: 20px auto 10px
 }
 
-#chatBox .accounts {
-  height: 302px;
-  z-index:10;
+#chatBox #extends-Loandetails {
+  height: 326px;
+  z-index: 10;
 }
 
-#chatBox #extends-Transfer,#extends-Loandetails,#extends-Loandetails2 .loandetailsContent .waitfor,.success{
-  margin: 20px auto;
-  width: 50px;
-  height: 50px;
-}
-
-#chatBox .extends-details-modal{
-  width:720px;
+#chatBox .extends-details-modal {
+  width: 720px;
   height: 100%;
   position: absolute;
-  background:transparent;
+  background: transparent;
   z-index: 199;
 }
 
-#chatBox .extends-Loandetails .details{
+#chatBox .extends-Loandetails .details {
   float: right;
 }
 
-.paddingzero{
+.paddingzero {
   padding: 0;
 }
-

@@ -249,38 +249,8 @@
             <div class="content-wrap">
                 <div class="content-header">借条大师信息报告</div>
                 <ul class="content-table" id="extends-information-report-content-table">
-                    <li class="table-item">
-                        <div class="item-unit">状态</div>
-                        <div class="item-unit">笔数</div>
-                        <div class="item-unit">金额</div>
-                    </li>
-                    <li class="table-item">
-                        <div class="item-unit">当前逾期</div>
-                        <div class="item-unit">2</div>
-                        <div class="item-unit">605.0</div>
-                    </li>
-                    <li class="table-item">
-                        <div class="item-unit">借给Ta</div>
-                        <div class="item-unit">18</div>
-                        <div class="item-unit">5840.0</div>
-                    </li>
-                    <li class="table-item">
-                        <div class="item-unit">待还</div>
-                        <div class="item-unit">2</div>
-                        <div class="item-unit">605.0</div>
-                    </li>
-                    <li class="table-item">
-                        <div class="item-unit">还款</div>
-                        <div class="item-unit">16</div>
-                        <div class="item-unit">5235.0</div>
-                    </li>
-                    <li class="table-item">
-                        <div class="item-unit">总借款</div>
-                        <div class="item-unit">18</div>
-                        <div class="item-unit">5840.0</div>
-                    </li>
                 </ul>
-                <div class="content-fail">最长逾期时间为0天</div>
+                <div class="content-fail">最长逾期时间为<span class="failText"></span>天</div>
             </div>
         </div>
     </div>						
@@ -573,23 +543,11 @@
 	<div id="mask" class="mask hide"></div>
 
 
-
 	<!-- transference 转接按钮 -->
 	<section class="extend-transference hide">
 		<button class="transference-btn" onclick="javascript: ExtendTransference.showTransference();">转接</button>
 	</section>
 
-
-	<!-- 快捷发送 -->
-	<!-- <section class="extends-quickSend hide" id="extends-quickSend">
-		<h4 class="quickSend-header">快捷回复短语</h4>
-		<ul class="quickSend-list" id="extends-quickSend-list"></ul>
-		<div class="quickSend-entry">
-			<textarea id="entry-textarea" class="entry-wrap"></textarea>
-			<div class="entry-btn" id="extends-quickSend-btn" onclick="javascript: ExtendQuickSend.add();">添加</div>
-		</div>
-	</section>
--->
 	<!-- transference-iframe 转接iframe -->
 	<section class="extends-cover extend-close" id="extend-transference">
 		<iframe src="" class="" id="extend-transference-iframe" class="extend-close"></iframe>
