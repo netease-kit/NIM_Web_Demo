@@ -501,6 +501,7 @@ window.yunXin.WB = new window.Vue({
       }).then(function () {
         that.log('音频加入白板会话成功');
         // 绑定音频事件
+        console.log('绑定音频事件')
         that.switchAudioEvent(true);
         // 开启播放设备
         that.audio.startDevice({ type: window.WebRTC.DEVICE_TYPE_AUDIO_OUT_CHAT }).then(function () {
@@ -529,6 +530,7 @@ window.yunXin.WB = new window.Vue({
         that.log('开始agent连接');
       }).catch(function (e) {
         that.log(e)
+        console.error('===startNetcallSession', e)
       })
     },
     // 开关音频
@@ -681,6 +683,7 @@ window.yunXin.WB = new window.Vue({
       var that = this;
       var op = add ? 'on' : 'off';
       // 检查microphone可用性
+      console.log('检查microphone可用性')
       this.checkDeviceStatus()
       this.audio[op]('deviceStatus', this.onAudioDeviceStatus);
       this.audio[op]('control', this.onAudioControl);
@@ -695,6 +698,7 @@ window.yunXin.WB = new window.Vue({
       var that = this
       this.audio.getDevicesOfType(window.Netcall.DEVICE_TYPE_AUDIO_IN)
       .then(function(info) {
+        console.log('===检查microphone可用性', info)
         if (info.devices.length === 0) {
           that.canWeUseMicro = false;
           if (that.isMicroOpen) {

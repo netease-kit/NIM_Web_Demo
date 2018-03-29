@@ -1,7 +1,7 @@
 (function () {
  	function getAvatar(url) {
         var re=/^((http|https|ftp):\/\/)?(\w(\:\w)?@)?([0-9a-z_-]+\.)*?([a-z0-9-]+\.[a-z]{2,6}(\.[a-z]{2})?(\:[0-9]{2,6})?)((\/[^?#<>\/\\*":]*)+(\?[^#]*)?(#.*)?)?$/i;
-        if(re.test(url)){
+        if(page && re.test(url)){
 			return page.link.room.viewImageSync({
 				url: url,
 				quality: 85, // 图片质量 0 - 100 可选填

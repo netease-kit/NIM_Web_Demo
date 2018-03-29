@@ -70,7 +70,7 @@ function NetcallBridge(yx) {
     // 本地agent连接状态
     this.signalInited = false;
     // agent程序下载地址
-    this.agentDownloadUrl = "http://yx-web.nos.netease.com/package%2FWebAgent_Setup_V2.4.0.208.zip";
+    this.agentDownloadUrl = "http://yx-web.nos.netease.com/package%2FWebAgent_Setup_V2.6.0.328.zip";
     // 多人音视频的缓存对象
     this.meetingCall = {};
     // 当前视频状态，是桌面共享还是视频: video / window / screen
@@ -444,8 +444,12 @@ fn.initWebRTCEvent = function () {
     }.bind(this));
     webrtc.on('joinChannel', function (obj) {
         if (this.callMethod !== 'webrtc' || window.yunXin.WB.session.length !== 0) return
-        // type多人没用
         console.log('user join', obj)
+    }.bind(this))
+    webrtc.on('remoteTrack', function (obj) {
+        if (this.callMethod !== 'webrtc' || window.yunXin.WB.session.length !== 0) return
+        // type多人没用
+        console.log('on remoteTrack', obj)
         that.onJoinChannel(obj);
     }.bind(this))
     webrtc.on('leaveChannel', function (obj) {

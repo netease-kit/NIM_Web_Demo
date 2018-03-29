@@ -636,7 +636,7 @@ function getAvatar(url) {
         })
         return url + "?imageView&thumbnail=80x80&quality=85";
     } else {
-        return "images/default-icon.png"
+        return url || "images/default-icon.png"
     }
 }
 
