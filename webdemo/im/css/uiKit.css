@@ -1,0 +1,109 @@
+.m-panel {
+    padding: 0;
+    margin: 0;
+}
+.m-panel p, .m-panel span, .m-panel ul, .m-panel li {
+    padding: 0;
+    margin: 0;
+}
+.m-panel li {
+    list-style: none;
+}
+.m-panel .emoji {
+    width: 18px;
+    height: 18px;
+    vertical-align: top;
+    float: none;
+}
+.m-panel .panel_empty {
+    padding: 10px 5px;
+}
+.m-panel .panel_item {
+    border-bottom: 1px solid #eaeeef;
+    overflow: hidden;
+    height: 57px;
+    padding: 8px 10px;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+.m-panel .panel_item.active {
+    background-color: #f5f5f5;
+}
+.m-panel .panel_item.active .count {
+    display: none;
+}
+.m-panel .panel_item:hover {
+    background-color: #f5f5f5;
+}
+.m-panel .panel_avatar {
+    float: left;
+}
+.m-panel .panel_avatar .panel_image {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    vertical-align: top;
+}
+.m-panel .panel_text {
+    margin: 0 0 0 60px;
+    box-sizing: border-box;
+    position: relative;
+    height: 100%;
+    overflow: hidden;
+}
+.m-panel .panel_text .panel_time {
+    position: absolute;
+    right: 0;
+    top: 0;
+    font-size: 12px;
+    color: #999;
+}
+.m-panel .panel_text .panel_multi-row {
+    height: 20px;
+    line-height: 20px;
+}
+.m-panel .panel_text .panel_single-row {
+    height: 40px;
+    line-height: 40px;
+    color: #3a4a59;
+    width: 80%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.m-panel .panel_text .panel_nick, .m-panel .panel_text .panel_lastMsg {
+    display: inline-block;
+    width: 60%;
+    font-size: 14px;
+    line-height: 20px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.m-panel .panel_text .panel_nick {
+    color: #3a4a59;
+}
+.m-panel .panel_text .panel_lastMsg {
+    color: #8899a7;
+}
+.m-panel .panel_text .panel_count {
+    position: absolute;
+    background-color: #f24c3d;
+    display: inline-block;
+    font-size: 12px;
+    color: #fff;
+    border-radius: 10px;
+    right: 0;
+    top: 21px;
+    text-align: center;
+    padding: 0 5px;
+    width: 20px;
+    line-height: 18px;
+}
+.m-panel .panel_team .panel_team-title {
+    font-size: 14px;
+    padding: 5px 10px;
+    color: #a1aebc;
+    background-color: #f5f7fa;
+    border-bottom: 1px solid #eaeeef;
+}

@@ -1,0 +1,52 @@
+@import "../util.css";
+.m-manager{
+    margin-top: 90px;
+    width: 1002px;
+    height: 538px;
+    background-color: #e5f4ff;
+    box-sizing: border-box;
+    border-radius: 5px;
+    overflow: hidden;
+    @mixin clearfix;
+    .tt{
+        height: 38px;
+        line-height: 38px;
+        width: 100%;
+        box-sizing:border-box;
+        padding-left: 24px;
+        color: #3a4a59;
+        font-size: 15px;
+        border-bottom: 1px solid #000;
+    }
+    .item{
+        width: 100%;
+        display: block;
+        height: 32px;
+        line-height: 32px;
+        font-size: 14px;
+        color: #7b8794;
+        padding-left: 44px;
+        box-sizing:border-box;
+        .icon{
+            margin-right: 10px;
+        }
+        &.crt,&:hover{
+            color: #fff;
+            background-color: #93c4f5;
+        }
+    }
+    .g-left{
+        float: left;
+        width: 230px;
+        height: 100%;
+        box-sizing: border-box;
+        padding-top: 5px;
+        border-right:1px solid #434e58;    
+    }
+    .g-right{
+        float: left;
+        position: relative;
+        width: 770px;
+        height: 100%;
+    }
+}

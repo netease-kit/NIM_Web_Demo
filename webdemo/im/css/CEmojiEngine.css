@@ -1,0 +1,22 @@
+.m-emoji-wrapper{position: absolute;border:1px solid #ccc;width: 400px;
+  height: 300px;
+  background-color: #fff;
+  position: absolute;
+  top: -320px;
+  left: 39px;
+  z-index: 100;}
+.m-emoji-picCol{position: relative;background: #fff;overflow-y:scroll;}
+.m-emoji-picCol-ul{position: relative; list-style-type: none;}
+.m-emoji-picCol-ul:after{display:block;clear:both;visibility:hidden;height:0;overflow:hidden;content:".";}
+.m-emoji-picCol-ul{zoom:1;}
+.m-emoji-picCol-ul span{float:left;display: inline-block;margin:0;background: #fff;border-right: #eee 1px solid;border-bottom: #eee 1px solid;cursor: pointer;padding:10px;}
+.m-emoji-picCol-ul span.f-sel{background-color: #ccc;}
+.m-emoji-picCol-ul span img{display: block;width: 100%;height:100%;}
+
+.m-emoji-chnCol{position: relative;background: #f0f0f0;}
+.m-emoji-chnCol-ul{position: relative; list-style-type: none;}
+.m-emoji-chnCol-ul span{float:left;display: inline-block;height: 100%;width:50px;background: #f0f0f0;cursor: pointer;}
+.m-emoji-chnCol-ul span.f-sel{background: #fff;}
+.m-emoji-chnCol-ul span img{display: block;height: 80%;width:auto;margin:10%;}
+
+

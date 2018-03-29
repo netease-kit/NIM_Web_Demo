@@ -1,0 +1,78 @@
+@import "../util.css";
+
+$fontColor: #1b2126;
+$fontColor2:#909ead;
+.m-list{
+    @mixin clearfix;
+    margin-top:54px;
+    margin-left: -10px;
+    .item{
+        float: left;
+        margin-left: 10px;
+        margin-bottom: 30px; 
+        width: 243px;
+        height: 190px;
+        box-sizing: border-box;
+        background-color: #fff;
+        position: relative;
+        &:hover{
+            cursor:pointer;
+            .play{
+                display:block;
+            };
+        };
+    }
+    .snapshot{
+        position: relative;
+        width: 100%;
+        height: 136px;
+        overflow: hidden;
+        .pic{
+            width: 100%;
+            background-color: #000;
+        }
+        .play{
+            display: none;
+            position: absolute;
+            top:0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            img{
+                margin: 36px 0 0 94px;
+            }
+        }
+    }
+    .title{
+        width: 100%;
+        box-sizing: border-box;
+        font-size: 14px;
+        color: $fontColor;
+        margin-top: 10px;
+        padding:0 10px;
+        line-height: 14px;
+        @mixin ellipsis;
+    }
+    .online{
+        width: 100%;
+        box-sizing: border-box;
+        font-size: 12px;
+        color: $fontColor2;
+        margin-top: 6px;
+        padding:0 10px;
+        line-height: 12px;
+        @mixin ellipsis;
+    }
+    .status{
+        position: absolute;
+        top:5px;
+        left: 5px;
+        width: 64px;
+        height: 20px;
+        text-align: center;
+        background-color: #238efa;
+        color: #fff;
+        line-height: 20px;
+    }
+}
