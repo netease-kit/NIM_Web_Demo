@@ -93,6 +93,15 @@ html, body {
 .item.read .readMsg{
     display: block;
 }
+.item .readTeamMsg {
+    display: block;
+    color: #6b8299;
+    font-size: 12px;
+    padding: 5px 5px;
+    text-align: right;
+    line-height: 37px;
+    float: right;
+}
 .wrapper {
     position: relative;
     overflow: visible;
@@ -448,6 +457,7 @@ html, body {
     vertical-align: middle;
     position: relative;
     margin-right: 2px;
+    /* vertical-align: top; */
 }
 .btn-send {
     background-color: #0888ff;
@@ -1870,7 +1880,22 @@ width: 40px;
 }
 .msg-input.p2p{
     /*margin-left:137px;*/
-    width: 460px;
+    width: 420px;
+}
+.chat-context {
+    /* display: inline-block; */
+    display: none;
+    font-size: 16px;
+    line-height: 42px;
+    vertical-align: middle;
+}
+.chat-context label {
+    vertical-align: middle;
+}
+.chat-context input {
+    width: 16px;
+    height: 16px;
+    vertical-align: middle;
 }
 .chat-box.show-netcall-box .chat-content{
     /*top:405px;*/

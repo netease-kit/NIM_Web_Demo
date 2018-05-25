@@ -17,7 +17,7 @@ var SDKBridge = function(ctr, data) {
   this.person[userUID] = true;
   this.controller = ctr;
   this.cache = data;
-  window.nim = ctr.nim = this.nim = new SDK.NIM({
+  window.nim = ctr.nim = this.nim = SDK.NIM.getInstance({
     //控制台日志，上线时应该关掉
     debug: true || {
       api: 'info',
@@ -27,7 +27,7 @@ var SDKBridge = function(ctr, data) {
     account: userUID,
     token: sdktoken,
     // 私有化配置文件
-    // privateConf: window.privateConf,
+    privateConf: CONFIG.privateConf,
     //连接
     onconnect: onConnect.bind(this),
     ondisconnect: onDisconnect.bind(this),
@@ -44,6 +44,7 @@ var SDKBridge = function(ctr, data) {
     onmsg: onMsg.bind(this),
     onroamingmsgs: saveMsgs.bind(this),
     onofflinemsgs: saveMsgs.bind(this),
+    onTeamMsgReceipt: onTeamMsgReceipt.bind(this),
     //会话
     // 同步会话未读数
     syncSessionUnread: true,
@@ -79,6 +80,13 @@ var SDKBridge = function(ctr, data) {
     this.teamMemberDone = false;
     this.sysMsgDone = false;
     console && console.log('连接成功');
+    this.nim.getClientAntispamLexicon({
+      done: function(error) {
+        if (!error) {
+          console.log('成功获取反垃圾词库');
+        }
+      }
+    });
   }
 
   function onKicked(obj) {
@@ -489,6 +497,24 @@ var SDKBridge = function(ctr, data) {
       console.log('订阅事件', param.msgEvents);
     }
   }
+
+  function onTeamMsgReceipt(obj) {
+    var ctr = this.controller;
+    if (
+      ctr.crtSessionTeamType !== 'advanced' ||
+      ctr.crtSessionType !== 'team'
+    ) {
+      return;
+    }
+    var teamMsgReceipts = obj.teamMsgReceipts;
+    var crtSession = ctr.crtSession;
+    for (var i = 0; i < teamMsgReceipts.length; i++) {
+      if ('team-' + teamMsgReceipts[i].teamId === crtSession) {
+        yunXin.doChatUI(crtSession);
+        break;
+      }
+    }
+  }
 };
 
 /********** 这里通过原型链封装了sdk的方法，主要是为了方便快速阅读sdkAPI的使用 *********/
@@ -566,12 +592,33 @@ SDKBridge.prototype.sendTextMessage = function(
   callback
 ) {
   isLocal = !!isLocal;
-  this.nim.sendText({
+  var options = {
     scene: scene || 'p2p',
     to: to,
     text: text,
     isLocal: isLocal,
     done: callback
+  };
+  this.nim.sendText(options);
+};
+
+SDKBridge.prototype.sendTipMsg = function(options) {
+  options = options || {};
+  this.nim.sendTipMsg({
+    isLocal: true,
+    scene: options.scene,
+    to: options.to,
+    tip: options.tip,
+    time: Date.now(),
+    done: function(err, data) {
+      if (!err) {
+        this.cache.addMsgs(data);
+        var msgHtml = appUI.updateChatContentUI(data, this.cache);
+        this.controller.$chatContent.append(msgHtml).scrollTop(99999);
+      } else {
+        alert('操作失败');
+      }
+    }.bind(this)
   });
 };
 

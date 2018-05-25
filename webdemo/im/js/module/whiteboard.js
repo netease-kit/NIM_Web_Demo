@@ -26,8 +26,6 @@ window.yunXin.WB = new window.Vue({
     beCalledInfo: {}, // 被叫方信息
     session: '', // 白板session信息
     sessionConfig: {
-      height: 275,
-      width: 275,
       videoQuality: window.WebRTC.CHAT_VIDEO_QUALITY_HIGH,
       videoFrameRate: window.WebRTC.CHAT_VIDEO_FRAME_RATE_15,
       videoBitrate: 0,
@@ -38,6 +36,10 @@ window.yunXin.WB = new window.Vue({
       rtmpUrl: '',
       rtmpRecord: false,
       splitMode: window.WebRTC.LAYOUT_SPLITLATTICETILE
+    },
+    whiteboardConfig: {
+      height: 275,
+      width: 275,
     }
   },
 
@@ -303,6 +305,7 @@ window.yunXin.WB = new window.Vue({
       this.sendLocalTip('白板互动已结束');
       this.wb.hangup();
       this.clearSession();
+      this.drawPlugin.clear()
     },
     // 对方结束白板互动
     onHangup: function(info) {
@@ -414,6 +417,7 @@ window.yunXin.WB = new window.Vue({
           if (this.session.length === 0) return;
           this.sendLocalTip('白板互动已结束');
           this.clearSession();
+          this.drawPlugin.clear()
         }.bind(this),
         1000 * 2
       );
@@ -466,11 +470,11 @@ window.yunXin.WB = new window.Vue({
     },
     // 撤销
     undo: function() {
-      this.wb.undo();
+      this.drawPlugin.undo();
     },
     // 清空
     clear: function() {
-      this.wb.clear();
+      this.drawPlugin.clear();
     },
     // 清除白板连接相关信息
     clearSession: function() {
@@ -692,6 +696,7 @@ window.yunXin.WB = new window.Vue({
       // 音频部分发生意外时按断线处理（也可以提示
       this.audio[op]('error', this.onAudioError);
       this.audio[op]('hangup', this.onAudioHangUp);
+      this.audio[op]('remoteTrack', this.onRemoteTrack);
       // this.audio[op]('error', function() {});
     },
     checkDeviceStatus: function () {
@@ -773,6 +778,21 @@ window.yunXin.WB = new window.Vue({
         that.hangup()
       }, 2000)
     },
+    // 收到远程轨道
+    onRemoteTrack: function(obj){
+      console.log('onRemoteTrack', obj)
+      if(obj.type === 'audio'){
+        this.audio.startDevice({
+          type: window.WebRTC.DEVICE_TYPE_AUDIO_OUT_CHAT,
+          account: obj.account,
+          uid: obj.uid
+        })
+        .catch(function (err) {
+          this.log('播放远端音频失败',err)
+          console.error('播放远端音频失败', err)
+        })
+      }
+    },
     onAudioError: function (info) {
       var that = this;
       if (!this.connected) return;
@@ -792,16 +812,40 @@ window.yunXin.WB = new window.Vue({
     log: function() {
       var message = [].join.call(arguments, ' ');
       console.log('%c【白板】' + message, 'color: green;font-size:16px;');
+    },
+    // 初始化绘图插件
+    initDrawPlugin: function() {
+      this.drawPlugin = new DrawPlugin(this.$refs.container, {
+        UID: this.wb.getAccount(),
+        nim: window.nim,
+        width: this.whiteboardConfig.width,
+        height: this.whiteboardConfig.height,
+        isP2P: true  // 开启p2p模式，则不发送颜色
+      })
+      this.drawPlugin.enableDraw(true)
+      var that = this
+      this.drawPlugin.on('data', function (obj) {
+        var toAccount = obj.toAccount
+        var data = obj.data
+        if (!data) return
+        that.wb.sendData({ 
+          toAccount: toAccount, 
+          data: data 
+        })
+      })
+    },
+    // 接收白板sdk的数据
+    onData: function(obj) {
+      this.drawPlugin && this.drawPlugin.act({ account: obj.account, data: obj.data })
     }
   },
 
   mounted: function() {
     this.wb = window.WhiteBoard.getInstance({
       nim: window.nim,
-      isCustom: false,
-      container: this.$refs.container,
       debug: true
     });
+    this.initDrawPlugin()
     this.$refs.container.ondragstart =function () { return false };
     // Vue已经把方法绑定好了this
     // 点击互动白板按钮，发起邀请
@@ -828,6 +872,8 @@ window.yunXin.WB = new window.Vue({
     this.wb.on('hangup', this.onHangup);
     // 收到
     this.wb.on('error', this.onError);
+    // 收到sdk发送来的数据
+    this.wb.on('data', this.onData);
     window.addEventListener('offline', this.onOffline);
     window.addEventListener('online', this.onOnline);
   }

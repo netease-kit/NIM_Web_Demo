@@ -25,15 +25,25 @@
 			<div class="left-panel radius5px" id="left-panel">
 				<div class="hide loading" id="loading"></div>
 				<div class="title">
-					<img src="" alt="" width="56" height="56" class="radius-circle avatar" id="userPic" /><span id="userName">&nbsp;</span>
-					<span><img src="images/pen.png" class="u-modify" id="showMyInfo"></span>
+					<img src="" alt="" width="56" height="56" class="radius-circle avatar" id="userPic" />
+					<span id="userName">&nbsp;</span>
+					<span>
+						<img src="images/pen.png" class="u-modify" id="showMyInfo">
+					</span>
 					<span class="exit" title="退出" id="logout">退出</span>
 				</div>
 				<div class="m-devices hide">正在使用云信web版</div>
 				<div class="panel" id="switchPanel">
-					<a class="box-sizing tc m-unread panel_tab cur" data-type="sessions"><span class="icon icon-session"></span><b class="u-unread hide"> </b></a>
-					<a class="box-sizing tc panel_tab" data-type="friends"><span class="icon icon-friend"></span></a>
-					<a class="box-sizing tc panel_tab" data-type="teams"><span class="icon icon-team"></span></a>
+					<a class="box-sizing tc m-unread panel_tab cur" data-type="sessions">
+						<span class="icon icon-session"></span>
+						<b class="u-unread hide"> </b>
+					</a>
+					<a class="box-sizing tc panel_tab" data-type="friends">
+						<span class="icon icon-friend"></span>
+					</a>
+					<a class="box-sizing tc panel_tab" data-type="teams">
+						<span class="icon icon-team"></span>
+					</a>
 				</div>
 				<div class="item" id="sessionsWrap" data-type="sessions">
 					<!-- 最近联系人 -->
@@ -126,17 +136,21 @@
 					</div>
 				</div>
 			</div>
-			<div class="chatVernier" id="chatVernier"><span class="radius-circle hide"></span></div>
+			<div class="chatVernier" id="chatVernier">
+				<span class="radius-circle hide"></span>
+			</div>
 			<div class="right-panel hide radius5px" id="rightPanel">
 				<!-- 聊天面板 -->
 				<div class="chat-box show-netcall-box" id="chatBox">
 					<div class="title" id="chatTitle">
 						<img src="" width="56" height="56" class="radius-circle img" id="headImg" />
 						<span id="nickName"></span>
-						<div class="cloudMsg tc radius4px" data-record-id="" id="cloudMsg"><i class="icon icon-team-info"></i>
+						<div class="cloudMsg tc radius4px" data-record-id="" id="cloudMsg">
+							<i class="icon icon-team-info"></i>
 							<p>云记录</p>
 						</div>
-						<div class="team-info hide tc radius4px" data-team-id="" id="teamInfo"><i class="icon icon-team-info"></i>
+						<div class="team-info hide tc radius4px" data-team-id="" id="teamInfo">
+							<i class="icon icon-team-info"></i>
 							<p>资料</p>
 						</div>
 					</div>
@@ -233,17 +247,20 @@
 							<p id="becallingText" class="tip"></p>
 							<div class="op">
 								<div class="normal">
-									<div class="checking-tip">检查插件中...<span class="netcall-icon-checking"></span></div>
+									<div class="checking-tip">检查插件中...
+										<span class="netcall-icon-checking"></span>
+									</div>
 									<button class="netcall-button blue beCallingAcceptButton" id="beCallingAcceptButton">
-                                        <span class="txt">接听</span>
-                                        <span class="netcall-icon-checking"></span>
-                                    </button>
+										<span class="txt">接听</span>
+										<span class="netcall-icon-checking"></span>
+									</button>
 									<button class="netcall-button red beCallingRejectButton" id="beCallingRejectButton">
-                                        拒绝
-                                    </button>
+										拒绝
+									</button>
 								</div>
 								<div class="exception">
-									<button class="netcall-button blue" id="downloadAgentButton">下载音视频插件</button><br/>
+									<button class="netcall-button blue" id="downloadAgentButton">下载音视频插件</button>
+									<br/>
 									<button class="netcall-button red beCallingRejectButton">拒绝</button>
 									<div class="exception-tip">拒绝调用插件申请会导致无法唤起插件,需重启浏览器</div>
 								</div>
@@ -269,6 +286,10 @@
 						<!-- 在netcall_ui.js的fn.whenOpenChatBox中隐藏 -->
 						<a class="chat-btn u-whiteboard" id="showWhiteboard">&nbsp;</a>
 						<textarea id="messageText" class="chat-btn msg-input box-sizing radius5px p2p" rows="1" autofocus="autofocus" maxlength="500"></textarea>
+						<span class="chat-context" id="showTeamMsgReceipt">
+							<label for="needTeamMsgReceipt">
+							<input id="needTeamMsgReceipt" type="checkbox" name="needTeamMsgReceipt" />回执</label>
+						</span>
 						<a class="btn-send radius5px" id="sendBtn">发送</a>
 						<form action="#" id="uploadForm">
 							<input multiple="multiple" type="file" name="file" id="uploadFile" class="hide" />
@@ -364,7 +385,9 @@
 					<img src="images/advanced.png">
 					<div class="desc">
 						<p class="j-name"></p>
-						<p><span class="j-teamId"></span></p>
+						<p>
+							<span class="j-teamId"></span>
+						</p>
 					</div>
 				</div>
 			</div>
@@ -402,7 +425,9 @@
 				<img src="">
 				<div class="desc">
 					<p class="j-nickname"></p>
-					<p><span class="j-username"></span></p>
+					<p>
+						<span class="j-username"></span>
+					</p>
 				</div>
 			</div>
 			<div class="tip">
@@ -426,8 +451,12 @@
 			<div class="desc">
 				<p class="j-nick nick">超级大饼</p>
 				<img src="" class="j-gender gender">
-				<p><span class="j-username">帐号：caojidabin</span></p>
-				<p><span class="j-nickname">昵称：caojidabin</span></p>
+				<p>
+					<span class="j-username">帐号：caojidabin</span>
+				</p>
+				<p>
+					<span class="j-nickname">昵称：caojidabin</span>
+				</p>
 			</div>
 		</div>
 		<div class="infos">
@@ -490,7 +519,9 @@
 			<div class="desc">
 				<p class="j-nickname nick">超级大饼</p>
 				<img src="" class="j-gender gender">
-				<p><span class="j-username">帐号：caojidabin</span></p>
+				<p>
+					<span class="j-username">帐号：caojidabin</span>
+				</p>
 			</div>
 		</div>
 		<div class="infos">
@@ -560,9 +591,13 @@
 			<div class="choseFile j-choseFile"> 选择图片</div>
 		</div>
 		<div class="tt">头像更换</div>
-		<div class="chose" id="cropImg"><img src="" class="hide"></div>
+		<div class="chose" id="cropImg">
+			<img src="" class="hide">
+		</div>
 		<div class="big">
-			<div class="img"><img src="" class="hide"></div>
+			<div class="img">
+				<img src="" class="hide">
+			</div>
 			<p>160*160</p>
 		</div>
 		<div class="small">
@@ -579,15 +614,15 @@
 	</div>
 	<div id="mask" class="mask hide"></div>
 	<script>
-			// IE 11 polify
-			if(!Object.assign) {
-				Object.assign = function () {
-					var list = arguments
-					for (var i = 1; i < list.length; i++) {
-						list[0] = extend(list[0], list[i])
-					}
-					return list[0]
+		// IE 11 polify
+		if (!Object.assign) {
+			Object.assign = function () {
+				var list = arguments
+				for (var i = 1; i < list.length; i++) {
+					list[0] = extend(list[0], list[i])
 				}
+				return list[0]
+			}
 
 			function extend(obj1, obj2) {
 				for (var i in obj2) {
@@ -596,14 +631,15 @@
 				return obj1
 			}
 		}
-
 	</script>
-	<!-- <script src="../3rd/nim_server_conf.js"></script> -->
-	<script src="../3rd/NIM_Web_SDK_v5.0.0.js"></script>
-	<script src="../3rd/NIM_Web_Netcall_v5.0.0.js"></script>
-	<script src="../3rd/NIM_Web_WebRTC_v5.0.0.js"></script>
-	<script src="../3rd/NIM_Web_WhiteBoard_v4.9.0.js"></script>
+	<script src="../3rd/nim_server_conf.js"></script>
+	<script src="../3rd/NIM_Web_SDK_v5.2.0.js"></script>
+	<script src="../3rd/NIM_Web_Netcall_v5.2.0.js"></script>
+	<script src="../3rd/NIM_Web_WebRTC_v5.2.0.js"></script>
+	<script src="../3rd/NIM_Web_WhiteBoard_v5.2.0.js"></script>
+	<script src="../3rd/DrawPlugin.js"></script>
 
+	<script src="./js/3rd/whiteboard.js"></script>
 	<script src="../3rd/jquery-1.11.3.min.js"></script>
 	<!--<script src="../3rd/zepto.min.js"></script>-->
 	<script>
