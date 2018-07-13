@@ -305,7 +305,12 @@ YX.fn.getHistoryMsgs = function(scene, account) {
   this.sendMsgRead(account, scene);
   if (!!sessions) {
     // if (sessions.unread >= msgs.length) {
-    var end = msgs.length > 0 ? msgs[0].time : false;
+      // var end = msgs.length > 0 ? msgs[0].time : false;
+        // }
+    // if (sessions.lastMsg) {
+    //   var end = sessions.lastMsg.time || false
+    // }
+    var end = false
     this.mysdk.getLocalMsgs(id, end, this.getLocalMsgsDone.bind(this));
     return;
     // }
@@ -325,7 +330,8 @@ YX.fn.doChatUI = function(id) {
 
 YX.fn.getLocalMsgsDone = function(err, data) {
   if (!err) {
-    this.cache.addMsgsByReverse(data.msgs);
+    var reset = true
+    this.cache.addMsgsByReverse(data.msgs, true);
     var id = data.sessionId;
     var array = getAllAccount(data.msgs);
     var that = this;
@@ -411,6 +417,7 @@ YX.fn.backoutMsg = function(id, data) {
 
   this.nim.sendTipMsg({
     isLocal: true,
+    idClient: msg.idClient || null,
     scene: msg.scene,
     to: to,
     tip: (userUID === opeAccount ? '你' : opeNick) + '撤回了一条消息',

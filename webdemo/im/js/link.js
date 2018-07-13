@@ -23,6 +23,7 @@ var SDKBridge = function(ctr, data) {
       api: 'info',
       style: 'font-size:14px;color:blue;background-color:rgba(0,0,0,0.1)'
     },
+    db: true,
     appKey: CONFIG.appkey,
     account: userUID,
     token: sdktoken,
@@ -266,6 +267,7 @@ var SDKBridge = function(ctr, data) {
     var data = this.cache.getSysMsgs();
     var array = [];
     var offlineMsgs = [];
+    debugger
     for (var i = sysMsgs.length - 1; i >= 0; i--) {
       if (sysMsgs[i].category === 'team') {
         array.push(sysMsgs[i]);
@@ -688,13 +690,13 @@ SDKBridge.prototype.getLocalMsgs = function(sessionId, end, done) {
     this.nim.getLocalMsgs({
       sessionId: sessionId,
       end: end,
-      limit: 20,
+      limit: 80,
       done: done
     });
   } else {
     this.nim.getLocalMsgs({
       sessionId: sessionId,
-      limit: 20,
+      limit: 80,
       done: done
     });
   }

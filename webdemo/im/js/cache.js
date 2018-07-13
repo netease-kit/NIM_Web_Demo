@@ -185,25 +185,33 @@ var Cache = (function() {
       this.msgs[user].push(msg);
     }
   };
-  Cache.prototype.addMsgsByReverse = function(msgs) {
+  Cache.prototype.addMsgsByReverse = function(msgs, reset) {
     var item;
     var user;
     var cacheSession = {};
     for (var i = 0; i < msgs.length; i++) {
       if (msgs[i].scene === 'team') {
         user = msgs[i].to;
-        if (!this.msgs['team-' + user]) {
-          this.msgs['team-' + user] = [];
+        var sessionId = msgs[i].scene + '-' + user
+        if (reset && (!cacheSession[sessionId])) {
+          this.msgs[sessionId] = []
         }
-        this.msgs['team-' + user].unshift(msgs[i]);
-        cacheSession['team-' + user] = true;
+        if (!this.msgs[sessionId]) {
+          this.msgs[sessionId] = [];
+        }
+        this.msgs[sessionId].unshift(msgs[i]);
+        cacheSession[sessionId] = true;
       } else {
         user = msgs[i].from === userUID ? msgs[i].to : msgs[i].from;
-        if (!this.msgs['p2p-' + user]) {
-          this.msgs['p2p-' + user] = [];
+        var sessionId = msgs[i].scene + '-' + user
+        if (reset && (!cacheSession[sessionId])) {
+          this.msgs[sessionId] = []
         }
-        this.msgs['p2p-' + user].unshift(msgs[i]);
-        cacheSession['p2p-' + user] = true;
+        if (!this.msgs[sessionId]) {
+          this.msgs[sessionId] = [];
+        }
+        this.msgs[sessionId].unshift(msgs[i]);
+        cacheSession[sessionId] = true;
       }
     }
     for (var sid in cacheSession) {
@@ -247,6 +255,9 @@ var Cache = (function() {
       }
     }
     this.msgs[sid].push(msg);
+    this.msgs[sid].sort(function(a,b){
+			return a.time - b.time;
+		});
   };
   //系统消息
   Cache.prototype.setSysMsgs = function(data) {
@@ -352,8 +363,10 @@ var Cache = (function() {
             return
           }
           var failedCnt = content.teamMsgReceipts;
-          for (var i = 0; i < failedCnt.length; i++) {
-            teamMsgMap[failedCnt[i].idServer].hasSendReceipt = false;
+          if (failedCnt) {
+            for (var i = 0; i < failedCnt.length; i++) {
+              teamMsgMap[failedCnt[i].idServer].hasSendReceipt = false;
+            }
           }
         }
       });
@@ -367,10 +380,12 @@ var Cache = (function() {
             callback()
             return
           }
-          for (var i = 0; i < content.teamMsgReceipts.length; i++) {
-            var cur = content.teamMsgReceipts[i];
-            teamMsgMap[cur.idServer].teamMsgUnread = cur.unread;
-            teamMsgMap[cur.idServer].teamMsgRead = cur.read;
+          if (content.teamMsgReceipts) {
+            for (var i = 0; i < content.teamMsgReceipts.length; i++) {
+              var cur = content.teamMsgReceipts[i];
+              teamMsgMap[cur.idServer].teamMsgUnread = cur.unread;
+              teamMsgMap[cur.idServer].teamMsgRead = cur.read;
+            }
           }
           callback();
         }
