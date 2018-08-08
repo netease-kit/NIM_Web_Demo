@@ -192,12 +192,6 @@ function buildSessionMsg(msg) {
 function getMessage(msg) {
     var str = ''
     var url = msg.file ? _$escape(msg.file.url) : ''
-    if (url) {
-        url = nim.viewImageSync({
-            url: url
-        })
-        console.log('new url', url)
-    }
     var sentStr = (msg.flow === 'in') ? "收到" : "发送";
     switch (msg.type) {
         case 'text':
@@ -212,12 +206,17 @@ function getMessage(msg) {
             if (msg.status === -1) {
                 str = '<p>[' + msg.message.message + ']</p>';
             } else {
+                if (url) {
+                    url = nim.viewImageSync({
+                        url: url
+                    })
+                }
                 // msg.file.url = _$escape(msg.file.url);
                 // msg.file.url = nim.viewImageSync({
                 //     url: msg.file.url
                 // })
                 // str = '<a href="' + msg.file.url + '?imageView" target="_blank"><img onload="loadImg()" data-src="' + msg.file.url + '" src="' + msg.file.url + '?imageView&thumbnail=200x0&quality=85"/></a>';
-                str = '<a href="' + url + '?imageView" target="_blank"><img onload="loadImg()" data-src="' + url + '" src="' + url + '?imageView&thumbnail=200x0&quality=85"/></a>';
+                str = '<a href="' + url + '" target="_blank"><img onload="loadImg()" data-src="' + url + '" src="' + url + '?imageView&thumbnail=200x0&quality=85"/></a>';
             }
             break;
         case 'file':
@@ -230,9 +229,17 @@ function getMessage(msg) {
                     //     url: msg.file.url
                     // })
                     // str = '<a class="f-maxWid" href="' + msg.file.url + '?imageView" target="_blank"><img data-src="' + msg.file.url + '" src="' + msg.file.url + '?imageView&thumbnail=200x0&quality=85"/></a>';
-                    str = '<a class="f-maxWid" href="' + url + '?imageView" target="_blank"><img data-src="' + url + '" src="' + url + '?imageView&thumbnail=200x0&quality=85"/></a>';
+                    if (url) {
+                        url = nim.viewImageSync({
+                            url: url
+                        })
+                    }
+                    str = '<a class="f-maxWid" href="' + url + '" target="_blank"><img data-src="' + url + '" src="' + url + '?imageView&thumbnail=200x0&quality=85"/></a>';
                 } else if (!/exe|bat/i.test(msg.file.ext)) {
-                    url += msg.file ? '?download=' + encodeURI(_$escape(msg.file.name)) : '';
+                    if (msg.file) {
+                        url += msg.file.url.indexOf('?') === -1 ? '?' : '&'
+                        url += 'download=' + encodeURI(_$escape(msg.file.name));
+                    }
                     str = '<a href="' + url + '" target="_blank" class="download-file f-maxWid"><span class="icon icon-file2"></span>' + _$escape(msg.file.name) + '</a>';
                 } else {
                     str = '<p>[非法文件，已被本站拦截]</p>';

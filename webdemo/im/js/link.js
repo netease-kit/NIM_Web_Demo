@@ -76,6 +76,11 @@ var SDKBridge = function(ctr, data) {
     // 监听订阅事件列表
     onpushevents: onPushEvents.bind(this)
   });
+  this.nim.on('wbNotifyHangup', onwbNotifyHangup)
+  function onwbNotifyHangup() {
+    console.log('未接听挂断')
+    window.yunXin.WB.hangup()
+  }
   function onConnect() {
     $('errorNetwork').addClass('hide');
     this.teamMemberDone = false;
