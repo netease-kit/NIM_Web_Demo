@@ -4,7 +4,9 @@ var YX = function(accid) {
   this.initModule();
   this.cache = new Cache();
   this.mysdk = new SDKBridge(this, this.cache);
-  this.myNetcall = new NetcallBridge(this);
+  if (window.nim) {
+    this.myNetcall = new NetcallBridge(this);
+  }
   this.firstLoadSysMsg = true;
   this.totalUnread = 0;
 };

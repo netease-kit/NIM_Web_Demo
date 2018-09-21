@@ -10,19 +10,18 @@ fn.checkDeviceStateUI = function () {
     var temp = this.netcall
     var p1 = this.netcall.getDevicesOfType(Netcall.DEVICE_TYPE_VIDEO).then(function (obj) {
         var $camera = $(".netcall-box .camera.control-item");
-        if (obj.devices.length) {
+        if (obj.length || (obj.devices && obj.devices.length)) {
             // 摄像头从无到有的变化
             if ($camera.is(".no-device")) {
 
                 // 更新ui
                 $camera.toggleClass("no-device", false).attr("title", "");
-
                 // rtc模式检测
-                if (this.callMethod === 'webrtc') {
-                    if (!temp.devices.needVideo) {
-                        return Promise.resolve()
-                    }
-                }
+                // if (this.callMethod === 'webrtc') {
+                //     if (!temp.devices.needVideo) {
+                //         return Promise.resolve()
+                //     }
+                // }
                 // 开启摄像头
                 this.setDeviceVideoIn(true);
 
@@ -31,7 +30,7 @@ fn.checkDeviceStateUI = function () {
                     this.updateDeviceStatus(Netcall.DEVICE_TYPE_VIDEO, true, true);
                     this.isRtcSupported && this.startLocalStreamMeeting() && this.setVideoViewSize()
                 } else {
-                    this.isRtcSupported && this.startLocalStream() && this.this.setVideoViewSize()
+                    this.isRtcSupported && this.startLocalStream() && this.setVideoViewSize()
                 }
 
                 $(".netcall-video-local").toggleClass("empty", false);
@@ -61,18 +60,18 @@ fn.checkDeviceStateUI = function () {
     var p2 = this.netcall.getDevicesOfType(Netcall.DEVICE_TYPE_AUDIO_IN).then(function (obj) {
         var $microphone = $(".netcall-box .microphone.control-item");
 
-        if (obj.devices.length) {
+        if (obj.length || (obj.devices && obj.devices.length)) {
             if ($microphone.is(".no-device")) {
 
                 // 更新ui
                 $microphone.toggleClass("no-device", false).attr("title", "");
 
                 // rtc模式检测
-                if (this.callMethod === 'webrtc') {
-                    if (!temp.devices.needAudio) {
-                        return Promise.resolve()
-                    }
-                }
+                // if (this.callMethod === 'webrtc') {
+                //     if (!temp.devices.needAudio) {
+                //         return Promise.resolve()
+                //     }
+                // }
 
                 this.setDeviceAudioIn(true);
             }
@@ -85,7 +84,7 @@ fn.checkDeviceStateUI = function () {
     }.bind(this));
     var p3 = this.netcall.getDevicesOfType(Netcall.DEVICE_TYPE_AUDIO_OUT_CHAT).then(function (obj) {
         var $volume = $(".netcall-box .volume.control-item");
-        if (obj.devices.length) {
+        if (obj.length || (obj.devices && obj.devices.length)) {
             if ($volume.is(".no-device")) {
                 this.setDeviceAudioOut(true);
             }
@@ -266,8 +265,8 @@ fn.hideAllNetcallUI = function () {
     this.$netcallBox.find(".top").toggleClass('hide', true);
     this.netcallActive = false;
     this.netcallAccount = "";
-    this.stopRemoteStream();
-    this.stopLocalStream();
+    // this.stopRemoteStream();
+    // this.stopLocalStream();
     $(".netcall-video-local").toggleClass("empty", false);
     $(".netcall-video-local .message").text("");
     $(".netcall-video-remote").toggleClass("empty", false);

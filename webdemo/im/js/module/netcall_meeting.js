@@ -15,7 +15,7 @@ window.requestAnimationFrame = (function () {
         };
 })();
 
-// 
+//
 /**
  * 生成参与多人音视频的可供选择的群成员的列表UI
  */
@@ -35,7 +35,7 @@ fn.getMeetingMemberListUI = function () {
     // 回调传回来选中的列表
     function cbConfirm(list) {
         that.meetingCall.members = list;
-        that.meetingCall.caller = that.netcall.getAccount();
+        that.meetingCall.caller = that.netcall.getAccount && that.netcall.getAccount() || that.yx.accid;
         that.createChannel();
         console.log(list);
     }
@@ -58,7 +58,7 @@ fn.getMeetingCallUI = function (list) {
     dialog.load('./netcall_meeting.html', function () {
         var $addUserUl = $('#memberList'), tmp = '';
 
-        // 拉取模板失败，连不上网的情况下, 
+        // 拉取模板失败，连不上网的情况下,
         if ($addUserUl.length === 0) {
             that.resetWhenHangup();
             that.showTip('网络错误，加入房间失败', 2000);
@@ -103,7 +103,7 @@ fn.showSpeakBanUI = function (list) {
 
 }
 
-/** 
+/**
  * 设置禁言
  * @param {object} listObj 被禁言的人列表
  */
@@ -209,7 +209,7 @@ fn.initMeetingCallEvent = function () {
     that.meetingCall.inited = true;
 }
 
-/** 
+/**
  * 多人音视频过程的控制处理
  * @param {object} obj 传递过来的控制对象属性
  */
@@ -281,7 +281,7 @@ fn.onMeetingControl = function (obj) {
     }
 }
 
-/** 
+/**
  * 更新音量状态显示
  * @param {object} obj 当前在房间的群成员的音量表 eg: {id1:{status:1000}}
  */
@@ -333,7 +333,7 @@ fn.updateBanStatus = function () {
     tmp.$box.find('.icon-ban').toggleClass('icon-disabled', Object.keys(tmp.joinedMembers || []).length === 0);
 }
 
-/** 
+/**
  * 呼叫等待计时器
  * 60s呼叫倒计时，到点将所有未接入的用户设置为未连接
  * @param {string} type 倒计时类型
@@ -518,7 +518,7 @@ fn.joinChannel = function (isReConnect) {
                 tmplist.unshift(that.yx.accid);
 
                 that.meetingCall.list = tmplist;
-
+                
                 /** 点对点发起视频通知 */
                 that.yx.sendCustomMessage({
                     caller: that.yx.accid,
@@ -535,38 +535,70 @@ fn.joinChannel = function (isReConnect) {
         if (this.isRtcSupported) {
             // 设置为互动者
             this.netcall.changeRoleToPlayer()
-            var promise;
-            if (obj.type === WebRTC.NETCALL_TYPE_VIDEO) {
-                promise = this.setDeviceVideoIn(true);
-            } else {
-                promise = this.setDeviceVideoIn(false);
-            }
-            promise.then(function () {
-                return this.setDeviceAudioIn(true);
-            }.bind(this)).then(function () {
-                this.startLocalStreamMeeting();
-                this.setVideoViewSize();
-                this.netcall.setCaptureVolume(255);
-            }.bind(this)).then(function () {
-                this.log("开始webrtc连接")
-                return this.netcall.startRtc();
-            }.bind(this)).then(function () {
-                this.log("webrtc连接成功")
+            // var promise;
+            // if (obj.type === WebRTC.NETCALL_TYPE_VIDEO) {
+            //     promise = this.setDeviceVideoIn(true);
+            // } else {
+            //     promise = this.setDeviceVideoIn(false);
+            // }
+            // promise.then(function () {
+            //     return this.setDeviceAudioIn(true);
+            // }.bind(this)).then(function () {
+            //     this.startLocalStreamMeeting();
+            //     this.setVideoViewSize();
+            //     this.netcall.setCaptureVolume(255);
+            // }.bind(this)).then(function () {
+            //     this.log("开始webrtc连接")
+            //     return this.netcall.startRtc();
+            // }.bind(this)).then(function () {
+            //     this.log("webrtc连接成功")
+            //     next();
+            //     return this.setDeviceAudioOut(true);
+            // }.bind(this)).catch(function (e) {
+            //     console.error(e);
+            //     this.log("连接出错");
+            //     if (/webrtc兼容开关/i.test(e)) {
+            //         minAlert.alert({
+            //             type: 'error',
+            //             msg: '无法加入房间!请让呼叫方打开"WebRTC兼容开关"，方可正常通话', //消息主体
+            //             confirmBtnMsg: '知道了，挂断',
+            //             cbCancel: this.leaveChannel.bind(this),
+            //             cbConfirm: this.leaveChannel.bind(this)
+            //         })
+            //     }
+            // }.bind(this))
+            Promise.resolve().then(function () {
+                that.log("开始webrtc连接")
+                return that.netcall.startRtc();
+            }).then(() => {
+                if (obj.type === WebRTC.NETCALL_TYPE_VIDEO) {
+                    return that.setDeviceVideoIn(true);
+                } else {
+                    return that.setDeviceVideoIn(false);
+                }
+            }).then(function () {
+                return that.setDeviceAudioIn(true);
+            }).then(function () {
+                that.startLocalStreamMeeting();
+                that.setVideoViewSize();
+                that.netcall.setCaptureVolume(255);
+            }).then(function () {
+                that.log("webrtc连接成功")
                 next();
-                return this.setDeviceAudioOut(true);
-            }.bind(this)).catch(function (e) {
+                return that.setDeviceAudioOut(true);
+            }).catch(function (e) {
                 console.error(e);
-                this.log("连接出错");
+                that.log("连接出错");
                 if (/webrtc兼容开关/i.test(e)) {
                     minAlert.alert({
                         type: 'error',
                         msg: '无法加入房间!请让呼叫方打开"WebRTC兼容开关"，方可正常通话', //消息主体
                         confirmBtnMsg: '知道了，挂断',
-                        cbCancel: this.leaveChannel.bind(this),
-                        cbConfirm: this.leaveChannel.bind(this)
+                        cbCancel: that.leaveChannel.bind(that),
+                        cbConfirm: that.leaveChannel.bind(that)
                     })
                 }
-            }.bind(this))
+            })
             return
         }
 
@@ -643,18 +675,8 @@ fn.leaveChannel = function (cb) {
  * 有第三方加入房间
  */
 fn.onJoinChannel = function (obj) {
-
-    // 如果是p2p模式
-    if (this.yx.crtSessionType !== 'team' && !this.meetingCall.channelName) {
-        this.startDeviceAudioOutChat()
-        this.startRemoteStreamMeeting(obj)
-        this.updateVideoShowSize(false, true);
-        return
-    }
-
     var joinedMembers = this.meetingCall.joinedMembers;
-    if (joinedMembers && joinedMembers[obj.account]) return;
-
+    // if (joinedMembers && joinedMembers[obj.account]) return;
 
     this.log('加入群视频:', JSON.stringify(obj));
 
@@ -700,12 +722,12 @@ fn.onLeaveChannel = function (obj) {
         console.log(obj);
         this.nodeLoadingStatus(obj.account, '已挂断');
         this.stopRemoteStreamMeeting(obj.account);
-    
+
         delete this.meetingCall.joinedMembers[obj.account];
         //刷新禁言状态
         this.updateBanStatus();
     }
-    
+
 }
 
 /** 音视频通信状态重置 */
@@ -751,12 +773,12 @@ fn.resetWhenHangup = function () {
     };
 
     if (!this.meetingCall.channelName) return;
-    this.stopLocalStreamMeeting()
-    this.stopRemoteStreamMeeting()
-    this.stopDeviceAudioIn()
-    this.stopDeviceAudioOutLocal()
-    this.stopDeviceAudioOutChat()
-    this.stopDeviceVideo()
+    // this.stopLocalStreamMeeting()
+    // this.stopRemoteStreamMeeting()
+    // this.stopDeviceAudioIn()
+    // this.stopDeviceAudioOutLocal()
+    // this.stopDeviceAudioOutChat()
+    // this.stopDeviceVideo()
 
 }
 
@@ -887,7 +909,7 @@ fn.meetingCallReject = function (reject_type) {
     console.log('reject');
 }
 
-/** 
+/**
  * 对方同意群视频
  */
 fn.onMeetingCallAccepted = function (obj) {
@@ -895,7 +917,7 @@ fn.onMeetingCallAccepted = function (obj) {
     console.log(obj);
 }
 
-/** 
+/**
 * 对方拒绝群视频
 */
 fn.onMeetingCallRejected = function (obj) {
@@ -1003,7 +1025,7 @@ fn.startRemoteStreamMeeting = function (obj) {
         console.log('远程流错误，缺少account或者uid：', obj);
     }
     if (!obj.account) {
-        obj.account = this.netcall.getAccountWithUid(obj.uid);
+      obj.account = this.netcall.getAccountWithUid && this.netcall.getAccountWithUid(obj.uid) || '';
     }
     obj.node = this.findAccountNode(obj.account);
     if (this.netcall) {

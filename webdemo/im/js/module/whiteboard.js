@@ -21,7 +21,7 @@ window.yunXin.WB = new window.Vue({
     drawboard: null, // 建立连接成功后创建白板实例
     undoable: false, // 是否能进行撤销操作
     isMicroOpen: false, // 麦克风状态 'unavailable', 'close', 'open'
-    canWeUseMicro: false, // 麦克风状态 'unavailable', 'close', 'open'
+    canWeUseMicro: true, // 麦克风状态 'unavailable', 'close', 'open'
     account: '', // 对方账号
     beCalledInfo: {}, // 被叫方信息
     session: '', // 白板session信息
@@ -45,7 +45,7 @@ window.yunXin.WB = new window.Vue({
 
   methods: {
     // 发起白板邀请
-    call: function() {
+    call: function () {
       // 已经在白板互动或者音视频互动中
       var that = this;
       var NETCALL = window.yunXin.myNetcall;
@@ -68,7 +68,7 @@ window.yunXin.WB = new window.Vue({
       }
       // 选择技术方案，成功后发起邀请
       this.chooseNetcallSolution(
-        function(data) {
+        function (data) {
           console.log('选择方式', data);
           that.session = window.yunXin.crtSession;
           that.account = window.yunXin.crtSessionAccount;
@@ -86,16 +86,16 @@ window.yunXin.WB = new window.Vue({
               sessionConfig: that.sessionConfig
             })
             .then(
-              function() {
+              function () {
                 that.log('对方收到了邀请');
                 // 播放连接铃声，复用音视频的API
-                NETCALL.playRing('A', 1, function() {
+                NETCALL.playRing('A', 1, function () {
                   NETCALL.playRing('E', 45);
                 });
               }
             )
             .catch(
-              function(err) {
+              function (err) {
                 that.log('邀请出错' + err);
                 if (err.code === 11001) {
                   that.log('对方不在线');
@@ -104,7 +104,7 @@ window.yunXin.WB = new window.Vue({
                   that.tip = '通信断开';
                 }
                 setTimeout(
-                  function() {
+                  function () {
                     if (that.session) that.hangup();
                   },
                   2000
@@ -123,7 +123,7 @@ window.yunXin.WB = new window.Vue({
           window.yunXin.$chatContent.append(msgHtml).scrollTop(99999);
           // 45秒超时
           that.timeouter = setTimeout(
-            function() {
+            function () {
               if (that.tip) return;
               that.tip = '无应答';
               that.log('超时无应答');
@@ -131,7 +131,7 @@ window.yunXin.WB = new window.Vue({
               NETCALL.playRing('B', 1);
               // 2秒后交互窗口消失
               setTimeout(
-                function() {
+                function () {
                   that.hangup();
                 },
                 1000 * 2
@@ -143,7 +143,7 @@ window.yunXin.WB = new window.Vue({
       );
     },
     // 收到白板邀请
-    onBeCalled: function(info) {
+    onBeCalled: function (info) {
       // 告诉发送方自己已经收到请求了
       this.log('收到邀请');
       this.wb.control({
@@ -183,13 +183,13 @@ window.yunXin.WB = new window.Vue({
       this.isCalled = true;
       // 45s未接受，超时自动断开
       this.timeouter = setTimeout(
-        function() {
+        function () {
           if (this.tip) return;
           this.tip = '未接受';
           this.log('超时未接受');
           // 2秒后交互窗口消失
           setTimeout(
-            function() {
+            function () {
               if (this.session) this.hangup();
             }.bind(this),
             1000 * 2
@@ -199,18 +199,20 @@ window.yunXin.WB = new window.Vue({
       );
     },
     // 接受邀请
-    accept: function() {
+    accept: function () {
       var that = this
       if (this.waiting) return;
       // 选择音频技术方案
       var NETCALL = window.yunXin.myNetcall;
       NETCALL.clearRingPlay();
       this.chooseNetcallSolution(
-        function(data) {
+        function (data) {
           if (data.type === 'webrtc') {
             that.audio = NETCALL.netcall = NETCALL.webrtc;
+            this.netcall = NETCALL.webrtc;
           } else {
             that.audio = NETCALL.netcall = NETCALL.webnet;
+            this.netcall = NETCALL.webnet;
           }
           // 选择成功后发送接受邀请的回应给对方
           if (that.session.length === 0) return
@@ -221,19 +223,19 @@ window.yunXin.WB = new window.Vue({
               sessionConfig: that.sessionConfig
             })
             .then(
-              function() {
+              function () {
                 that.log('接受了邀请');
                 that.waiting = true;
                 that.hasAccepted = true;
               },
-              function(err) {
+              function (err) {
                 // 向服务器发送接受回应失败了，按拒绝邀请处理
                 that.reject();
                 that.log('接受白板邀请失败', err.toString());
               }
             );
         },
-        function(data) {
+        function (data) {
           // 选择音频技术方案出现问题，按拒绝邀请处理
           that.log('选择音频方案出现问题');
           if (data.incompatible) {
@@ -244,7 +246,7 @@ window.yunXin.WB = new window.Vue({
       );
     },
     // 接受邀请的回调
-    onAccept: function(info) {
+    onAccept: function (info) {
       var that = this;
       // 如果并没有发起邀请，不做响应
       if (this.session.length === 0) return;
@@ -253,30 +255,30 @@ window.yunXin.WB = new window.Vue({
       console.log(info);
       var NETCALL = window.yunXin.myNetcall;
       this.wb.startSession()
-      .then(function() {
-        if (that.timeouter) clearTimeout(that.timeouter);
-        that.statusTip = '等待对方加入房间，请稍候...'
-        that.waiting = true
-        that.timeouter = setTimeout(function () {
-          if (that.connected) return
-          that.tip = '对方加入房间失败';
-          setTimeout(function() {
-            that.hangup();
-          }, 1000 * 2);
-        }, 45 * 1000)
-      })
-      .catch(function(err) {
-        that.log('会话开启失败', err)
-      });
+        .then(function () {
+          if (that.timeouter) clearTimeout(that.timeouter);
+          that.statusTip = '等待对方加入房间，请稍候...'
+          that.waiting = true
+          that.timeouter = setTimeout(function () {
+            if (that.connected) return
+            that.tip = '对方加入房间失败';
+            setTimeout(function () {
+              that.hangup();
+            }, 1000 * 2);
+          }, 45 * 1000)
+        })
+        .catch(function (err) {
+          that.log('会话开启失败', err)
+        });
     },
     // 拒绝邀请
-    reject: function() {
+    reject: function () {
       if (this.session.length === 0) return;
       // 接受了请求，但还在等待对方加入房间，此时拒绝应该进行挂断操作
       if (this.hasAccepted) {
         this.hangup()
         return
-      } 
+      }
       this.wb.response({
         accepted: false,
         beCalledInfo: this.beCalledInfo
@@ -286,7 +288,7 @@ window.yunXin.WB = new window.Vue({
       this.clearSession();
     },
     // 对方拒绝邀请
-    onReject: function(info) {
+    onReject: function (info) {
       // 如果并没有发起邀请，不做响应
       if (!this.isCalling || this.account != info.account) return;
       this.log('对方拒绝邀请');
@@ -298,7 +300,7 @@ window.yunXin.WB = new window.Vue({
       this.end();
     },
     // 结束白板互动
-    hangup: function() {
+    hangup: function () {
       if (this.session.length === 0) return;
       var NETCALL = window.yunXin.myNetcall;
       this.log('我方挂断')
@@ -308,7 +310,7 @@ window.yunXin.WB = new window.Vue({
       this.drawPlugin.clear()
     },
     // 对方结束白板互动
-    onHangup: function(info) {
+    onHangup: function (info) {
       if (!this.session) return;
       // 断网挂断
       if (info.type === -1) {
@@ -339,7 +341,7 @@ window.yunXin.WB = new window.Vue({
       this.startNetcallSession();
     },
     // 对方发来白板指令
-    onControl: function(info) {
+    onControl: function (info) {
       // 没和对方在进行互动
       if (this.session.length === 0 || this.account !== info.account) return;
 
@@ -358,7 +360,7 @@ window.yunXin.WB = new window.Vue({
       }
     },
     // 其它端已处理
-    onCallerAckSync: function(info) {
+    onCallerAckSync: function (info) {
       // 没有收到请求
       if (!this.isCalled) return;
       this.log('其它端已处理');
@@ -366,7 +368,7 @@ window.yunXin.WB = new window.Vue({
       if (this.beCalledInfo && info.channelId === this.beCalledInfo.channelId) {
         this.tip = '其它端已处理';
         setTimeout(
-          function() {
+          function () {
             this.sendLocalTip('白板互动已结束');
             this.clearSession();
           }.bind(this),
@@ -375,7 +377,7 @@ window.yunXin.WB = new window.Vue({
       }
     },
     // 出错
-    onError: function(info) {
+    onError: function (info) {
       this.log('出错');
       console.log('出错信息 ', info);
       this.tip = '通信断开';
@@ -384,7 +386,7 @@ window.yunXin.WB = new window.Vue({
       }.bind(this), 2000);
     },
     // 信令断开
-    onSignalClosed: function(info) {
+    onSignalClosed: function (info) {
       this.log('信令断开');
       console.log(info);
       this.tip = '通信断开';
@@ -404,16 +406,16 @@ window.yunXin.WB = new window.Vue({
       }, 30 * 1000);
     },
     onOnline: function () {
-      this.log('连接上网络')      
+      this.log('连接上网络')
       if (this.offlineTimer) clearTimeout(this.offlineTimer)
     },
     // 白板互动结束，显示本地消息并清除保存的信息
     // 适用于非主动挂断情况下的善后
-    end: function() {
+    end: function () {
       if (this.session.length === 0) return;
       var NETCALL = window.yunXin.myNetcall;
       setTimeout(
-        function() {
+        function () {
           if (this.session.length === 0) return;
           this.sendLocalTip('白板互动已结束');
           this.clearSession();
@@ -422,7 +424,7 @@ window.yunXin.WB = new window.Vue({
         1000 * 2
       );
     },
-    sendLocalTip: function(tip) {
+    sendLocalTip: function (tip) {
       var msg = window.yunXin.nim.sendTipMsg({
         scene: 'p2p',
         to: this.account,
@@ -434,12 +436,12 @@ window.yunXin.WB = new window.Vue({
       window.yunXin.$chatContent.append(msgHtml).scrollTop(99999);
     },
     // 下载PCAgent
-    downloadAgent: function() {
+    downloadAgent: function () {
       var that = this;
       var NETCALL = window.yunXin.myNetcall;
       // 修改并复用音视频部分，最后加上一个isWhiteboard参数进行区分
       NETCALL.clickDownloadAgent(
-        function() {
+        function () {
           if (!that.session) return;
           that.audio = NETCALL.netcall = NETCALL.webnet;
           // 选择成功后发送接受邀请的回应给对方
@@ -450,18 +452,18 @@ window.yunXin.WB = new window.Vue({
               sessionConfig: that.sessionConfig
             })
             .then(
-              function() {
+              function () {
                 that.log('接受了邀请');
                 that.waiting = true;
               },
-              function(err) {
+              function (err) {
                 // 向服务器发送接受回应失败了，按拒绝邀请处理
                 that.reject();
                 that.log('接受白板邀请失败', err.toString());
               }
             );
         },
-        function() {
+        function () {
           if (!that.session) return;
           that.reject();
         },
@@ -469,15 +471,15 @@ window.yunXin.WB = new window.Vue({
       );
     },
     // 撤销
-    undo: function() {
+    undo: function () {
       this.drawPlugin.undo();
     },
     // 清空
-    clear: function() {
+    clear: function () {
       this.drawPlugin.clear();
     },
     // 清除白板连接相关信息
-    clearSession: function() {
+    clearSession: function () {
       var NETCALL = window.yunXin.myNetcall;
       this.account = this.session = this.tip = this.bottomTip = this.banner = this.statusTip = '';
       this.waiting = this.isCalled = this.isCalling = this.connected = this.display = false;
@@ -486,8 +488,10 @@ window.yunXin.WB = new window.Vue({
       this.switchAudioEvent(false);
       this.audio.hangup();
       this.audio.stopSignal && this.audio.stopSignal();
-      this.audio.stopDevice(Netcall.DEVICE_TYPE_AUDIO_IN);
-      this.audio.stopDevice(Netcall.DEVICE_TYPE_AUDIO_OUT_CHAT);
+      if (this.callMethod != 'webrtc') {
+        this.audio.stopDevice(Netcall.DEVICE_TYPE_AUDIO_IN);
+        this.audio.stopDevice(Netcall.DEVICE_TYPE_AUDIO_OUT_CHAT);
+      }
       NETCALL.resetWhenHangup();
       window.yunXin.myNetcall.clearRingPlay();
       if (this.timeouter) clearTimeout(this.timeouter);
@@ -495,7 +499,7 @@ window.yunXin.WB = new window.Vue({
     },
     /* 音频部分 */
     // onAccept事件触发后开启音视频的会话
-    startNetcallSession: function() {
+    startNetcallSession: function () {
       var that = this;
       var NETCALL = window.yunXin.myNetcall;
       // 初始化音频信令
@@ -504,16 +508,7 @@ window.yunXin.WB = new window.Vue({
         return that.audio.setNetcallSession(that.isCalled ? that.wb.beCalledInfo : that.wb.callerInfo)
       }).then(function () {
         that.log('音频加入白板会话成功');
-        // 绑定音频事件
-        console.log('绑定音频事件')
-        that.switchAudioEvent(true);
-        // 开启播放设备
-        that.audio.startDevice({ type: window.WebRTC.DEVICE_TYPE_AUDIO_OUT_CHAT }).then(function () {
-          that.log("开启扬声器成功");
-        }).catch(function () {
-          that.log("开启扬声器失败");
-        });
-          // WebRTC模式需要连接网关
+        // WebRTC模式需要连接网关
         if (that.callMethod == 'webrtc') {
           that.log('开始webrtc连接');
           that.audio
@@ -530,6 +525,16 @@ window.yunXin.WB = new window.Vue({
             });
           return;
         }
+        // 绑定音频事件
+        console.log('绑定音频事件')
+        that.switchAudioEvent(true);
+        // 开启播放设备
+        that.audio.startDevice({ type: window.WebRTC.DEVICE_TYPE_AUDIO_OUT_CHAT }).then(function () {
+          that.log("开启扬声器成功");
+        }).catch(function () {
+          that.log("开启扬声器失败");
+        });
+        
         // webnet模式
         that.log('开始agent连接');
       }).catch(function (e) {
@@ -538,7 +543,7 @@ window.yunXin.WB = new window.Vue({
       })
     },
     // 开关音频
-    switchAudio: function() {
+    switchAudio: function () {
       // 麦不可用的情况下不做处理
       var open = !this.isMicroOpen;
       if (open) {
@@ -547,7 +552,7 @@ window.yunXin.WB = new window.Vue({
             type: window.Netcall.DEVICE_TYPE_AUDIO_IN
           })
           .then(
-            function() {
+            function () {
               this.audio.setCaptureVolume(255);
               this.audio.setPlayVolume(255);
               this.log('启动麦克风成功');
@@ -555,7 +560,7 @@ window.yunXin.WB = new window.Vue({
               this.bottomTip = '已开启己方语音';
               // 显示2秒底部提示
               setTimeout(
-                function() {
+                function () {
                   if (this.bottomTip === '已开启己方语音') this.bottomTip = '';
                 }.bind(this),
                 2000
@@ -566,7 +571,7 @@ window.yunXin.WB = new window.Vue({
             }.bind(this)
           )
           .catch(
-            function(err) {
+            function (err) {
               if (/webrtc兼容开关/i.test(err)) {
                 minAlert.alert({
                   type: 'error',
@@ -582,12 +587,12 @@ window.yunXin.WB = new window.Vue({
           );
       } else {
         this.audio.stopDevice(window.Netcall.DEVICE_TYPE_AUDIO_IN).then(
-          function() {
+          function () {
             this.log('关闭麦克风成功');
             this.isMicroOpen = false;
             this.bottomTip = '已关闭己方语音';
             setTimeout(
-              function() {
+              function () {
                 if (this.bottomTip === '已关闭己方语音') this.bottomTip = '';
               }.bind(this),
               2000
@@ -600,17 +605,19 @@ window.yunXin.WB = new window.Vue({
       }
     },
     // 复用音视频的部分，选择白板Demo中的音频技术方案
-    chooseNetcallSolution: function(successCallback, failCallback, isCalled) {
+    chooseNetcallSolution: function (successCallback, failCallback, isCalled) {
       var NETCALL = window.yunXin.myNetcall;
       var that = this;
       NETCALL.dialog_call.open({
         callMethod: this.callMethod,
-        cbConfirm: function(data) {
+        cbConfirm: function (data) {
           that.callMethod = data.type;
           if (data.type === 'webrtc') {
             this.audio = NETCALL.webrtc;
+            this.netcall = NETCALL.webrtc;
           } else {
             this.audio = NETCALL.webnet;
+            this.netcall = NETCALL.webnet;
           }
 
           if (data.type === 'webnet') {
@@ -641,16 +648,16 @@ window.yunXin.WB = new window.Vue({
                 }
               });
             }
-            
+
             // 尝试唤起插件
             NETCALL.checkAgentWorking(
-              function() {
+              function () {
                 console.log('唤起插件成功');
                 // 使用PC agent
                 // 发起白板呼叫，音频呼叫
                 successCallback(data);
               },
-              function() {
+              function () {
                 console.log('唤起插件失败');
                 failCallback && failCallback(data);
               },
@@ -683,7 +690,7 @@ window.yunXin.WB = new window.Vue({
       });
     },
     // 绑定音频事件
-    switchAudioEvent: function(add) {
+    switchAudioEvent: function (add) {
       var that = this;
       var op = add ? 'on' : 'off';
       // 检查microphone可用性
@@ -702,17 +709,18 @@ window.yunXin.WB = new window.Vue({
     checkDeviceStatus: function () {
       var that = this
       this.audio.getDevicesOfType(window.Netcall.DEVICE_TYPE_AUDIO_IN)
-      .then(function(info) {
-        console.log('===检查microphone可用性', info)
-        if (info.devices.length === 0) {
-          that.canWeUseMicro = false;
-          if (that.isMicroOpen) {
-            that.switchAudio()
+        .then(function (info) {
+          console.log('===检查microphone可用性', info)
+          if (info.length === 0 || (info.devices && info.devices.length === 0)) {
+            that.canWeUseMicro = false;
+            if (that.isMicroOpen) {
+              that.switchAudio()
+            }
+          } else {
+            that.canWeUseMicro = true;
           }
-        } else {
-          that.canWeUseMicro = true;
-        }
-      });
+          console.log('===', that.canWeUseMicro)
+        });
     },
     // 收到音频指令
     onAudioControl: function (info) {
@@ -723,7 +731,7 @@ window.yunXin.WB = new window.Vue({
       switch (info.type) {
         case window.Netcall.NETCALL_CONTROL_COMMAND_NOTIFY_AUDIO_ON:
           this.bottomTip = '对方已开启语音';
-          setTimeout(function() {
+          setTimeout(function () {
             if (that.bottomTip === '对方已开启语音') {
               that.bottomTip = '';
             }
@@ -731,7 +739,7 @@ window.yunXin.WB = new window.Vue({
           break;
         case window.Netcall.NETCALL_CONTROL_COMMAND_NOTIFY_AUDIO_OFF:
           this.bottomTip = '对方已关闭语音';
-          setTimeout(function() {
+          setTimeout(function () {
             if (that.bottomTip === '对方已关闭语音') {
               that.bottomTip = '';
             }
@@ -779,18 +787,18 @@ window.yunXin.WB = new window.Vue({
       }, 2000)
     },
     // 收到远程轨道
-    onRemoteTrack: function(obj){
+    onRemoteTrack: function (obj) {
       console.log('onRemoteTrack', obj)
-      if(obj.type === 'audio'){
+      if (obj.type === 'audio') {
         this.audio.startDevice({
           type: window.WebRTC.DEVICE_TYPE_AUDIO_OUT_CHAT,
           account: obj.account,
           uid: obj.uid
         })
-        .catch(function (err) {
-          this.log('播放远端音频失败',err)
-          console.error('播放远端音频失败', err)
-        })
+          .catch(function (err) {
+            this.log('播放远端音频失败', err)
+            console.error('播放远端音频失败', err)
+          })
       }
     },
     onAudioError: function (info) {
@@ -804,17 +812,17 @@ window.yunXin.WB = new window.Vue({
       }, 2000)
     },
     // 检测是否显示白板UI，这个方法会在base.js的openChatBox函数中被调用
-    checkSession: function() {
+    checkSession: function () {
       this.display =
         this.session.length > 0 && window.yunXin.crtSession === this.session;
     },
     // 日志
-    log: function() {
+    log: function () {
       var message = [].join.call(arguments, ' ');
       console.log('%c【白板】' + message, 'color: green;font-size:16px;');
     },
     // 初始化绘图插件
-    initDrawPlugin: function() {
+    initDrawPlugin: function () {
       this.drawPlugin = new DrawPlugin(this.$refs.container, {
         UID: this.wb.getAccount(),
         nim: window.nim,
@@ -828,25 +836,25 @@ window.yunXin.WB = new window.Vue({
         var toAccount = obj.toAccount
         var data = obj.data
         if (!data) return
-        that.wb.sendData({ 
-          toAccount: toAccount, 
-          data: data 
+        that.wb.sendData({
+          toAccount: toAccount,
+          data: data
         })
       })
     },
     // 接收白板sdk的数据
-    onData: function(obj) {
+    onData: function (obj) {
       this.drawPlugin && this.drawPlugin.act({ account: obj.account, data: obj.data })
     }
   },
 
-  mounted: function() {
+  mounted: function () {
     this.wb = window.WhiteBoard.getInstance({
       nim: window.nim,
       debug: true
     });
     this.initDrawPlugin()
-    this.$refs.container.ondragstart =function () { return false };
+    this.$refs.container.ondragstart = function () { return false };
     // Vue已经把方法绑定好了this
     // 点击互动白板按钮，发起邀请
     document
@@ -881,6 +889,6 @@ window.yunXin.WB = new window.Vue({
 
 // 白板模块外部按钮还是使用Jquery
 window.yunXin.WB.$goWhiteboard = $('.m-goWhiteboard');
-window.yunXin.WB.$goWhiteboard.click(function() {
+window.yunXin.WB.$goWhiteboard.click(function () {
   window.yunXin.openChatBox(window.yunXin.WB.account, 'p2p');
 });
