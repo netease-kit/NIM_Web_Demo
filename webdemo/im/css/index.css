@@ -38,6 +38,20 @@ body {
     border: 1px solid #ddd;
     width: 280px;
 }
+.row-private-env {
+  display: block;
+  margin: 0 auto;
+  width: 280px;
+}
+.row-private-env input {
+    width: auto;
+}
+input.row-private-url {
+  display: block;
+  margin: 0 auto;
+  padding: 10px 20px;
+  width: 240px;
+}
 input:-webkit-autofill {
     -webkit-box-shadow: 0 0 0px 1000px #fff inset;
 }

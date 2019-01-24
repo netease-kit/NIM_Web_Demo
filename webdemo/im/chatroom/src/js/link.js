@@ -11,32 +11,12 @@ var LinkRoom = function(ctr, data) {
   this.account = info.account;
   this.ctr = ctr;
 
-  //拿连接room的地址
-  $.ajax({
-    url: CONFIG.chatroomAddr,
-    contentType: 'application/json',
-    type: 'POST',
-    beforeSend: function(req) {
-      req.setRequestHeader('appkey', CONFIG.appkey);
-    },
-    data: JSON.stringify({
-      roomid: info.id
-      // uid:info.account
-    })
-  }).done(function(data) {
-    if (data.res === 200) {
-      that.address = data.msg.addr;
-      doLink(info);
-    } else {
-      alert('获取连接房间地址失败');
-    }
-  });
   //连接link
-  var doLink = function(data) {
+  var doLink = function (data) {
     var options = {
       appKey: data.appKey,
       account: data.account,
-      token: data.token,
+      token: data.token, 
       // 私有化配置文件
       privateConf: CONFIG.privateConf,
       chatroomId: data.id,
@@ -137,6 +117,46 @@ var LinkRoom = function(ctr, data) {
     }
     that.room = SDK.Chatroom.getInstance(options);
   };
+
+ if (typeof CONFIG.chatroomAddr === 'object' && Object.prototype.toString.call(CONFIG.chatroomAddr) === '[object Array]') {
+   getAddr(CONFIG.chatroomAddr);
+ } else {
+   //拿连接room的地址
+   $.ajax({
+     url: CONFIG.chatroomAddr,
+     contentType: 'application/json',
+     type: 'POST',
+     beforeSend: function(req) {
+       req.setRequestHeader('appkey', CONFIG.appkey);
+     },
+     data: JSON.stringify({
+       roomid: info.id
+       // uid:info.account
+     })
+   }).done(function(data) {
+     if (data.res === 200) {
+       getAddr(data.msg.addr);
+     } else {
+       alert('获取连接房间地址失败');
+     }
+   });
+ }
+  function getAddr(addr) {
+    that.address = addr;
+    // 等待私有化配置请求完毕
+    if (CONFIG.usePrivateEnv === 1) {
+      function waitPrivateConf() {
+        if (CONFIG.privateConf || CONFIG.usePrivateEnv === 2) {
+          doLink(info);
+        } else {
+          setTimeout(waitPrivateConf, 1000)
+        }
+      }
+      waitPrivateConf()
+    } else {
+      doLink(info);
+    }
+  }
 
   var cbGetHistoryMsgs = function(err, data) {
     if (!err) {

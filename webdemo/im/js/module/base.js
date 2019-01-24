@@ -45,7 +45,6 @@ YX.fn.initBase = function() {
   //2面板中间的圆点
   this.$chatVernier = $('#chatVernier span');
   $('#left-panel .item .list').on('scroll', this.doPoint.bind(this));
-
   //登出
   this.logoutEvt();
   //多端登陆
@@ -118,6 +117,9 @@ YX.fn.cbInitLocalTeamInfo = function(err, data) {
  * 点击左边面板，打开聊天框
  *********************************/
 YX.fn.openChatBox = function(account, scene) {
+  // 切换聊天对象取消之前的语音播放以及录音
+  YX.fn.stopPlayAudio()
+  YX.fn.cancelRecordAudio()
   var info;
   var that = this;
   this.mysdk.setCurrSession(scene, account);
@@ -190,9 +192,9 @@ YX.fn.openChatBox = function(account, scene) {
       );
     });
     this.crtSessionTeamType = info ? info.type : 'normal';
-    // if (this.crtSessionTeamType === 'advanced') {
-    //   $('#showTeamMsgReceipt').show();
-    // }
+    if (this.crtSessionTeamType === 'advanced') {
+      $('#showTeamMsgReceipt').show();
+    }
   }
   this.doPoint();
   // 根据或取聊天记录
@@ -454,13 +456,77 @@ YX.fn.hideDevices = function() {
  * 语音播放
  */
 YX.fn.playAudio = function() {
-  if (!!window.Audio) {
-    var node = $(this),
-      btn = $(this).children('.j-play');
-    node.addClass('play');
-    setTimeout(function() {
-      node.removeClass('play');
-    }, parseInt(btn.attr('data-dur')));
-    new window.Audio(btn.attr('data-src') + '?audioTrans&type=mp3').play();
+  // 点击音频则停止录音
+  YX.fn.stopRecordAudio()
+  var node = $(this);
+  if (!node.hasClass('u-audio')) {
+    node = node.parent()
+  }
+  var btn = node && node.children('.j-play');
+  var sameNode = node.hasClass('play')
+  YX.fn.stopPlayAudio()
+  if (sameNode) {
+    return
+  }
+  YX.fn.playAudio.$audio = {
+    node: node,
+    audio: document.createElement('audio')
+  };
+  var $audio = YX.fn.playAudio.$audio.audio
+  var $source = document.createElement('source');
+  var audioType = btn.attr('data-ext');
+  $source.src = btn.attr('data-src');
+  $source.type = 'audio/' + (audioType === 'mp3' ? 'mpeg' : audioType);
+  $audio.appendChild($source)
+  $audio.play()
+  node.addClass('play');
+  setTimeout(function() {
+    node.removeClass('play');
+  }, parseInt(btn.attr('data-dur')));
+  if (node.hasClass('unreadAudio') && btn.attr('data-id')) {
+    nim.updateLocalMsg({
+      idClient: btn.attr('data-id'),
+      localCustom: '{"audio": "played"}'
+    });
+    node.removeClass('unreadAudio');
+    $audio.onended = YX.fn.autoPlayNextUnreadAudio
   }
 };
+YX.fn.stopPlayAudio = function() {
+  if (YX.fn.playAudio.$audio.audio) {
+    YX.fn.playAudio.$audio.node.removeClass('play');
+    YX.fn.playAudio.$audio.audio.pause();
+    YX.fn.playAudio.$audio = {
+      node: null,
+      audio: null
+    };
+  }
+};
+YX.fn.autoPlayNextUnreadAudio = function() {
+  var parentNode = YX.fn.playAudio.$audio.node && YX.fn.playAudio.$audio.node.parent()
+  if (!parentNode) {
+    return
+  }
+  var currentMsgNode = parentNode.parent().parent().parent();
+  var nextMsgNode = currentMsgNode[0].nextElementSibling
+  var $nextMsgNode
+  var nextAudioNode
+  while (nextMsgNode) {
+    $nextMsgNode = $(nextMsgNode)
+    if ($nextMsgNode.hasClass('item-you')) {
+      nextAudioNode = nextMsgNode.querySelector('.u-audio')
+      if (nextAudioNode) {
+        break
+      }
+    }
+    nextMsgNode = nextMsgNode.nextElementSibling
+  }
+  if (nextMsgNode && $(nextAudioNode).hasClass('unreadAudio')) {
+    nextAudioNode.click()
+  }
+};
+// 播放音频信息使用的 audio
+YX.fn.playAudio.$audio = {
+  node: null,
+  audio: null
+}

@@ -4,10 +4,15 @@
     "start": "node app.js",
     "https-server": "http-server --ssl --key ./ssh/key.pem --cert ./ssh/cert.pem --p 9091",
     "build": "node deploy.js"
+    "env": "node env.js",
+    "copy": "node deploy.js",
+    "deploy": "npm run env && npm run copy"
   },
   "dependencies": {
     "babel-polyfill": "^6.23.0",
     "blurify": "^1.0.7",
+    "fs-extra": "^5.0.0",
+    "http-server": "^0.11.1",
     "multer": "^1.1.0",
     "platform": "^1.3.3",
     "prettyjson": "^1.1.3",

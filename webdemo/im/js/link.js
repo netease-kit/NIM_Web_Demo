@@ -26,7 +26,7 @@ var SDKBridge = function(ctr, data) {
     db: true,
     appKey: CONFIG.appkey,
     account: userUID,
-    token: sdktoken,
+    token: sdktoken, 
     // 私有化配置文件
     privateConf: CONFIG.privateConf,
     //连接

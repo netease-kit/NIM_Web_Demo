@@ -285,6 +285,13 @@
 						<a class="chat-btn u-netcall-video-link" id="showNetcallVideoLink">&nbsp;</a>
 						<!-- 在netcall_ui.js的fn.whenOpenChatBox中隐藏 -->
 						<a class="chat-btn u-whiteboard" id="showWhiteboard">&nbsp;</a>
+						<div class="chat-btn">
+							<a class="chat-btn u-voice" id="toRecord"></a>
+							<span id="toRecordBox" class="u-voice-duration-box">
+								<i id="toRecordTime" class="u-voice-duration-time">00:00</i>
+								<i id="toRecordCancle" class="u-voice-duration-action"></i>
+							</span>
+						</div>
 						<textarea id="messageText" class="chat-btn msg-input box-sizing radius5px p2p" rows="1" autofocus="autofocus" maxlength="500"></textarea>
 						<span class="chat-context" id="showTeamMsgReceipt">
 							<label for="needTeamMsgReceipt">
@@ -633,10 +640,11 @@
 		}
 	</script>
 	<script src="../3rd/nim_server_conf.js"></script>
-	<script src="../3rd/NIM_Web_SDK_v5.6.0.js"></script>
-	<script src="../3rd/NIM_Web_Netcall_v5.6.0.js"></script>
-	<script src="../3rd/NIM_Web_WebRTC_v5.6.0.js"></script>
-	<script src="../3rd/NIM_Web_WhiteBoard_v5.6.0.js"></script>
+	<script src="../3rd/NIM_Web_SDK_v6.1.0.js"></script>
+	<script src="../3rd/NIM_Web_Netcall_v6.1.0.js"></script>
+	<script src="../3rd/NIM_Web_WebRTC_v6.1.0.js"></script>
+	<script src="../3rd/NIM_Web_WhiteBoard_v6.1.0.js"></script>
+	<script src="js/config.js"></script>
 	<script src="../3rd/DrawPlugin.js"></script>
 
 	<script src="./js/3rd/whiteboard.js"></script>
@@ -672,9 +680,9 @@
 	<!-- 右键菜单-->
 	<script src="js/3rd/contextMenu/jquery.ui.position.js"></script>
 	<script src="js/3rd/contextMenu/jquery.contextMenu.js"></script>
-
-	<script src="js/config.js"></script>
+	<script src="../3rd/recorder.js"></script>
 	<script src="js/emoji.js"></script>
+	<script src="js/md5.js"></script>
 	<script src="js/util.js?v=2"></script>
 	<script src="js/cache.js?v=2"></script>
 	<script src="js/link.js"></script>
@@ -761,7 +769,7 @@
 							<div v-if="!canWeUseMicro" class="btn-tip">麦克风不可用</div>
 							<div v-else-if="isMicroOpen" class="btn-tip">关闭己方语音</div>
 							<div v-else class="btn-tip">开启己方语音</div>
-							<span @click="switchAudio" class="icon-mic" :class="{ 
+							<span @click="switchAudio" class="icon-mic" :class="{
 								close: !isMicroOpen,
 								disable: !canWeUseMicro
 							}"></span>

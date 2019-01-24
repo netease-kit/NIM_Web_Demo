@@ -1,6 +1,6 @@
 /*
-* @Author: 消息逻辑
-*/
+ * @Author: 消息逻辑
+ */
 
 'use strict';
 
@@ -9,11 +9,30 @@ YX.fn.message = function() {
   this.$messageText = $('#messageText');
   this.$chooseFileBtn = $('#chooseFileBtn');
   this.$fileInput = $('#uploadFile');
-
+  this.$toRecord = $('#toRecord');
+  this.$recordTimeBox = $('#toRecordBox')
+  this.$recordTimeDuration = $('#toRecordTime')
+  this.$cancelRecord = $('#toRecordCancle')
+  this.$showNetcallAudioLink = $('#showNetcallAudioLink')
+  this.$showNetcallVideoLink = $('#showNetcallVideoLink')
+  this.$showWhiteboard = $('#showWhiteboard')
+  try {
+    this.audioContext = new Recorder.AudioContext;
+  } catch (e) {
+    console.log(e);
+  }
+  YX.fn.recorder = null;
+  YX.fn.recordTimeout = '';
+  YX.fn.recordTime = 0;
   this.$sendBtn.on('click', this.sendTextMessage.bind(this));
   this.$messageText.on('keydown', this.inputMessage.bind(this));
   this.$chooseFileBtn.on('click', 'a', this.chooseFile.bind(this));
   this.$fileInput.on('change', this.uploadFile.bind(this));
+  this.$toRecord.on('click', this.recordAudio.bind(this));
+  this.$cancelRecord.on('click', this.cancelRecordAudio.bind(this));
+  this.$showNetcallAudioLink.on('click', this.stopRecordAndAudio.bind(this));
+  this.$showNetcallVideoLink.on('click', this.stopRecordAndAudio.bind(this));
+  this.$showWhiteboard.on('click', this.stopRecordAndAudio.bind(this));
   //消息重发
   this.$chatContent.delegate('.j-resend', 'click', this.doResend.bind(this));
   //语音播发
@@ -25,8 +44,7 @@ YX.fn.message = function() {
       if (key === 'delete') {
         var id = options.$trigger.parent().data('id');
         var msg = this.cache.findMsg(this.crtSession, id);
-        if (!msg || options.$trigger.hasClass('j-msg')) {
-        }
+        if (!msg || options.$trigger.hasClass('j-msg')) {}
         if (msg.flow !== 'out' && msg.scene === 'p2p') {
           alert('点对点场景，只能撤回自己发的消息');
           return;
@@ -52,14 +70,19 @@ YX.fn.message = function() {
               }
             } else {
               msg.opeAccount = userUID;
-              this.backoutMsg(id, { msg: msg });
+              this.backoutMsg(id, {
+                msg: msg
+              });
             }
           }.bind(this)
         });
       }
     }.bind(this),
     items: {
-      delete: { name: '撤回', icon: 'delete' }
+      delete: {
+        name: '撤回',
+        icon: 'delete'
+      }
     }
   });
 
@@ -78,7 +101,7 @@ YX.fn.doMsg = function(msg) {
       //如果当前消息对象的会话面板打开
       if (that.crtSessionAccount === who) {
         that.sendMsgRead(who, msg.scene);
-        that.cache.dealTeamMsgReceipts(msg, function () {
+        that.cache.dealTeamMsgReceipts(msg, function() {
           var msgHtml = appUI.updateChatContentUI(msg, that.cache);
           that.$chatContent.find('.no-msg').remove();
           that.$chatContent.append(msgHtml).scrollTop(99999);
@@ -181,6 +204,16 @@ YX.fn.chooseFile = function() {
 };
 
 YX.fn.sendTextMessage = function() {
+  var self = this
+  if (self.$toRecord.hasClass('recording') || self.$toRecord.hasClass('recorded')) {
+    if (YX.fn.recordTime < 2) {
+      alert('语音消息最短2s')
+      return
+    }
+    self.stopRecordAudio()
+    self.sendRecordAudio()
+    return
+  }
   var scene = this.crtSessionType,
     to = this.crtSessionAccount,
     text = this.$messageText.val().trim();
@@ -234,6 +267,124 @@ YX.fn.sendTextMessage = function() {
     }
   }
 };
+
+YX.fn.sendRecordAudio = function() {
+  var self = this
+  YX.fn.recorder.exportWAV(function(blob) {
+    self.$toRecord.addClass('uploading');
+    self.nim.sendFile({
+      scene: self.crtSessionType,
+      to: self.crtSessionAccount,
+      type: 'audio',
+      blob: blob,
+      uploadprogress: function(obj) {
+        console.log('文件总大小: ' + obj.total + 'bytes');
+        console.log('已经上传的大小: ' + obj.loaded + 'bytes');
+        console.log('上传进度: ' + obj.percentage);
+        console.log('上传进度文本: ' + obj.percentageText);
+        if (obj.percentage === 100) {
+          self.$toRecord.removeClass('uploading');
+          self.$toRecord.removeClass('recorded');
+        }
+      },
+      done: self.sendMsgDone.bind(self)
+    });
+  });
+  self.cancelRecordAudio()
+}
+
+YX.fn.stopRecordAndAudio = function () {
+  YX.fn.stopRecordAudio()
+  YX.fn.stopPlayAudio()
+}
+YX.fn.recordAudio = function() {
+  YX.fn.stopPlayAudio()
+  var self = this
+  if (location.protocol === 'http:') {
+    alert('请使用https协议');
+    return
+  }
+  if (!self.audioContext) {
+    alert('当前浏览器不支持录音!');
+    return
+  }
+  if (!self.$toRecord.hasClass('recording') && !self.$toRecord.hasClass('recorded')) {
+    if (YX.fn.recorder) {
+      YX.fn.recorder.clear();
+      YX.fn.recorder.record();
+      self.showRecorderTime()
+    } else {
+      Recorder.mediaDevices.getUserMedia({
+        audio: true
+      }).then(function(stream) {
+        var input = self.audioContext.createMediaStreamSource(stream);
+        YX.fn.recorder = new Recorder(input);
+        YX.fn.recorder.record();
+        if (~self.audioContext.state.indexOf('suspend')) {
+          self.audioContext.resume().then(function () {
+            YX.fn.recorder.record();
+            self.showRecorderTime()
+            console.log('audioContext suspend state resume');
+          })
+        } else {
+          self.showRecorderTime()
+        }
+      }).catch(function(err) {
+        alert('您没有可用的麦克风输入设备')
+        self.$toRecord.addClass('disabled')
+        console.log('No live audio input: ' + err, err.name + ": " + err.message);
+      });
+    }
+  }
+}
+YX.fn.showRecorderTime = function () {
+  var self = this
+  if (YX.fn.recorder) {
+    self.$recordTimeBox.show()
+    self.$toRecord.addClass('recording');
+    YX.fn.recordTime = 0;
+    YX.fn.recordTimeout = setTimeout(self.recordTimeRun.bind(self), 1000)
+  }
+}
+YX.fn.recordTimeRun = function () {
+  var self = this
+  YX.fn.recordTimeout = setTimeout(self.recordTimeRun.bind(self), 1000)
+  YX.fn.recordTime++;
+  if (YX.fn.recordTime >= 60) {
+    clearTimeout(YX.fn.recordTimeout)
+    self.stopRecordAudio()
+  }
+  self.$recordTimeDuration.html('00:' + (YX.fn.recordTime > 9 ? YX.fn.recordTime : '0' + YX.fn.recordTime))
+}
+YX.fn.stopRecordAudio = function() {
+  var $toRecord = $('#toRecord')
+  var isRecording = $toRecord.hasClass('recording');
+  if (isRecording) {
+    $toRecord.removeClass('recording');
+    $toRecord.addClass('recorded');
+    if (YX.fn.recorder) {
+      clearTimeout(YX.fn.recordTimeout)
+      YX.fn.recorder.stop();
+    }
+  }
+}
+
+YX.fn.cancelRecordAudio = function () {
+  var $toRecord = $('#toRecord')
+  var isRecording = $toRecord.hasClass('recording') || $toRecord.hasClass('recorded');
+  var $recordTimeBox = $('#toRecordBox')
+  var $recordTimeDuration = $('#toRecordTime')
+  if (isRecording && YX.fn.recorder) {
+    clearTimeout(YX.fn.recordTimeout)
+    YX.fn.recorder.stop();
+    YX.fn.recorder.clear();
+    $recordTimeBox.hide()
+    $toRecord.removeClass('recording');
+    $toRecord.removeClass('recorded');
+    $recordTimeDuration.html('00:00')
+    YX.fn.recordTime = 0
+  }
+}
 /**
  * 发送消息完毕后的回调
  * @param error：消息发送失败的原因
@@ -245,9 +396,11 @@ YX.fn.sendMsgDone = function(error, msg) {
     msg.blacked = true;
   }
   this.cache.addMsgs(msg);
-  this.$messageText.val('');
+  if (msg.type === 'text') {
+    this.$messageText.val('');
+  }
   this.$chatContent.find('.no-msg').remove();
-  this.cache.dealTeamMsgReceipts(msg, function () {
+  this.cache.dealTeamMsgReceipts(msg, function() {
     var msgHtml = appUI.updateChatContentUI(msg, this.cache);
     this.$chatContent.append(msgHtml).scrollTop(99999);
     $('#uploadForm')
@@ -305,8 +458,8 @@ YX.fn.getHistoryMsgs = function(scene, account) {
   this.sendMsgRead(account, scene);
   if (!!sessions) {
     // if (sessions.unread >= msgs.length) {
-      // var end = msgs.length > 0 ? msgs[0].time : false;
-        // }
+    // var end = msgs.length > 0 ? msgs[0].time : false;
+    // }
     // if (sessions.lastMsg) {
     //   var end = sessions.lastMsg.time || false
     // }
@@ -319,7 +472,7 @@ YX.fn.getHistoryMsgs = function(scene, account) {
 };
 //拿到历史消息后聊天面板UI呈现
 YX.fn.doChatUI = function(id) {
-  this.cache.dealTeamMsgReceipts(id, function () {
+  this.cache.dealTeamMsgReceipts(id, function() {
     var temp = appUI.buildChatContentUI(id, this.cache);
     this.$chatContent.html(temp);
     this.$chatContent.scrollTop(9999);

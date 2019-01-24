@@ -208,7 +208,7 @@ html, body {
     overflow-y: auto;
     background-color: #fff;
     border-radius: 0 0 5px 5px;
-} 
+}
 .chat-vernier {
     position: absolute;
     margin-left: 6px;
@@ -282,7 +282,7 @@ html, body {
     opacity: 0.8;
     text-align: center;
     padding: 20px 0;
-    font-size: 14px;    
+    font-size: 14px;
 }
 .chat-mask{
     z-index: 5;
@@ -294,7 +294,7 @@ html, body {
     opacity: 0.8;
     text-align: center;
     padding: 20px 0;
-    font-size: 14px;  
+    font-size: 14px;
 }
 .chat-content {
     position: absolute;
@@ -408,7 +408,7 @@ html, body {
     position: relative;
     min-height: 20px;
     line-height: 20px;
-    overflow: hidden;
+    /* overflow: hidden; */
     white-space: normal;
     word-wrap: break-word;
     word-break: break-all;
@@ -459,6 +459,7 @@ html, body {
     margin-right: 2px;
     /* vertical-align: top; */
 }
+
 .btn-send {
     background-color: #0888ff;
     color: #fff;
@@ -595,6 +596,53 @@ html, body {
     background: url(../images/icons.png) no-repeat center;
     background-position: 2px -187px;
 }
+.u-keyboard,
+.u-voice {
+    position: relative;
+    width: 30px;
+    height: 30px;
+    background: url(../images/record.png) no-repeat center center;
+}
+.u-voice.recording {
+    background-image: url(../images/recording.gif);
+}
+.u-voice.uploading {
+    background-image: url(../images/netcall-checking.gif);
+    background-size: 15px 15px;
+}
+.chat-btn .u-voice {
+    position: relative;
+    cursor: pointer;
+}
+.u-voice-duration-box {
+    display: none;
+    position: absolute;
+    top: -36px;
+    left: -26px;
+    width: 110px;
+    height: 35px;
+    line-height: 27px;
+    color: #fff;
+    text-align: center;
+    font-size: 16px;
+}
+.u-voice-duration-time {
+    display: inline-block;
+    width: 66px;
+    height: 35px;
+    background: url(../images/record-time.png) no-repeat center center;
+}
+.u-voice-duration-action {
+    float: right;
+    display: inline-block;
+    width: 29px;
+    height: 29px;
+    background: url(../images/stop-record.png) no-repeat center center;
+    cursor: pointer;
+}
+.u-voice-duration-action:hover {
+    color: blue;
+}
 .devices-container {
   margin-left: 292px;
   height: 620px;
@@ -656,7 +704,7 @@ html, body {
     top:50%;
     left: 50%;
     margin-left: -193px;
-    margin-top:-126px; 
+    margin-top:-126px;
     width: 386px;
     height: 252px;
     background-color: #fff;
@@ -725,10 +773,10 @@ html, body {
 /*添加好友（不是好友）*/
 .m-dialog.noFriend .btns .cancel,.m-dialog.noFriend .btns .search,.m-dialog.noFriend .btns .done,.m-dialog.noFriend .btns .chat，.m-dialog.noFriend .btns .blacklist{
     display: none;
-} 
+}
 .m-dialog.noFriend .btns .back,.m-dialog.noFriend .btns .add{
     display: inline-block;
-}                                                                          
+}
 .m-dialog.noFriend .content .ipt,.m-dialog.noFriend .content .tip{
     display: none;
 }
@@ -738,10 +786,10 @@ html, body {
 /*添加好友（是好友）*/
 .m-dialog.friend .btns .cancel,.m-dialog.friend .btns .search,.m-dialog.friend .btns .done,.m-dialog.friend .btns .add,.m-dialog.friend .btns .blacklist{
     display: none;
-} 
+}
 .m-dialog.friend .btns .back,.m-dialog.friend .btns .chat{
     display: inline-block;
-}                                                                          
+}
 .m-dialog.friend .content .ipt,.m-dialog.friend .content .tip{
     display: none;
 }
@@ -757,7 +805,7 @@ html, body {
 }
 .m-dialog.done .btns .cancel,.m-dialog.done .btns .search,.m-dialog.done .btns .add,.m-dialog.done .btns .chat,.m-dialog.done .btns .blacklist{
     display: none;
-} 
+}
 .m-dialog.done .btns .back,.m-dialog.done .btns .done{
     display: inline-block;
 }
@@ -771,10 +819,10 @@ html, body {
 }
 .m-dialog.blacklist .btns .cancel,.m-dialog.blacklist .btns .search,.m-dialog.blacklist .btns .add,.m-dialog.blacklist .btns .chat,.m-dialog.blacklist .btns .done{
     display: none;
-} 
+}
 .m-dialog.blacklist .btns .back,.m-dialog.blacklist .btns .blacklist{
     display: inline-block;
-} 
+}
 /*搜高级群 在群里*/
 .m-dialog.inTeam .info{
     display: block;
@@ -933,7 +981,7 @@ html, body {
 }
 .m-card .editUI .item{
     top:6px;
-} 
+}
 .m-card .infos .sign{
     margin-top: -4px;
     line-height: 22px;
@@ -977,7 +1025,7 @@ html, body {
     text-overflow: ellipsis;
     white-space: nowrap;
     width: 200px;
-   
+
 }
 .m-card .alias .item{
     top:10px;
@@ -989,7 +1037,7 @@ html, body {
     height: 16px;
     padding: 5px 10px;
     border-radius: 4px;
-    margin-left: 24px;    
+    margin-left: 24px;
     background-color: #0888ff;
     color:#fff;
 }
@@ -1234,7 +1282,7 @@ html, body {
     width: 230px;
     height: 42px;
     padding: 18px 0;
-    border-bottom:1px solid #e4e9ee; 
+    border-bottom:1px solid #e4e9ee;
 }
 .m-blacklist .items .head{
     float: left;
@@ -1292,7 +1340,7 @@ html, body {
     height: 305px;
     background-color: #e4e9ee;
     z-index: 999;
-   
+
 }
 .m-modifyAvatar .choseFileCtn .choseFile{
     position: absolute;
@@ -1345,7 +1393,7 @@ width: 40px;
 }
 .m-modifyAvatar .btns .btn{
     margin-left: 15px;
-    margin-right: 0px; 
+    margin-right: 0px;
 }
 
 .m-unread .u-unread{
@@ -1374,7 +1422,7 @@ width: 40px;
     color: #fff;
 }
 .u-switch .off{
-   color: #8496a9;   
+   color: #8496a9;
 }
 .m-card .btns{
     padding-top: 18px;
@@ -1404,7 +1452,18 @@ width: 40px;
     line-height: 30px;
 }
 
-.u-audio{width:164px;position: relative;height: 20px;cursor: pointer;}
+.u-audio{width:100px;position: relative;height: 20px;cursor: pointer;}
+.u-audio.unreadAudio:after{
+    content: ' ';
+    display: block;
+    position: absolute;
+    top: -6px;
+    right: -38px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: red;
+}
 .u-audio b{position:absolute;top: 1px;color:#fff;font-size:10px;font-family:arial,"simsun";}
 .u-audio.right b{left:8px;}
 .u-audio.left b{right: 8px;color:#6b8299;}
@@ -1731,7 +1790,7 @@ width: 40px;
     height: 94px;
 }
 
-/* 通话方式选择弹框样式 */ 
+/* 通话方式选择弹框样式 */
 .team-box h2{
     text-align: center;
     font-size: 18px;
@@ -1880,7 +1939,7 @@ width: 40px;
 }
 .msg-input.p2p{
     /*margin-left:137px;*/
-    width: 420px;
+    width: 390px;
 }
 .chat-context {
     /* display: inline-block; */
@@ -2393,7 +2452,7 @@ width: 40px;
     margin:auto;
     justify-content: center;
     height: 240px;
-    
+
 }
 .netcall-box.fullscreen .netcall-show-video{
     height: 480px;
@@ -2721,7 +2780,7 @@ width: 40px;
     background-position: center;
     background-size: cover;
     background-blend-mode: darken;
-    position: relative;    
+    position: relative;
     overflow: hidden;
     box-sizing: border-box;
     color: #fff;
@@ -2883,7 +2942,7 @@ width: 40px;
 .netcall-meeting-box .option-box .tip{
     float: right;
 }
-/* 多人全屏模式 */ 
+/* 多人全屏模式 */
 .netcall-meeting-box.fullscreen .member-list{
     position: absolute;
     bottom: 50px;

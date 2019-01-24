@@ -255,9 +255,8 @@ var Draw = (function (EventEmitter) {
     this.emit('action', { UID: UID, op: 'flagend' });
     user.shapesFlag = { r: 3.5 };
     user.ctx = user.ctxFree;
-    clearCtx(user.ctxFlag);
-    this._clear();
-    render(this.displayCtx, this.shapes, ++this.visible, this.users);
+    clearCtx(this.flagCtx);
+    renderFlag(this.flagCtx, this.users);
   };
   /**
    * 获取或者设置笔&橡皮擦的大小
@@ -570,6 +569,7 @@ var Draw = (function (EventEmitter) {
    * @public
    */
   Draw.prototype.undo = function undo (UID) {
+    var this$1 = this;
     if ( UID === void 0 ) UID = this.UID;
 
     var user = this.users[UID];
@@ -580,8 +580,17 @@ var Draw = (function (EventEmitter) {
     this.shapes[discard].visible = false;
     user.recycle.push(discard);
     --user.visible;
-    this._clear();
+
+    this.displayCtx.clearRect(0, 0, this.width, this.height);
     render(this.displayCtx, this.shapes, --this.visible, this.users);
+    
+    for (var _UID in this$1.users) {
+      var user$1 = this$1.users[_UID];
+      if (user$1.isMouseDown) {
+        // 防止在clear时 擦除了其他用户正在绘制的笔记，
+        this$1.displayCtx.drawImage(user$1.ctx.canvas, 0, 0);
+      }
+    }
     this.emit('action', { UID: UID, op: 'undo', value: UID });
   };
 
@@ -621,6 +630,7 @@ var Draw = (function (EventEmitter) {
    * @public
    */
   Draw.prototype.redo = function redo (UID) {
+    var this$1 = this;
     if ( UID === void 0 ) UID = this.UID;
 
     var user = this.users[UID];
@@ -630,8 +640,17 @@ var Draw = (function (EventEmitter) {
     this.shapes[restore].visible = true;
     user.shapes.push(restore);
     ++user.visible;
-    this._clear();
-    render(this.displayCtx, this.shapes, ++this.visible, this.users);
+
+    this.displayCtx.clearRect(0, 0, this.width, this.height);
+    render(this.displayCtx, this.shapes, --this.visible, this.users);
+
+    for (var _UID in this$1.users) {
+      var user$1 = this$1.users[_UID];
+      if (user$1.isMouseDown) {
+        // 防止在clear时 擦除了其他用户正在绘制的笔记，
+        this$1.displayCtx.drawImage(user$1.ctx.canvas, 0, 0);
+      }
+    }
     this.emit('action', { UID: UID, op: 'redo', value: UID });
   };
 
@@ -902,7 +921,8 @@ function render(ctx, shapes, visibleCount, users) {
     if (!shape.visible || count >= visibleCount) { return; }
     applyState(ctx, shape);
     if (shape.mode === 'fill') { return fill(ctx, shape.corner[0]); }
-    ctx.drawImage(shape.ctx.canvas, shape.corner[0].x, shape.corner[0].y);
+    // -0.5是为了防止重绘时的抖动
+    ctx.drawImage(shape.ctx.canvas, shape.corner[0].x -0.5, shape.corner[0].y);
     count++;
   });
 }
@@ -942,6 +962,7 @@ function applyState(displayCtx, ref) {
   if (UID !== undefined) {
     displayCtx.lineWidth = ctx.lineWidth = size;
     displayCtx.strokeStyle = ctx.strokeStyle = color;
+    displayCtx.lineCap = ctx.lineCap;
   }
   if (mode === 'erase') {
     displayCtx.globalCompositeOperation = 'destination-out';
@@ -1457,8 +1478,8 @@ var AdapterDraw = (function (EventEmitter) {
        action === ACTION.LASER_PEN) {
       return {
         action: isFlag ? ACTION.LASER_PEN : action,
-        x: (actionObj.value.x / this._draw.width).toFixed(2),
-        y: (actionObj.value.y / this._draw.height).toFixed(2),
+        x: (actionObj.value.x / this._draw.width).toFixed(4),
+        y: (actionObj.value.y / this._draw.height).toFixed(4),
         color: formatColor(this._draw.currColor, 10)
       }
     } else {
@@ -1503,15 +1524,25 @@ var CommandManager = function CommandManager(account, draw) {
   this.dataQue = {};// Map<uid, List<command>>
   this.syncCache = {}; // Map<uid, List<command>>
   this.fileData = {}; // Map<uid, command>
+  this.lastDataMap = {}; // Map<uid, command>
   this.startLoop();
 };
 
 CommandManager.prototype.pushCache = function pushCache (account, command) {
+  var commandStr = JSON.stringify(command);
+  if (this.lastDataMap[account] === commandStr && command.action === 2) {
+    return
+  }
   this.syncCache[account] = this.syncCache[account] || [];
   this.syncCache[account].push(command);
 };
 
 CommandManager.prototype.pushQueue = function pushQueue (account, command) {
+  var commandStr = JSON.stringify(command);
+  if (this.lastDataMap[account] === commandStr && command.action === 2) {
+    return
+  }
+  this.lastDataMap[account] = commandStr;
   this.dataQue[account] = this.dataQue[account] || [];
   this.dataQue[account].push(command);
 };
@@ -1560,7 +1591,7 @@ CommandManager.prototype.syncTo = function syncTo (toAccount) {
     var this$1 = this;
 
   var syncCache = this.syncCache;
-  if (this._cb && !syncCache[this.account] && this.fileData[this.account]) {
+  if (this._cb && (!syncCache[this.account] || !syncCache[this.account].length) && this.fileData[this.account]) {
     this._cb({ toAccount: toAccount, commands: [this.fileData[this.account]]});
   }
   Object.keys(syncCache).forEach(function (account) {
@@ -1628,7 +1659,7 @@ CommandManager.prototype.startLoop = function startLoop () {
         dq[key].length = 0;
       }
     });
-  }, 60);
+  }, 100);
 };
   
 CommandManager.prototype.destroy = function destroy () {
@@ -1740,10 +1771,17 @@ var defaultExport = (function (EventEmitter$$1) {
     var commands = ref.commands;
 
     if (!commands || commands.length<1) { return }
-    commands = commands.filter(function (item) { return item; });
     var dataArr = [];
+    // let prevCommand = null
     commands.forEach(function (command) {
+      if (!command) {
+        return
+      }
+      // if (JSON.stringify(prevCommand) === JSON.stringify(command)) {
+      //   return
+      // }
       dataArr.push(pack(command, this$1.isP2P));
+      // prevCommand = command
     });
     //let dataArr = commands.map(commandHelper.pack)
     var data = dataArr.join(';') + ';';

@@ -253,6 +253,7 @@ window.yunXin.WB = new window.Vue({
       // 停止播放等待的铃声，复用音视频的API
       if (this.isCalling) this.log('对方接受了邀请');
       console.log(info);
+      // Object.assign(this.beCalledInfo, info)
       var NETCALL = window.yunXin.myNetcall;
       this.wb.startSession()
         .then(function () {
@@ -305,13 +306,14 @@ window.yunXin.WB = new window.Vue({
       var NETCALL = window.yunXin.myNetcall;
       this.log('我方挂断')
       this.sendLocalTip('白板互动已结束');
+      this.drawPlugin.clear()
       this.wb.hangup();
       this.clearSession();
-      this.drawPlugin.clear()
     },
     // 对方结束白板互动
     onHangup: function (info) {
-      if (!this.session) return;
+      console.log('已挂断。。。')
+      // if (!this.session) return;
       // 断网挂断
       if (info.type === -1) {
         this.log('和对方通信断开');
@@ -338,6 +340,7 @@ window.yunXin.WB = new window.Vue({
       this.waiting = false;
       this.banner = '';
       this.connected = true;
+      // Object.assign(this.beCalledInfo, info)
       this.startNetcallSession();
     },
     // 对方发来白板指令
@@ -418,8 +421,8 @@ window.yunXin.WB = new window.Vue({
         function () {
           if (this.session.length === 0) return;
           this.sendLocalTip('白板互动已结束');
-          this.clearSession();
           this.drawPlugin.clear()
+          this.clearSession();
         }.bind(this),
         1000 * 2
       );
@@ -505,7 +508,8 @@ window.yunXin.WB = new window.Vue({
       // 初始化音频信令
       this.audio.initSignal().then(function () {
         that.log('初始化信令成功');
-        return that.audio.setNetcallSession(that.isCalled ? that.wb.beCalledInfo : that.wb.callerInfo)
+        // return that.audio.setNetcallSession(that.isCalled ? (that.beCalledInfo) : that.callerInfo)
+        return that.audio.setNetcallSession(that.isCalled ? that.wb._status.beCalledInfo : that.wb._status.callerInfo)
       }).then(function () {
         that.log('音频加入白板会话成功');
         // WebRTC模式需要连接网关
@@ -835,7 +839,7 @@ window.yunXin.WB = new window.Vue({
       this.drawPlugin.on('data', function (obj) {
         var toAccount = obj.toAccount
         var data = obj.data
-        if (!data) return
+        if (!data || !that.wb.isChannelConnected()) return
         that.wb.sendData({
           toAccount: toAccount,
           data: data

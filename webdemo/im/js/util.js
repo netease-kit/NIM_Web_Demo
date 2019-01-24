@@ -7,7 +7,7 @@ if (!Function.prototype.bind) {
     }
 }
 
-//写cookies 
+//写cookies
 function setCookie(name, value) {
     var days = 1;
     var exp = new Date();
@@ -15,7 +15,7 @@ function setCookie(name, value) {
     document.cookie = name + "=" + escape(value) + ";path=/;expires=" + exp.toGMTString();
 }
 
-//读取cookies 
+//读取cookies
 function readCookie(name) {
     var arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
     if (arr = document.cookie.match(reg)) {
@@ -26,7 +26,7 @@ function readCookie(name) {
 
 }
 
-//删除cookies 
+//删除cookies
 function delCookie(name) {
     var cval = readCookie(name);
     if (cval != null) {
@@ -255,10 +255,12 @@ function getMessage(msg) {
             break;
         case 'audio':
             if (!!window.Audio) {
+                var audioDur = Math.round((msg.file.dur) / 1000)
+                var unread = !msg.localCustom
                 if (msg.from === userUID && msg.from !== msg.to) {
-                    str = '<div class="u-audio j-mbox right"> <a href="javascript:;" class="j-play playAudio" data-dur="' + msg.file.dur + '"  data-src="' + url + '">点击播放</a><b class="j-duration">' + Math.floor((msg.file.dur) / 1000) + '"</b><span class="u-icn u-icn-play" title="播放音频"></span></div>'
+                    str = '<div class="u-audio j-mbox right" style="width:' + (100 + audioDur) + 'px"> <a href="javascript:;" class="j-play playAudio" data-ext="' + msg.file.ext + '" data-dur="' + msg.file.dur + '"  data-src="' + url + '">点击播放</a><b class="j-duration">' + audioDur + '"</b><span class="u-icn u-icn-play" title="播放音频"></span></div>'
                 } else {
-                    str = '<div class="u-audio j-mbox left"> <a href="javascript:;" class="j-play playAudio" data-dur="' + msg.file.dur + '"  data-src="' + url + '">点击播放</a><b class="j-duration">' + Math.floor((msg.file.dur) / 1000) + '"</b><span class="u-icn u-icn-play" title="播放音频"></span></div>'
+                    str = '<div class="u-audio j-mbox left '+ (unread ? 'unreadAudio': '') + '" style="width:' + (100 + audioDur) + 'px"> <a href="javascript:;" class="j-play playAudio" data-ext="' + msg.file.ext + '" data-dur="' + msg.file.dur + '" data-id="' + msg.idClient + '" data-src="' + url + '">点击播放</a><b class="j-duration">' + audioDur + '"</b><span class="u-icn u-icn-play" title="播放音频"></span></div>'
                 }
             } else {
                 str = '<a href="' + url + '" target="_blank" class="download-file"><span class="icon icon-file2"></span>[' + sentStr + '一条语音消息]</a>';
@@ -675,4 +677,3 @@ function getAllAccount(obj) {
     };
     return array;
 }
-

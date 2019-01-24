@@ -4,7 +4,6 @@ var http = require('http');
 var fs = require('fs');
 var prettyjson = require('prettyjson');
 var multer = require('multer');
-
 var app = express();
 
 app.use(express.static('./'));
@@ -28,18 +27,18 @@ app.get('timeout', function (req, res) {
 });
 
 var options = {
-    key: fs.readFileSync('./ssh/key.pem'),
-    cert: fs.readFileSync('./ssh/cert.pem')
+  key: fs.readFileSync('./ssh/key.pem'),
+  cert: fs.readFileSync('./ssh/cert.pem')
 };
 
 var httpServer = http.createServer(app);
 httpServer.listen(8182, function () {
-    console.info('server start at ' + 8182)
-    logAddress(httpServer, 'http');
+  console.info('server start at ' + 8182)
+  logAddress(httpServer, 'http');
 });
 var httpsServer = https.createServer(options, app);
 httpsServer.listen(7182, function () {
-    logAddress(httpsServer, 'https');
+  logAddress(httpsServer, 'https');
 });
 
 function logAddress(server, type) {

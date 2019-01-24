@@ -70,7 +70,7 @@ function NetcallBridge(yx) {
     // 本地agent连接状态
     this.signalInited = false;
     // agent程序下载地址
-    this.agentDownloadUrl = "https://yx-web-nosdn.netease.im/package/1536666437/WebAgent_Setup_V2.8.0.906.zip";
+    this.agentDownloadUrl = "https://yx-web-nosdn.netease.im/package/1543999612/WebAgent_Setup_V2.9.0.1204.zip";
     // 多人音视频的缓存对象
     this.meetingCall = {};
     // 当前视频状态，是桌面共享还是视频: video / window / screen
