@@ -3,7 +3,7 @@
   "scripts": {
     "start": "node app.js",
     "https-server": "http-server --ssl --key ./ssh/key.pem --cert ./ssh/cert.pem --p 9091",
-    "build": "node deploy.js"
+    "build": "node deploy.js",
     "env": "node env.js",
     "copy": "node deploy.js",
     "deploy": "npm run env && npm run copy"
