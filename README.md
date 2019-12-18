@@ -12,7 +12,19 @@ demo地址https://github.com/netease-im/NIM_Web_Demo
 2. `node app`
 3. 在浏览器中访问 http://127.0.0.1:8888/webdemo/index.html
 
-** 注：必须启服务预览demo文件（node服务只是一个例子，并非必须）**
+**注：必须启服务预览demo文件（node服务只是一个例子，并非必须)**
+
+## 云信SDK版本
+
+开发者可在[云信官网](https://yunxin.163.com/im-sdk-demo)下载最新版本SDK。Demo仅供参考，使用的SDK可能不是最新版本。
+
+如您想在Demo上体验最新版本的SDK，可以通过以下步骤更新该Demo使用的SDK版本:
+
+1. 下载Demo源码
+2. 下载SDK
+3. 将SDK的js文件拷贝至Demo文件夹下的 `./webdemo/3rd/`
+4. 在Demo的根目录下执行 `npm run env`，根据提示输入新的版本号，格式如 `7.1.0`
+
 
 ## IM功能
 
