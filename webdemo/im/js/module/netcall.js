@@ -824,7 +824,7 @@ fn.doSwitchToAudio = function () {
     this.type = Netcall.NETCALL_TYPE_AUDIO;
     this.setDeviceVideoIn(false).then(function () {
         this.netcall.switchVideoToAudio();
-        setTimeout(() => {
+        setTimeout(function () {
             this.stopLocalStream();
             this.stopRemoteStream();
         }, 100)
@@ -1292,7 +1292,7 @@ fn.onCallAccepted = function (obj) {
         Promise.resolve().then(function () {
             that.log("开始webrtc连接")
             return that.netcall.startRtc();
-        }).then(() => {
+        }).then(function () {
             that.log("webrtc连接成功")
             return that.setDeviceVideoIn(obj.type === WebRTC.NETCALL_TYPE_VIDEO);
         }).then(function () {

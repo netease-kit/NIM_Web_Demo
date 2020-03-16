@@ -272,7 +272,6 @@ var SDKBridge = function(ctr, data) {
     var data = this.cache.getSysMsgs();
     var array = [];
     var offlineMsgs = [];
-    debugger
     for (var i = sysMsgs.length - 1; i >= 0; i--) {
       if (sysMsgs[i].category === 'team') {
         array.push(sysMsgs[i]);
