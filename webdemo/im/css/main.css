@@ -524,6 +524,14 @@ html, body {
     border: none;
     height: 520px;
 }
+.merge-msgs-sub-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: #fff;
+}
 .dialog-team-container {
     position: fixed;
     width: 680px;

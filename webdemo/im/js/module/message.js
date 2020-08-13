@@ -37,6 +37,13 @@ YX.fn.message = function() {
   this.$chatContent.delegate('.j-resend', 'click', this.doResend.bind(this));
   //语音播发
   this.$chatContent.delegate('.j-mbox', 'click', this.playAudio);
+  // 查看合并转发消息 
+  this._mergeMsgsOffset = []
+  this.$chatContent.delegate('.j-merge-box', 'click', this.showMergeMsg.bind(this))
+  var mergeMsgsContainer = $('#mergeMsgsContainer')
+  mergeMsgsContainer.delegate('.j-merge-box','click',this.showMergeMsg.bind(this))
+  mergeMsgsContainer.delegate('.j-backBtn', 'click', this.closeMergeMsgsContainer.bind(this));
+  mergeMsgsContainer.delegate('.j-mbox','click',this.playAudio)
   //聊天面板右键菜单
   $.contextMenu({
     selector: '.j-msg',
@@ -662,3 +669,164 @@ YX.fn.sendCustomMessage = function(option) {
     });
   });
 };
+
+/**
+ * 关闭当前合并转发消息详情页
+ */
+
+YX.fn.closeMergeMsgsContainer = function (e, a) {
+  var target = $(e.target)
+  target.parents('.merge-msgs-sub-container').remove()
+  this._mergeMsgsOffset.pop()
+  if (this._mergeMsgsOffset.length === 0) {
+    $('#mergeMsgsContainer').addClass('hide')
+    /** 通话中的设置 */
+    var tmp = this.myNetcall;
+    tmp.$goNetcall.toggleClass("hide", true);
+  }
+}
+
+/**
+ * 展示合并转发消息详情页（复用云记录的样式和模版）
+ * @param {Object} msg 收到的合并消息
+ */
+YX.fn.showMergeMsg = function (e) {
+  var self = this
+  var mergeMsgsData = e.currentTarget.dataset
+
+  var mergeMsgsContainer = $('#mergeMsgsContainer')
+  var subContainer = document.createElement('div')
+  subContainer = $(subContainer)
+  subContainer.addClass('merge-msgs-sub-container')
+  subContainer.load('./cloudMsg.html', function () {
+    mergeMsgsContainer.removeClass('hide')
+    $("#cloudMsgTitle").html(mergeMsgsData.sessionname)
+    self._mergeMsgsOffset.push(0)
+    self.loadMergeMsgs(mergeMsgsData, subContainer)
+  })
+
+  mergeMsgsContainer.append(subContainer)
+  subContainer.delegate('.j-loadMore-mergeMsgs', 'click', this.loadMergeMsgs.bind(this, mergeMsgsData, subContainer))
+}
+
+YX.fn.loadMergeMsgs = function (data, $parent) {
+  var self = this
+  var i = self._mergeMsgsOffset.length - 1
+  // 先获取源链，只有是短链时才用获取，getNosOriginUrl内部会校验
+  nim.getNosOriginUrl({
+    safeShortUrl: data.url,
+    done: function (err, res) {
+      if (!err) data.url = res
+      $.ajax({
+        type: "post",
+        url: CONFIG.url + "/api/message/get",
+        data: {
+          url: data.url,
+          md5: data.md5,
+          password: data.password,
+          encrypted: data.encrypted !== "false",
+          limit: 10,
+          offset: self._mergeMsgsOffset[i]
+        },
+        success: cbGetMsgs.bind(self),
+        error: function (e) {
+          console && console.error(e)
+          $("#mergeMsgsContainer .u-status span").html('获取消息详情失败') 
+        }
+      })
+      self._mergeMsgsOffset[i]++
+    }
+  })
+  // 解析并展示消息，调整最上面的提示内容
+  function cbGetMsgs (res) {
+    var promiseArr = [], self = this
+    if (!res.msg) return
+
+    res.msg.body.forEach(function (item, i) {
+      promiseArr.push(reverseMsg(item))
+    })
+    Promise.all(promiseArr).then(function (msgs) {
+      console.log(msgs)
+      var $node = $parent.find("#cloudMsgList"),
+          $tip = $("#mergeMsgsContainer .u-status span")
+      if (msgs.length === 0) {
+        $tip.html('没有更多的消息了')          
+      } else {
+        if(msgs.length < 10){
+          $tip.html('没有更多的消息了') 
+        }else{
+          $tip.html('<a class="j-loadMore-mergeMsgs">加载更多消息</a>')
+        }
+        var msgHtml = appUI.buildCloudMsgUI(msgs, self.cache)
+        $(msgHtml).prependTo($node)
+      }
+    })
+  }
+  // TODO 该成支持低版本浏览器的方法
+  function reverseMsg (raw) {
+    var msg = parseMsg(JSON.parse(raw))
+    // 调用SDK解析消息的方法 nim.options.Message.reverse
+    msg = self.nim.options.Message.prototype.reverse(msg)
+    if (msg.file && msg.file.url &&  msg.file.url.indexOf('_im_url=1')) {
+      // 若开启了文件安全校验，需要将短链转成长链
+      return new Promise(function (resolve, reject) {
+        nim.getNosOriginUrl({
+          safeShortUrl: msg.file.url,
+          done: function (err, res) {
+            if (!err) msg.file.url = res
+            resolve(msg)
+          }
+        })
+      })
+    }
+    return Promise.resolve(msg)
+  }
+  function parseMsg (rowMsg) {
+    var msgMap = {
+      "0": "scene",
+      "1": "to",
+      "2": "from",
+      "4": "fromClientType",
+      "5": "fromDeviceId",
+      "6": "fromNick",
+      "7": "time",
+      "8": "type",
+      "9": "body",
+      "10": "attach",
+      "11": "idClient",
+      "12": "idServer",
+      "13": "resend",
+      "14": "userUpdateTime",
+      "15": "custom",
+      "16": "pushPayload",
+      "17": "pushContent",
+      "18": "apnsAccounts",
+      "19": "apnsContent",
+      "20": "apnsForcePush",
+      "21": "yidunEnable",
+      "22": "antiSpamContent",
+      "23": "antiSpamBusinessId",
+      "24": "clientAntiSpam",
+      "25": "antiSpamUsingYidun",
+      "26": "needMsgReceipt",
+      "28": "needUpdateSession",
+      "100": "isHistoryable",
+      "101": "isRoamingable",
+      "102": "isSyncable",
+      "104": "isMuted",
+      "105": "cc",
+      "106": "isInBlackList",
+      "107": "isPushable",
+      "108": "isOfflinable",
+      "109": "isUnreadable",
+      "110": "needPushNick",
+      "111": "isReplyMsg",
+      "112": "tempTeamMemberCount"
+    }
+    var msg = {}
+    Object.keys(rowMsg).forEach(function (item) {
+      msg[msgMap[item]] = rowMsg[item]
+    })
+    return msg
+  }
+}

@@ -189,7 +189,7 @@ function buildSessionMsg(msg) {
  * @param  {object} msg 消息
  * @return {string} str
  */
-function getMessage(msg) {
+function getMessage (msg) {
     var str = ''
     var url = msg.file ? _$escape(msg.file.url) : ''
     var sentStr = (msg.flow === 'in') ? "收到" : "发送";
@@ -281,6 +281,21 @@ function getMessage(msg) {
                 str = '<img class="chartlet" onload="loadImg()" src="./images/' + catalog + '/' + chartvar + '.png">';
             } else if (content.type == 4) {
                 str = msg.fromNick + '发起了[白板互动]';
+            } else if (content.type === 15) {
+                var mergeData = content.data
+                str = '<div data-url="' +
+                    mergeData.url +'" data-md5="' +
+                    mergeData.md5 +'" data-password="' +
+                    mergeData.password +'" data-compressed="' +
+                    mergeData.compressed +'" data-encrypted="' +
+                    mergeData.encrypted +'" data-sessionname="' +
+                    mergeData.sessionName +'" class="j-merge-box"><div>' + mergeData.sessionName + '的聊天记录</div>'
+                if (!mergeData.messageAbstract) mergeData.messageAbstract = []
+                mergeData.messageAbstract.forEach(function (item) {
+                    var msgText = buildEmoji(item.message)
+                    str += '<p>' + item.sender + '：' + msgText + '</p>'
+                })
+                str += '<hr /><div>聊天记录</div></div>'
             } else {
                 str = sentStr + '一条[自定义]消息，请到手机或电脑客户端查看';
             }
@@ -300,7 +315,6 @@ function getMessage(msg) {
             } else {
                 str = sentStr + '一条[未知消息类型]消息';
             }
-
             break;
     }
     return str;
