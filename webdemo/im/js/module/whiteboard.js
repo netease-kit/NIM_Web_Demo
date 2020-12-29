@@ -505,6 +505,9 @@ window.yunXin.WB = new window.Vue({
     startNetcallSession: function () {
       var that = this;
       var NETCALL = window.yunXin.myNetcall;
+      // 绑定音频事件
+      console.log('绑定音频事件')
+      that.switchAudioEvent(true);
       // 初始化音频信令
       this.audio.initSignal().then(function () {
         that.log('初始化信令成功');
@@ -529,9 +532,6 @@ window.yunXin.WB = new window.Vue({
             });
           return;
         }
-        // 绑定音频事件
-        console.log('绑定音频事件')
-        that.switchAudioEvent(true);
         // 开启播放设备
         that.audio.startDevice({ type: window.WebRTC.DEVICE_TYPE_AUDIO_OUT_CHAT }).then(function () {
           that.log("开启扬声器成功");
@@ -793,11 +793,10 @@ window.yunXin.WB = new window.Vue({
     // 收到远程轨道
     onRemoteTrack: function (obj) {
       console.log('onRemoteTrack', obj)
-      if (obj.type === 'audio') {
+      if (obj && obj.track && obj.track.kind == 'audio') {
+        console.log('播放对端的声音')
         this.audio.startDevice({
-          type: window.WebRTC.DEVICE_TYPE_AUDIO_OUT_CHAT,
-          account: obj.account,
-          uid: obj.uid
+          type: window.WebRTC.DEVICE_TYPE_AUDIO_OUT_CHAT
         })
           .catch(function (err) {
             this.log('播放远端音频失败', err)
@@ -877,7 +876,7 @@ window.yunXin.WB = new window.Vue({
     // 其他端消息
     this.wb.on('callerAckSync', this.onCallerAckSync);
     // 信令断开
-    this.wb.on('signalClosed', this.onSignalClosed);
+    // this.wb.on('signalClosed', this.onSignalClosed);
     // 收到指令
     this.wb.on('control', this.onControl);
     // 挂断

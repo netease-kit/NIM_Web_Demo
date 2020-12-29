@@ -1,0 +1,28 @@
+@define-mixin clearfix{
+ 	*zoom: 1;
+    &:before, &:after {
+        display: table;
+        content: "";
+        line-height: 0; 
+    }
+    &:after {
+        clear: both; 
+    }
+}
+
+@define-mixin ellipsis{
+ 	overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.u-btn{
+    padding: 5px 10px;
+    color: #fff;
+    background-color: #238efa;
+    border: 1px solid #0070d9;
+    border-radius: 1px;
+}
+.u-btn:hover{
+    color: #fff;
+}

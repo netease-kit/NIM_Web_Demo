@@ -17,7 +17,7 @@ var SDKBridge = function(ctr, data) {
   this.person[userUID] = true;
   this.controller = ctr;
   this.cache = data;
-  window.nim = ctr.nim = this.nim = SDK.NIM.getInstance({
+  window.nim = ctr.nim = this.nim = window.SDK.NIM.getInstance({
     //控制台日志，上线时应该关掉
     debug: true || {
       api: 'info',
@@ -26,7 +26,7 @@ var SDKBridge = function(ctr, data) {
     db: true,
     appKey: CONFIG.appkey,
     account: userUID,
-    token: sdktoken, 
+    token: sdktoken,
     // 私有化配置文件
     privateConf: CONFIG.privateConf,
     //连接
@@ -79,7 +79,7 @@ var SDKBridge = function(ctr, data) {
   this.nim.on('wbNotifyHangup', onwbNotifyHangup)
   function onwbNotifyHangup() {
     console.log('未接听挂断')
-    window.yunXin.WB.hangup()
+    // window.yunXin.WB.hangup()
   }
   function onConnect() {
     $('errorNetwork').addClass('hide');
@@ -174,6 +174,10 @@ var SDKBridge = function(ctr, data) {
     that.subscribeMultiPortEvent(subscribeAccounts);
   }
   function onSessions(sessions) {
+    console.log('收到了会话', (sessions || []).slice(0))
+    sessions = sessions.filter(function (s) {
+      return s.scene !== 'superTeam'
+    })
     var old = this.cache.getSessions();
     this.cache.setSessions(this.nim.mergeSessions(old, sessions));
     for (var i = 0; i < sessions.length; i++) {
@@ -201,6 +205,7 @@ var SDKBridge = function(ctr, data) {
   }
 
   function onUpdatesession(session) {
+    if (session.scene === 'superTeam') return
     var id = session.id || '';
     var old = this.cache.getSessions();
     var msg = session.lastMsg;
@@ -287,7 +292,8 @@ var SDKBridge = function(ctr, data) {
     this.cache.setSysMsgs(array);
     this.cache.addSysMsgCount(array.length);
   }
-  function onSysMsg(newMsg, msg) {
+  function onSysMsg(newMsg, msg, obj) {
+    console.log(newMsg, msg, obj);
     var type = msg.type,
       ctr = this.controller,
       cache = this.cache;
@@ -657,6 +663,10 @@ SDKBridge.prototype.sendFileMessage = function(scene, to, fileInput, callback) {
     value = fileInput.value,
     ext = value.substring(value.lastIndexOf('.') + 1, value.length),
     type = /png|jpg|bmp|jpeg|gif/i.test(ext) ? 'image' : 'file';
+  if (~['html', 'htm'].indexOf(ext)) {
+    alert('抱歉，该网站禁止上传 html 和 htm 类型的文件')
+    return
+  }
   this.nim.sendFile({
     scene: scene,
     to: to,
@@ -674,7 +684,7 @@ SDKBridge.prototype.sendFileMessage = function(scene, to, fileInput, callback) {
       console.log('上传' + (!error ? '成功' : '失败'));
     },
     beforesend: function(msgId) {
-      console && console.log('正在发送消息, id=' + msgId);
+      console && console.log('正在发送消息, id=', msgId);
     },
     done: callback
   });
