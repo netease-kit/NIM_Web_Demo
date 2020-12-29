@@ -70,7 +70,7 @@ function NetcallBridge(yx) {
     // 本地agent连接状态
     this.signalInited = false;
     // agent程序下载地址
-    this.agentDownloadUrl = "https://yx-web-nosdn.netease.im/package/1543999612/WebAgent_Setup_V2.9.0.1204.zip";
+    this.agentDownloadUrl = "https://yx-web-nosdn.netease.im/package/1582511072/WebAgent_Setup_V3.0.1.0.zip";
     // 多人音视频的缓存对象
     this.meetingCall = {};
     // 当前视频状态，是桌面共享还是视频: video / window / screen
@@ -304,10 +304,11 @@ fn.initNetcall = function () {
     var Netcall = window.Netcall;
     var WebRTC = window.WebRTC;
 
-    NIM.use(WebRTC);
+    
     NIM.use(Netcall);
     NIM.use(window.WhiteBoard);
-
+    NIM.use(WebRTC);
+    
     var that = this;
 
     // 初始化webrtc
@@ -824,7 +825,7 @@ fn.doSwitchToAudio = function () {
     this.type = Netcall.NETCALL_TYPE_AUDIO;
     this.setDeviceVideoIn(false).then(function () {
         this.netcall.switchVideoToAudio();
-        setTimeout(function () {
+        setTimeout(() => {
             this.stopLocalStream();
             this.stopRemoteStream();
         }, 100)
@@ -1292,7 +1293,7 @@ fn.onCallAccepted = function (obj) {
         Promise.resolve().then(function () {
             that.log("开始webrtc连接")
             return that.netcall.startRtc();
-        }).then(function () {
+        }).then(() => {
             that.log("webrtc连接成功")
             return that.setDeviceVideoIn(obj.type === WebRTC.NETCALL_TYPE_VIDEO);
         }).then(function () {

@@ -570,7 +570,7 @@ fn.joinChannel = function (isReConnect) {
             Promise.resolve().then(function () {
                 that.log("开始webrtc连接")
                 return that.netcall.startRtc();
-            }).then(function () {
+            }).then(() => {
                 if (obj.type === WebRTC.NETCALL_TYPE_VIDEO) {
                     return that.setDeviceVideoIn(true);
                 } else {

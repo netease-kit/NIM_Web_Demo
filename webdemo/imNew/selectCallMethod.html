@@ -1,0 +1,29 @@
+<div class="team-box call-type J-all-type-box">
+	<div class="title box-sizing">
+		选择技术方案
+		<i class="icon icon-close j-close"></i>
+	</div>
+	<div class="detail">
+		<h2>请选择一种技术方案</h2>
+		<div class="item">
+			<p class="item-title radio" data-type="webrtc">WebRTC(支持Chrome浏览器)</p>
+			<p class="desc">WebRTC是一个支持网页浏览器进行实时语音、视频通话的开源技术，优点是不需要安装任何插件，即开即用，支持Mac OS和Windows。缺点是目前适配的浏览器有限。支持Chrome58+、Firefox57+</p>
+			<p class="desc">注：其他国内使用chrome内核的浏览器由于内核版本，自身支持条件不同，可能接通WebRTC，也可能失败，目前我们没有做验证</p>
+		</div>
+		<div class="item">
+			<p class="item-title radio" data-type="webnet">PC Agent(支持Win7/10系统，Chrome、IE11/Edge浏览器)</p>
+			<div class="desc">
+				PC Agent是一种插件方案，核心在于需要在本地安装一个音视频插件，优点是支持的浏览器较多，包括Chrome55以上，IE11和Edge最新版本。缺点是只支持Windows系统且需要安装插件。
+			</div>
+		</div>
+		<div class="item">
+			<div class="desc" id="whiteboard-tip">
+				技术原理提示：白板功能中的音频功能需要WebRTC或PCagent的技术支持，但白板本身不需要，且可以单独剥离使用
+			</div>
+		</div>
+		<div class="item checkbox J-remember hide"><span class="icon"></span>是否记住选择</div>
+	</div>
+	<div class="box-footer buttons tc">
+		<button class="btn btn-ok radius4px j-confirm disabled">确定</button>
+	</div>
+</div>

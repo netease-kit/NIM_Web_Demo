@@ -156,7 +156,7 @@ var appUI = {
           '</div>',
           '</div>'
         ];
-        if (message.blacked) {
+        if (message.blacked || message.isInBlackList) {
           msgHtml.push(
             '<span class="error" data-session="' +
               message.sessionId +

@@ -1,0 +1,72 @@
+<div class="info-box">
+	<div class="title tc">
+		<button class="btn back-btn radius5px j-backBtn">返回</button>资料
+	</div>
+	<div class="info-content">
+		<ul id="teamMemberList" class="f-cb">
+
+		</ul>
+	</div>
+	<div class="info-footer box-sizing">
+		<div class="items items-1 f-cb">
+			<div class="item item-2 f-fl"><img src="images/advanced.png" style="width:40px;height:40px;" class="j-teamAvatar radius-circle"></div>
+			<div class="g-id f-fl j-teamId">--</div>
+		</div>
+		<div class="items f-cb">
+			<div class="item f-fl">名称</div>
+			<div class=" f-fl info">
+				<span class="wrap">
+					<a href="javascript:;" class="groupName" title="群名称" id="teamName">
+						<span class="name"></span><i class="icon icon-write"></i>
+					</a>
+					<input type="text" class="ipt" id="teamNameInput">
+				</span>
+			</div>
+		</div>
+		<div class="items f-cb j-advanced hide">
+			<div class="item f-fl">介绍</div>
+			<div class="f-fl info">
+				<span class="wrap">
+					<a href="javascript:;" class="groupName" title="群介绍" id="teamDesc">
+						<span class="name"></span><i class="icon icon-write"></i>
+					</a>
+					<input type="text" id="teamDescInput" class="ipt">
+				</span>
+			</div>
+		</div>
+		<div class="items f-cb j-advanced hide">
+			<div class="item f-fl">身份验证</div>
+			<div class="f-fl info">
+				<input type="radio" value="noVerify" name="radio" class="radio j-joinMode"><span class="radio-info">不需要验证</span>
+				<input type="radio" value="needVerify" name="radio" class="radio j-joinMode"><span class="radio-info">需要验证</span>
+				<input type="radio" value="rejectAll" name="radio" class="radio j-joinMode"><span class="radio-info">禁止任何人加入</span>
+			</div>
+		</div>
+		<div class="items f-cb j-advanced hide">
+			<div class="item item-1 f-fl">邀请他人权限</div>
+			<div class="f-fl info">
+				<input type="radio" value="manager" name="radio1" class="radio j-inviteMode"><span class="radio-info">管理员</span>
+				<input type="radio" value="all" name="radio1" class="radio j-inviteMode"><span class="radio-info">所有人</span>
+			</div>
+		</div>
+		<div class="items f-cb j-advanced hide">
+			<div class="item item-1 f-fl">群资料修改权限</div>
+			<div class="f-fl info">
+				<input type="radio" value="manager" name="radio2" class="radio j-updateTeamMode"><span class="radio-info">管理员</span>
+				<input type="radio" value="all" name="radio2" class="radio j-updateTeamMode"><span class="radio-info">所有人</span>
+			</div>
+		</div>
+		<div class="items f-cb j-advanced hide">
+			<div class="item item-1 f-fl">被邀请人身份验证</div>
+			<div class="f-fl info">
+				<input type="radio" value="needVerify" name="radio3" class="radio j-beInviteMode"><span class="radio-info">需要验证</span>
+				<input type="radio" value="noVerify" name="radio3" class="radio j-beInviteMode"><span class="radio-info">不需要验证</span>
+			</div>
+		</div>
+		<div class="btns">
+			<a href="javascript:;"  class="j-exitTeam exit-team u-btn" title="退群">退出该群</a>
+			<a href="javascript:;" class="j-dismissTeam dismiss-team hide u-btn" title="解散群">解散该群</a>
+		</div>
+		
+	</div>
+</div>
