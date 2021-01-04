@@ -448,7 +448,7 @@ fn.showCallingUI = function () {
  * 1: NETCALL_TYPE_AUDIO
  * 2: NETCALL_TYPE_VIDEO
  */
-fn.onClickNetcallLink = function (type) {
+fn.onClickNetcallLink = function (type, cbFail) {
     var that = this;
     // 已经处于音视频通话中，弹窗提示
     // 已经处于互动白板流程中，弹窗提示
