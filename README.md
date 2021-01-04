@@ -44,7 +44,7 @@ demo地址https://github.com/netease-im/NIM_Web_Demo
 
 * login.js,register.js：登陆，注册相关逻辑处理
 
-* widget/uiKit.js [云信的ui组件库](https://github.com/netease-im/NIM_Web_UIKit)，开发这可以使用该组件来快速开发工程
+* [云信的呼叫组件](https://github.com/netease-im/NERtcCallKit-Web)，开发这可以使用该组件来快速开发工程
 
 ### 功能点指引
 #### SDK初始化
@@ -112,11 +112,11 @@ message.js里sendTextMsg,uploadFile方法提供发送文本，文件功能。发
 
 ## 点对点(pcAgent、WebRTC)音视频
 
-源码位于`webdemo/im/js/module`下
+源码位于`webdemo/imNew/js/module`下
 
 ## 多人(pcAgent、WebRTC)音视频
 
-源码位于`webdemo/im/js/module`下
+源码位于`webdemo/imNew/js/module`下
 
 #### 源码结构
 
@@ -126,23 +126,6 @@ message.js里sendTextMsg,uploadFile方法提供发送文本，文件功能。发
 #### 核心代码
 * netcall.js: 调用agent、webrtc点对点音视频功能核心代码
 * netcall_ui.js: 音视频UI操作相关代码
-
-## 点对点白板
-
-源码位于`webdemo/im/js/module`下
-
-#### 源码结构
-
-依赖SDK文件 `Web_SDK_WhiteBoard.js` (版本号这里略去了)
-
-Demo中白板额外加入了音频通话的功能，因此需要依赖音频相关的SDK，进行开发时也可以只使用白板本身，不使用音频功能。
-音频部分依赖SDK文件 `Web_SDK_Netcall.js` (版本号这里略去了)
-以及 `Web_SDK_WebRTC.js` (版本号这里略去了)
-
-另外为了简化代码，白板界面通过Vue框架编写，源码中尽可能减少UI操作逻辑，只包含业务逻辑。
-
-#### 核心代码
-* whiteboard.js: 包含白板通话建立流程以及功能操作等内容
 
 ## 修改代码为已用
 
