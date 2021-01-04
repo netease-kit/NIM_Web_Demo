@@ -3,8 +3,9 @@
 网易云信demo工程基于网易云信[webSDK](/docs/product/IM即时通讯/SDK开发集成/Web开发集成/概要介绍)，演示了SDK聊天，群组，点对点音视频等功能。用户可参照该demo，将网易云信SDK接入自己的app。
 
 ## 预览demo
-demo地址https://github.com/netease-im/NIM_Web_Demo
+demo地址 https://app.yunxin.163.com/webdemo/imNew/index.html
 
+## 本地启动
 将工程克隆到本地，使用静态服务启动本工程。
 
 #### 例：node环境工程部署
@@ -110,13 +111,13 @@ message.js里sendTextMsg,uploadFile方法提供发送文本，文件功能。发
 
 监听消息通知  —> UI渲染
 
-## 点对点(pcAgent、WebRTC)音视频
+## 点对点(WebRTC)音视频
 
-源码位于`webdemo/imNew/js/module`下
+源码位于`webdemo/imNew/js/module/netcall.js`下
 
-## 多人(pcAgent、WebRTC)音视频
+## 多人(WebRTC)音视频
 
-源码位于`webdemo/imNew/js/module`下
+源码位于`webdemo/imNew/js/module/netcall_meeting.js`下
 
 #### 源码结构
 
@@ -124,7 +125,7 @@ message.js里sendTextMsg,uploadFile方法提供发送文本，文件功能。发
 依赖SDK文件 `Web_SDK_WebRTC.js` (版本号这里略去了)
 
 #### 核心代码
-* netcall.js: 调用agent、webrtc点对点音视频功能核心代码
+* netcall.js: 调用呼叫组件，实现webrtc点对点音视频功能核心代码
 * netcall_ui.js: 音视频UI操作相关代码
 
 ## 修改代码为已用
