@@ -941,7 +941,7 @@ fn.setLocalView = function() {
         node = this.$netcallBox.find(".netcall-video-local").css({width: '320px', height: '240px'})
         node = node[0]
     } else {
-        node = this.$netcallBox.find('.netcall-meeting-box .item[data-account=' + userUID + ']')[0]
+        node = this.$netcallBox.find('.netcall-meeting-box .item[data-account="' + userUID + '"]')[0]
     }
     this.netcall.setupLocalView(node)
 }
@@ -950,7 +950,7 @@ fn.setRemoteView = function(userId) {
     if (this.yx.crtSessionType === 'p2p') {
         node = this.$netcallBox.find(".netcall-video-remote")[0]
     } else {
-        node = this.$netcallBox.find('.netcall-meeting-box .item[data-account=' + userId + ']')[0]
+        node = this.$netcallBox.find('.netcall-meeting-box .item[data-account="' + userId + '"]')[0]
     }
     this.netcall.setupRemoteView(userId, node)
 }
@@ -965,8 +965,8 @@ fn.startLocalStream = function (node) {
         // this.netcall.setupLocalView(node)
         this.setVideoSize()
     } catch (e) {
-        this.log("开启本地流失败");
-        console && console.warn && console.warn(e);
+        // this.log("开启本地流失败");
+        // console && console.warn && console.warn(e);
     }
 };
 fn.startRemoteStream = function (obj) {

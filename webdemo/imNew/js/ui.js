@@ -466,9 +466,9 @@ var appUI = {
     return (
       '<li class="item loading" style="' +
       (data.avatar ? 'background-image:url(' + data.avatar + ')' : '') +
-      '" data-account=' +
+      '" data-account="' +
       data.account +
-      '>' +
+      '">' +
       '<span class="fullScreenIcon" title="切换全屏">&nbsp;</span>' +
       '<span class="tip"><i></i><i></i><i></i></span>' +
       '<p style="cursor:pointer;" class="setAudioMute name" data-account="' +

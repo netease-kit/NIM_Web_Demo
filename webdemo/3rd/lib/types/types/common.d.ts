@@ -19,6 +19,9 @@ export declare type Callback = {
 };
 export declare type SetupParams = {
     appKey: string;
+    resolution?: 2 | 4 | 8 | 16;
+    frameRate?: 1 | 2 | 3 | 4 | 5;
+    quality?: 'speech_low_quality' | 'speech_standard' | 'music_standard' | 'standard_stereo' | 'high_quality' | 'high_quality_stereo';
 };
 export declare type LoginParams = {
     account: string;

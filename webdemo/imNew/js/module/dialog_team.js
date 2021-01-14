@@ -181,7 +181,7 @@ YX.fn.dialog = {
                 addedNum++
             } else {
                 delete that.selectedlist[account]
-                $addedUserListUl.find('[data-account=' + account + ']').remove()
+                $addedUserListUl.find('[data-account="' + account + '"]').remove()
                 addedNum--
             }
 

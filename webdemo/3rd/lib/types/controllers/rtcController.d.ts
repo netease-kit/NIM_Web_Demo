@@ -14,12 +14,15 @@ declare class RTCController extends BaseController implements RTCControllerTypes
     private audioEnabled;
     private videoEnabled;
     private getTokenFunc;
+    private resolution;
+    private frameRate;
+    private quality;
     constructor(options: BaseOptions);
     /**
      * 初始化G2
      * @param params
      */
-    setupAppKey({ appKey }: SetupParams): void;
+    setupAppKey({ appKey, resolution, frameRate, quality, }: SetupParams): void;
     /**
      * 设置获取token的异步函数，在加入RTC之前调用
      * @param cb 获取token的异步函数
