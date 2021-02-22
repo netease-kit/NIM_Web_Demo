@@ -617,13 +617,13 @@ fn.joinChannel = function (isReConnect) {
                 that.meetingCall.list = tmplist;
                 
                 /** 点对点发起视频通知 */
-                that.yx.sendCustomMessage({
-                    caller: that.yx.accid,
-                    list: tmplist,
-                    teamId: that.yx.crtSessionAccount,
-                    channelName: that.meetingCall.channelName,
-                    type: that.type
-                });
+                // that.yx.sendCustomMessage({
+                //     caller: that.yx.accid,
+                //     list: tmplist,
+                //     teamId: that.yx.crtSessionAccount,
+                //     channelName: that.meetingCall.channelName,
+                //     type: that.type
+                // });
 
             }
         }
