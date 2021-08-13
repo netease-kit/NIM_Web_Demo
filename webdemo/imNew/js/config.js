@@ -3,28 +3,28 @@
   var envir = 'online';
   var configMap = {
     dev: {
-      appkey: 'fe416640c8e8a72734219e1847ad2547',
+      appkey: '',
       url: 'https://apptest.netease.im',
       chatroomList: 'https://apptest.netease.im/api/chatroom/homeList',
       chatroomAddr: 'https://apptest.netease.im/api/chatroom/requestAddress',
       authService: 'https://yiyong-qa.netease.im',
     },
     test: {
-      appkey: 'fe416640c8e8a72734219e1847ad2547',
+      appkey: '',
       url: 'https://apptest.netease.im',
       chatroomList: 'https://apptest.netease.im/api/chatroom/homeList',
       chatroomAddr: 'https://apptest.netease.im/api/chatroom/requestAddress',
       authService: 'https://yiyong-qa.netease.im',
     },
     pre: {
-      appkey: '45c6af3c98409b18a84451215d0bdd6e',
+      appkey: '',
       url: 'https://apptest.netease.im',
       chatroomList: 'https://apptest.netease.im/api/chatroom/homeList',
       chatroomAddr: 'https://apptest.netease.im/api/chatroom/requestAddress',
       authService: 'https://yiyong.netease.im',
     },
     online: {
-      appkey: '45c6af3c98409b18a84451215d0bdd6e',
+      appkey: '',
       url: 'https://app.netease.im',
       chatroomList: 'https://app.netease.im/api/chatroom/homeList',
       chatroomAddr: 'https://app.netease.im/api/chatroom/requestAddress',
