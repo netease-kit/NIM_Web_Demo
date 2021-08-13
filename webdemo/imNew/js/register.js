@@ -6,17 +6,19 @@ var register = {
 
   initNode: function() {
     // 初始化节点
-    this.$username = $('#username');
-    this.$pwd = $('#password');
+    this.$phone = $('#phone');
+    this.$smsCode = $('#smsCode');
     this.$nickname = $('#nickname');
     this.$errorMsg = $('#errorMsg');
     this.$submit = $('#submit');
+    this.$getCode = $('#getCode');
   },
 
   addEvent: function() {
     // 绑定事件
     var that = this;
     this.$submit.on('click', this.validate.bind(this));
+    this.$getCode.on('click', this.getCode.bind(this));
     $(document).on('keydown', function(e) {
       var ev = e || window.event;
       if (ev.keyCode === 13) {
@@ -27,56 +29,95 @@ var register = {
 
   validate: function() {
     this.$errorMsg.addClass('hide');
-    var that = this,
-      username = $.trim(this.$username.val()),
-      pwd = this.$pwd.val(),
+    var phone = $.trim(this.$phone.val()),
+      smsCode = this.$smsCode.val(),
       nickname = $.trim(this.$nickname.val()),
       errorMsg = '';
-    if (username.length === 0) {
-      errorMsg = '帐号不能为空';
+    if (phone.length === 0) {
+      errorMsg = '手机号不能为空';
+    } else if (!/^1\d{10}$/.test(phone)) {
+      errorMsg = "手机号格式错误";
     } else if (nickname.length === 0) {
       errorMsg = '昵称不能为空';
-    } else if (!pwd || pwd.length < 6) {
-      errorMsg = '密码为6~20位字母或者数字';
+    } else if (!/^[\u4e00-\u9fa5a-zA-Z0-9]+$/gi.test(nickname)) {
+      errorMsg = "昵称有误";
+    } else if (!smsCode) {
+      errorMsg = '验证码不能为空';
     } else {
       this.$submit.html('注册中...').attr('disabled', 'disabled');
-      this.doRegister(username, pwd, nickname);
+      this.doRegister(phone, smsCode, nickname);
       return;
-      this.$submit.html('注册').removeAttr('disabled');
     }
     this.$errorMsg.html(errorMsg).removeClass('hide'); // 显示错误信息
     return false;
   },
 
-  doRegister: function(username, pwd, nickname) {
+  getCode: function() {
     var that = this;
-    if (
-      window.CONFIG.appkey === '' ||
-      window.CONFIG.appkey === ''
-    ) {
-      var password = MD5(pwd);
-    } else {
-      password = pwd;
+    var phone = $.trim(that.$phone.val());
+    if (!phone) {
+      this.$errorMsg.html('手机号不能为空').removeClass('hide');
+      return;
     }
-    var params = {
-      username: username,
-      password: password,
-      nickname: nickname
-    };
+    if (!/^1\d{10}$/.test(phone)) {
+      this.$errorMsg.html("手机号格式错误").removeClass("hide");
+      return;
+    }
     $.ajax({
-      url: CONFIG.url + '/api/createDemoUser',
-      type: 'POST',
-      data: params,
-      contentType: 'application/x-www-form-urlencoded',
+      url: CONFIG.authService + '/auth/sendLoginSmsCode',
+      method: 'POST',
+      contentType: 'application/json;charset=utf-8',
+      data: JSON.stringify({
+        mobile: phone
+      }),
       beforeSend: function(req) {
-        req.setRequestHeader('appkey', CONFIG.appkey);
+        req.setRequestHeader('appKey', CONFIG.appkey);
+        req.setRequestHeader('scope', 7);
       },
       success: function(data) {
-        if (data.res === 200) {
+        if (data.code === 200) {
+          let total = 60;
+          that.$getCode.html(`${total}s后可重发`).attr('disabled', 'disabled').css("pointer-events","none");
+          const timer = setInterval(function() {
+              total--;
+              that.$getCode.html(`${total}s后可重发`)
+              if(total <= 0) {
+                clearInterval(timer)
+                that.$getCode.html('获取验证码').removeAttr('disabled').css("pointer-events", "auto");
+              }
+          }, 1000)
+        } else {
+          that.$errorMsg.html(data.msg).removeClass('hide');
+        }
+      },
+      error: function() {
+        that.$errorMsg.html('请求失败，请重试');
+      }
+    })
+  },
+
+  doRegister: function(phone, smsCode, nickname) {
+    var that = this;
+    var params = JSON.stringify({
+      mobile: phone,
+      nickname: nickname,
+      smsCode: smsCode,
+    });
+    $.ajax({
+      url: CONFIG.authService + '/auth/registerBySmsCode',
+      method: 'POST',
+      data: params,
+      contentType: 'application/json;charset=utf-8',
+      beforeSend: function(req) {
+        req.setRequestHeader('appKey', CONFIG.appkey);
+        req.setRequestHeader('scope', 7);
+      },
+      success: function(data) {
+        if (data.code === 200) {
           alert('注册成功');
           window.location.href = './login.html';
         } else {
-          that.$errorMsg.html(data.errmsg).removeClass('hide');
+          that.$errorMsg.html(data.msg).removeClass('hide');
           that.$submit.html('注册').removeAttr('disabled');
         }
       },

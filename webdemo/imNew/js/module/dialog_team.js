@@ -20,7 +20,7 @@ YX.fn.dialog = {
     open: function (option) {
 
         this.limit = option.limit || 0;
-        this.isCompleteList = option.isCompleteList || false;
+        this.isCompleteList = option.selectedlist && option.selectedlist.length > 0 || false;
         this.cbConfirm = option.cbConfirm || function () { };
         this.cbCancel = option.cbCancel || function () { };
 
@@ -30,10 +30,15 @@ YX.fn.dialog = {
         that.yx = option.yx;
         that.env = option.env || that;
         that.selectedlist = {};
+        option.selectedlist && option.selectedlist.forEach(function(item) {
+            that.selectedlist[item.account] = item.nick;
+        });
         that.load(option.list, option.selectedlist);
         that.selectedNum = 0;
 
+        this.selectArr = []
         this.isOpen = true;
+        this.accountList;
 
         // 事件绑定一次就行了
         if (that.isInited) return;
@@ -142,13 +147,14 @@ YX.fn.dialog = {
             // enable和disable按钮
             return;
         }
-
+        selectArr = members
         /** 已选的ui */
-        $('#addedUserNum').text(this.limit ? 0 + "/8" : 0)
+        $('#addedUserNum').text(this.limit ? 0 + "/" + (8 - members.length) || 8 : 0)
 
         var $addUserUl = $('#addUserList ul');
         for (var i = 0; i < members.length; i++) {
             var account = members[i].account
+            $addUserUl.find('[data-account="' + account + '"]').addClass('selected')
             $addUserUl.find('[data-account="' + account + '"] i').addClass('cur2')
         }
     },
@@ -166,7 +172,6 @@ YX.fn.dialog = {
             addedNum = that.selectedNum
         // 不能被选择的人不响应事件
         if (!$checkIcon.hasClass('cur2')) {
-
             var str = '<li data-account="' + account + '" data-account="' + name + '" data-icon="' + icon + '"><img src="' + getAvatar(icon) + '" width="56" height="56"/><p class="name">' + name + '</p></li>'
             if (!$checkIcon.hasClass('cur')) {
 
@@ -176,7 +181,15 @@ YX.fn.dialog = {
                     return;
                 }
 
+                var listArr = that.selectedlist && Object.keys(that.selectedlist)
+                if (that.limit && listArr.length >= that.limit) {
+                    that.yx.myNetcall.showTip('人数已达上限', 2000);
+                    return;
+                }
+
                 that.selectedlist[account] = name
+                accountList = that.selectedlist;
+                window.accountList = accountList
                 $addedUserListUl.append(str)
                 addedNum++
             } else {
@@ -187,9 +200,8 @@ YX.fn.dialog = {
 
             $checkIcon.toggleClass('cur')
             $this.toggleClass('selected')
-            $addedUserNum.text(that.limit ? addedNum + "/8" : addedNum)
+            $addedUserNum.text(that.limit ? addedNum + "/" + (8 - selectArr.length) || 8 : addedNum)
             that.selectedNum = addedNum
-
             if (that.fname === 'speakBan') return;
             // enable和disable按钮
             that.$dialog.find('.j-confirm').toggleClass('disabled', addedNum <= 0)

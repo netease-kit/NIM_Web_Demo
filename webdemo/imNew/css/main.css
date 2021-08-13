@@ -2037,6 +2037,9 @@ width: 40px;
     position:relative;
     text-align: center;
 }
+.netcall-box  .control .control-item-hide{
+    display: none;
+}
 .netcall-box  .control .control-item span{
     background-color: rgba(0,0,0,0.1);
     position: relative;
@@ -2070,6 +2073,12 @@ width: 40px;
 }
 .netcall-box .icon-volume.icon-disabled{
     background-position: -93px -261px;
+}
+.netcall-box .icon-add{
+    background: url(../images/add.png) no-repeat;
+    background-position: 7px 6px;
+    background-size: 22px 22px;
+    image-rendering: -webkit-optimize-contrast;
 }
 .netcall-box .icon-camera{
     background: url(../images/icons.png) no-repeat;
@@ -2207,6 +2216,17 @@ width: 40px;
     background-color: rgba(255,255,255,0.1);
 }
 .netcall-box .icon-ban{
+    position:relative;
+    top:2px;
+    display:inline-block;
+    width: 36px;
+    height: 36px;
+    /*line-height:36px;*/
+    cursor:pointer;
+    border-radius: 50%;
+    background-color: rgba(255,255,255,0.1);
+}
+.netcall-box .icon-add{
     position:relative;
     top:2px;
     display:inline-block;

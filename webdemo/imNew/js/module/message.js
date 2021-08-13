@@ -577,6 +577,7 @@ YX.fn.backoutMsg = function(id, data) {
 
   this.nim.sendTipMsg({
     isLocal: true,
+    idClient: msg.idClient || null,
     scene: msg.scene,
     to: to,
     tip: (userUID === opeAccount ? '你' : opeNick) + '撤回了一条消息',
