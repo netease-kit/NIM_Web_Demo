@@ -12,16 +12,17 @@
 	<div class="wrapper radius10px">
 		<form action="" method="post" class="m-register">
 			<div class="row tc">
-				<span class="type">帐号：</span>
-				<input type="text" class="radius5px box-sizing" id="username" autofocus="autofocus" autocomplete="on" placeholder="限20位字母或者数字"  maxlength="20"/>
+				<span class="type">手机号：</span>
+				<input type="text" class="radius5px box-sizing" id="phone" autofocus="autofocus" autocomplete="on" placeholder="请输入手机号"  maxlength="11"/>
 			</div>
 			<div class="row tc">
 				<span class="type">昵称：</span>
 				<input type="text" class="radius5px box-sizing" id="nickname" autofocus="autofocus" autocomplete="on" placeholder="限10位汉字、字母或者数字" maxlength="10"/>
 			</div>
 			<div class="row tc">
-				<span class="type">密码：</span>
-				<input type="password" class="radius5px box-sizing" id="password" placeholder="6~20位字母或者数字"  maxlength="20"/>
+				<span class="type">验证码：</span>
+				<input class="radius5px box-sizing" id="smsCode" placeholder="请输入验证码"  maxlength="10"/>
+				<a href="javascript:;" class="button-getCode" id="getCode">获取验证码</a>
 			</div>
 			<div class="row">
 				<div class="error-msg hide" id="errorMsg">此帐号已存在</div>
@@ -36,7 +37,7 @@
 		<p class="hide">为了更好地体验本Demo，建议您使用IE10、Chrome、FireFox、Safari、360等主流浏览器。</p>
 		<p>&copy;1997 - 2020 网易公司版权所有</p>
 	</div>
-	<script src="../3rd/jquery-1.11.3.min.js"></script>
+	<script src="./3rd/jquery-1.11.3.min.js"></script>
 	<script src="js/config.js"></script>
 	<script src="js/md5.js"></script>
 	<script src="js/register.js"></script>

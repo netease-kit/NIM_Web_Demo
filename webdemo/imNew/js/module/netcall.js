@@ -210,6 +210,11 @@ fn.initEvent = function () {
         $(".icon-camera").toggleClass("icon-disabled", !this.cameraDebounceState);
     }.bind(this));
 
+    // 点击通话中邀请成员按钮
+    this.$netcallBox.on('click', '.icon-add', function (event) {
+        this.getMeetingMemberListUI(true);
+    }.bind(this));
+
     this.$netcallBox.on('click', '.switchCallType', function (event) {
         const $target = this.$netcallBox.find('.switchCallType');
         this.netcall.switchCallType(1).then(() => {
@@ -350,7 +355,8 @@ fn.initNetcall = function () {
         container: $(".netcall-video-local")[0],
         remoteContainer: $(".netcall-video-remote")[0]
     });*/
-    window.webrtc = this.webrtc = new window['NRTCCalling'].RTCCalling.getInstance({debug: true})
+    window.webrtc = this.webrtc = new window['NERTCCalling'].default.getInstance({debug: true})
+
     this.webrtc.setupAppKey({
         appKey: CONFIG.appkey
     })
@@ -358,7 +364,7 @@ fn.initNetcall = function () {
         appKey: CONFIG.appkey,
         account: readCookie('uid'),
         token:readCookie('sdktoken')
-    }).then(res=>{console.warn('登录成功')}).catch(e=>{console.error('登录失败: ', e)})
+    })
     // 设置安全模式
     this.webrtc.setTokenService(function(uid) {
         // todo：此获取token函数需要业务方自己实现，然后替换该示例
@@ -407,9 +413,9 @@ fn.initWebRTCEvent = function () {
         if (this.callMethod !== 'webrtc') return
         this.onUserBusy(userId);
     }.bind(this));
-    webrtc.on("onCallingTimeOut", function (userId) {
+    webrtc.on("onCallingTimeOut", function (reason) {
         if (this.callMethod !== 'webrtc') return
-        this.onCallingTimeOut(userId);
+        this.onCallingTimeOut(reason);
     }.bind(this));
     webrtc.on("onUserCancel", function (userId) {
         if (this.callMethod !== 'webrtc') return
@@ -438,6 +444,18 @@ fn.initWebRTCEvent = function () {
         if (this.callMethod !== 'webrtc') return
         this.yx.openChatBox(userId, 'p2p');
     })
+    // onJoinChannel
+    webrtc.on('onJoinChannel', function (obj) {
+        console.log('onJoinChannel: ', JSON.stringify(obj))
+    }.bind(this));
+    // onVideoMuted
+    webrtc.on('onVideoMuted', function (obj) {
+        console.log('onVideoMuted: ', JSON.stringify(obj))
+    }.bind(this));
+    // onAudioMuted
+    webrtc.on('onAudioMuted', function (obj) {
+        console.log('onAudioMuted: ', JSON.stringify(obj))
+    }.bind(this));
 
     // webrtc.on('signalClosed', function () {
     //     if (this.callMethod !== 'webrtc') return
@@ -509,6 +527,7 @@ fn.initWebRTCEvent = function () {
     webrtc.on("onInvited", function (obj) {
         if (this.callMethod !== 'webrtc' || window.yunXin.WB.session.length !== 0) return
         console.warn('收到呼叫消息: ', obj)
+        that.netcall.setCallTimeout(1000 * 45)
         if(obj.isFromGroup){
             this.onMeetingCalling(obj)
         } else {
@@ -1374,13 +1393,14 @@ fn.onUserAccept = function(userId) {
 }
 // 对方接受通话 或者 我方接受通话，都会触发
 fn.onUserEnter = function (obj) {
-    
     if (this.yx.crtSessionType === 'p2p') {
         this.showConnectedUI(this.type);
         // this.startLocalStream()
         // setTimeout(() => {
         this.switchViewPosition();
         // }, 1000)
+    } else {
+        this.onGroupUserEnter(obj)
     }
     this.setRemoteView(obj);
     this.acceptAndWait = false;
@@ -1433,14 +1453,20 @@ fn.onUserBusy = function (userId) {
 /**
  * 呼叫超时
  */
-fn.onCallingTimeOut = function (userId) {
-    console.warn('呼叫超时: ', userId)
+fn.onCallingTimeOut = function (reason) {
+    console.warn('呼叫超时: ', reason)
+    if (reason === 'groupInviteTimeOut') {
+        return;
+    }
     if (this.yx.crtSessionType === 'team') {
         this.onGroupCallTimeout();
         return;
     }
     this.log("超时未接听");
-    this.showTip("未接听", 2000, this.hideAllNetcallUI.bind(this));
+    this.showTip("未接听", 2000, () => {
+        this.hideAllNetcallUI();
+        this.resetWhenHangup();
+    });
     this.clearRingPlay();
     // this.clearCallTimer();
     // this.sendLocalMessage("呼叫超时");
@@ -1457,7 +1483,10 @@ fn.onUserCancel = function (userId) {
     }
 
     this.log("对方已取消呼叫");
-    this.showTip("对方已取消呼叫", 2000, this.hideAllNetcallUI.bind(this));
+    this.showTip("对方已取消呼叫", 2000, () => {
+        this.hideAllNetcallUI();
+        this.resetWhenHangup();
+    });
     // this.clearCallTimer();
     // this.sendLocalMessage("对方已取消呼叫");
 }
@@ -1509,7 +1538,10 @@ fn.doCalling = function (type) {
     // 发起呼叫
     netcall.call({
         type: type,
-        userId: account
+        userId: account,
+        attachment: JSON.stringify({
+            call: "testValue"
+        })
     }).then(function (obj) {
         this.log("发起通话成功，等待对方接听");
         if (type === 2) {
@@ -1701,7 +1733,6 @@ fn.setDeviceVideoIn = function (state) {
     }
 
 };
-
 
 // fn.clearCallTimer = function () {
 //     if (this.callTimer) {

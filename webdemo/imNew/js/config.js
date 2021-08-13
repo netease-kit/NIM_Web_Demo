@@ -3,28 +3,32 @@
   var envir = 'online';
   var configMap = {
     dev: {
-      appkey: '',
+      appkey: 'fe416640c8e8a72734219e1847ad2547',
       url: 'https://apptest.netease.im',
       chatroomList: 'https://apptest.netease.im/api/chatroom/homeList',
-      chatroomAddr: 'https://apptest.netease.im/api/chatroom/requestAddress'
+      chatroomAddr: 'https://apptest.netease.im/api/chatroom/requestAddress',
+      authService: 'https://yiyong-qa.netease.im',
     },
     test: {
-      appkey: '',
+      appkey: 'fe416640c8e8a72734219e1847ad2547',
       url: 'https://apptest.netease.im',
       chatroomList: 'https://apptest.netease.im/api/chatroom/homeList',
-      chatroomAddr: 'https://apptest.netease.im/api/chatroom/requestAddress'
+      chatroomAddr: 'https://apptest.netease.im/api/chatroom/requestAddress',
+      authService: 'https://yiyong-qa.netease.im',
     },
     pre: {
-      appkey: '',
+      appkey: '45c6af3c98409b18a84451215d0bdd6e',
       url: 'https://apptest.netease.im',
       chatroomList: 'https://apptest.netease.im/api/chatroom/homeList',
-      chatroomAddr: 'https://apptest.netease.im/api/chatroom/requestAddress'
+      chatroomAddr: 'https://apptest.netease.im/api/chatroom/requestAddress',
+      authService: 'https://yiyong.netease.im',
     },
     online: {
-      appkey: '',
+      appkey: '45c6af3c98409b18a84451215d0bdd6e',
       url: 'https://app.netease.im',
       chatroomList: 'https://app.netease.im/api/chatroom/homeList',
-      chatroomAddr: 'https://app.netease.im/api/chatroom/requestAddress'
+      chatroomAddr: 'https://app.netease.im/api/chatroom/requestAddress',
+      authService: 'https://yiyong-qa.netease.im',
     }
   };
   window.CONFIG = configMap[envir];

@@ -115,14 +115,33 @@ input:-webkit-autofill {
 .u-redirect{
     text-align: center;
 }
+.u-flex {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 25px;
+}
 .m-register .type{
     position: absolute;
     left: 25px;
     top: 10px;
-    display: inline-block
-    color:#999;
+    display: inline-block;
+    color: #999;
 
 }
 .m-register .row input{
-    padding: 10px 0 10px 48px;
+    padding: 10px 0 10px 55px;
+}
+.button-getCode {
+    position: absolute;
+    right: 25px;
+    top: 6px;
+    background-color: #0888ff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 5px;
+    font-size: 12px;
+}
+.button-getCode:hover {
+    color: #fff;
 }

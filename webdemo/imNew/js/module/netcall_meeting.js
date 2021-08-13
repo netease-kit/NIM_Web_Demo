@@ -19,9 +19,9 @@ window.requestAnimationFrame = (function () {
 /**
  * 生成参与多人音视频的可供选择的群成员的列表UI
  */
-fn.getMeetingMemberListUI = function () {
+fn.getMeetingMemberListUI = function (isCalling) {
     var that = this;
-    var listContainer = that.yx.$dialogTeamContainer;
+    var listContainer = $('#dialogTeamContainer')
     var teamId = that.yx.crtSessionAccount
 
     that.yx.getTeamMembers(teamId, showMember);
@@ -29,24 +29,71 @@ fn.getMeetingMemberListUI = function () {
     function showMember() {
         var list = that.yx.cache.getTeamMembers(teamId).members;
         // 绑定环境，回调继续用
-        that.yx.dialog.open({ list: list, cbConfirm: cbConfirm, cbCancel: cbCancel, env: that, yx: that.yx, limit: 8, selectedlist: [{ account: that.yx.accid }] });
+        var selectedList = list.map(function(item) {
+            if (that.meetingCall.members && Object.keys(that.meetingCall.members).indexOf(item.account) > -1) {
+                return item;
+            }
+        }).filter(function(item) {
+            return !!item;
+        });
+        that.yx.dialog.open({ list: list, cbConfirm: cbConfirm, cbCancel: cbCancel, env: that, yx: that.yx, limit: 8, selectedlist: selectedList });
     }
 
     // 回调传回来选中的列表
     function cbConfirm(list) {
         that.meetingCall.members = list;
         that.meetingCall.caller = that.netcall.getAccount && that.netcall.getAccount() || that.yx.accid;
-        that.createChannel();
-        console.log(list);
+        if (!isCalling) {
+            that.createChannel();
+        } else {
+            const newList = Array.from(listContainer.find('.icon-radio.cur')).filter(item => {
+                return $(item).parent().hasClass('selected')
+            }).map(item => {
+                return $(item).parent().attr('data-account')
+            })
+            that.groupInvite(newList);
+        }
     }
 
     // 取消多人音视频，放开通道
     function cbCancel() {
         that.signalInited = false;
-        that.meetingCall = {};
+        if (!isCalling) {
+            that.meetingCall = { members: that.meetingCall.members };
+        }
         that.netcall && that.netcall.stopSignal && that.netcall.stopSignal()
     }
+}
 
+fn.groupInvite = function(list) {
+    // debugger;
+    this.netcall.groupInvite({
+        userIds: list,
+        groupId:  this.netcall.channelName,
+        attachment: JSON.stringify({
+            groupInvite: "testValue"
+        })
+    }).then(function (obj) {
+        console.log("通话中邀请成功，等待对方接听");
+        var $addIconItem = $('#addIconItem'),
+            html = "";
+        html = '<span class="icons icon-add"></span>'
+        $addIconItem.html(html)
+        $addIconItem.removeClass('control-item-hide')
+    }).catch(function (err) {
+        console.log("通话中邀请失败：", err);
+    });
+}
+
+fn.onGroupUserEnter = function(item) {
+    if(!item) {
+        return
+    }
+    var $addUserUl = $('#memberList')
+    if (!$addUserUl.find(`.item[data-account="${item}"]`).length){
+        var node = appUI.buildmeetingMemberUI({ account: item, nick: getNick(item), avatar: this.yx.cache.getUserById(item).avatar });
+        $addUserUl.append(node);
+    }
 }
 
 /** 根据选中的人数，生成房间UI
@@ -69,11 +116,9 @@ fn.getMeetingCallUI = function (list, isCaller) {
             $("#devices").addClass('hide')
         }
         dialog.removeClass('hide');
-
         list.forEach(function (item) {
             tmp += appUI.buildmeetingMemberUI({ account: item, nick: getNick(item), avatar: that.yx.cache.getUserById(item).avatar });
         });
-
         $addUserUl.html(tmp);
 
         // 判断是否是firefox, 显示桌面共享按钮
@@ -111,7 +156,7 @@ fn.getMeetingCallUI = function (list, isCaller) {
 fn.showSpeakBanUI = function (list) {
 
     var arr = [], that = this;
-    list.forEach(function (item) {
+    list && list.forEach(function (item) {
         arr.push({ account: item, nick: getNick(item), avatar: that.yx.cache.getUserById(item).avatar })
     });
 
@@ -242,6 +287,9 @@ fn.initMeetingCallEvent = function () {
     });
     $box.on('click', '.camera', function (e) {
         console.log('camera')
+    });
+    $box.on('click', '.add', function (e) {
+        console.log('add')
     });
     $box.on('click', '.speakBan', function (e) {
         if ($(e.target).hasClass('icon-disabled')) return;
@@ -485,7 +533,7 @@ fn.offline = function (e) {
 fn.createChannel = function () {
     var that = this;
     this.netcall.channelName = this.yx.crtSession + '-' + Date.now();
-    console.warn('创建房价')
+    console.warn('创建房间')
     that.log('createChannel')
     var mcall = that.meetingCall;
     mcall.teamId = that.yx.crtSessionAccount
@@ -556,7 +604,6 @@ fn.joinChannel = function (isReConnect) {
         custom: netcall.channelCustom || "",
         sessionConfig: that.sessionConfig
     })*/
-    var client = this.webrtc.getSdkInstance().rtcClient
     this.setLocalView();
     // 设置超时时间
     netcall.setCallTimeout(1000 * 45);
@@ -564,7 +611,10 @@ fn.joinChannel = function (isReConnect) {
     netcall.groupCall({
         userIds,
         groupId: this.netcall.channelName,
-        type
+        type,
+        attachment: JSON.stringify({
+            groupCall: "testValue"
+        })
     }).then(function (obj) {
         that.log('joinChannel', JSON.stringify(obj));
         that.startLocalStreamMeeting()
@@ -592,8 +642,14 @@ fn.joinChannel = function (isReConnect) {
             /** 如果是视频发起者，需要发送呼叫声音，tip和点对点通知 */
             if (that.meetingCall.caller === that.yx.accid) {
 
+                var $addIconItem = $('#addIconItem'),
+                    html = "";
                 that.$goNetcall.find(".nick").text(that.meetingCall.teamName);
                 that.$goNetcall.find(".netcall-icon-state").toggleClass("netcall-icon-state-audio", that.type === Netcall.NETCALL_TYPE_AUDIO).toggleClass("netcall-icon-state-video", that.type === Netcall.NETCALL_TYPE_VIDEO);
+
+                html = '<span class="icons icon-add"></span>'
+                $addIconItem.html(html)
+                $addIconItem.removeClass('control-item-hide')
 
                 /** 呼叫声音开启 */
                 that.afterPlayRingA = function () {
@@ -782,7 +838,6 @@ fn.leaveChannel = function (cb) {
 fn.onJoinChannel = function (obj) {
     var joinedMembers = this.meetingCall.joinedMembers;
     // if (joinedMembers && joinedMembers[obj.account]) return;
-
     this.log('加入群视频:', JSON.stringify(obj));
 
     /** 将加入者加入自己的列表里 */
@@ -824,15 +879,15 @@ fn.onJoinChannel = function (obj) {
 
 /** 有第三方离开房间 */
 fn.onLeaveChannel = function (userId) {
-    if(this.meetingCall.joinedMembers) {
+    // if(this.meetingCall.joinedMembers) {
         console.log(userId);
         this.nodeLoadingStatus(userId, '已挂断');
         //this.stopRemoteStreamMeeting(obj);
 
-        delete this.meetingCall.joinedMembers[userId];
+        // delete this.meetingCall.joinedMembers[userId];
         //刷新禁言状态
         this.updateBanStatus();
-    }
+    // }
 
 }
 
@@ -922,7 +977,7 @@ fn.onMeetingCalling = function (message) {
     
     this.meetingCall.caller = message.invitor
     this.meetingCall.channelName = channelInfo.channelName
-    this.meetingCall.list = message.userIds.push(message.invitor)
+    this.meetingCall.list = message.userIds
     this.meetingCall.teamId = teamId
 
     this.netcallAccount = teamId;
