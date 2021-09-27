@@ -27,6 +27,8 @@ var SDKBridge = function(ctr, data) {
     appKey: CONFIG.appkey,
     account: userUID,
     token: sdktoken,
+    // 撤回消息是否更新未读数
+    rollbackDelMsgUnread: true,
     // 私有化配置文件
     privateConf: CONFIG.privateConf,
     //连接

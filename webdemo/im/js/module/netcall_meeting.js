@@ -319,7 +319,7 @@ fn.updateVolumeBar = function (obj) {
             }
 
 
-            meetingCall.$box.find('.item[data-account=' + id + '] .volume-show').css({
+            meetingCall.$box.find('.item[data-account="' + id + '"] .volume-show').css({
                 width: percent + '%'
             });
         }
@@ -367,7 +367,7 @@ fn.waitingCallTimer = function (type) {
  */
 fn.findAccountNode = function (account) {
     // console.log(this);
-    return this.meetingCall.$box && this.meetingCall.$box.find('.item[data-account=' + account + ']')[0];
+    return this.meetingCall.$box && this.meetingCall.$box.find('.item[data-account="' + account + '"]')[0];
 }
 
 /** 画面加载状态变化提示
@@ -375,7 +375,7 @@ fn.findAccountNode = function (account) {
  * @param {string} message 加载状态的消息
  */
 fn.nodeLoadingStatus = function (uid, message) {
-    this.meetingCall.$box && this.meetingCall.$box.find('.item[data-account=' + uid + ']').removeClass('loading').find('.tip').html(message || '');
+    this.meetingCall.$box && this.meetingCall.$box.find('.item[data-account="' + uid + '"]').removeClass('loading').find('.tip').html(message || '');
 }
 
 /** 摄像头状态切换的节点变化
@@ -384,7 +384,7 @@ fn.nodeLoadingStatus = function (uid, message) {
  */
 fn.nodeCameraStatus = function (uid, isEnable) {
     isEnable = isEnable || false;
-    this.meetingCall.$box && this.meetingCall.$box.find('.item[data-account=' + uid + '] canvas').toggleClass('hide', !isEnable);
+    this.meetingCall.$box && this.meetingCall.$box.find('.item[data-account="' + uid + '"] canvas').toggleClass('hide', !isEnable);
 }
 
 /** 发送群视频提示消息 */
