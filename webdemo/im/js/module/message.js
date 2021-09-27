@@ -16,6 +16,8 @@ YX.fn.message = function() {
   this.$showNetcallAudioLink = $('#showNetcallAudioLink')
   this.$showNetcallVideoLink = $('#showNetcallVideoLink')
   this.$showWhiteboard = $('#showWhiteboard')
+  this.$forwardBtn = $('#forwardBtn')
+  this.$forwardCancelBtn = $('#forwardCancelBtn')
   try {
     this.audioContext = new Recorder.AudioContext;
   } catch (e) {
@@ -33,6 +35,8 @@ YX.fn.message = function() {
   this.$showNetcallAudioLink.on('click', this.stopRecordAndAudio.bind(this));
   this.$showNetcallVideoLink.on('click', this.stopRecordAndAudio.bind(this));
   this.$showWhiteboard.on('click', this.stopRecordAndAudio.bind(this));
+  this.$forwardBtn.on('click', this.chooseFriends.bind(this));
+  this.$forwardCancelBtn.on('click', this.hideForwardBtn.bind(this));  
   //消息重发
   this.$chatContent.delegate('.j-resend', 'click', this.doResend.bind(this));
   //语音播发
@@ -83,12 +87,29 @@ YX.fn.message = function() {
             }
           }.bind(this)
         });
+      } else if (key === 'multiple') {
+        // 每一条记录前面添加 checkbox 多选框
+        document.querySelectorAll('#chatContent>div.item').forEach((item) => {
+          var id = item.dataset.id;
+          var checkboxElement = document.createElement('input');
+          checkboxElement.name = id;
+          checkboxElement.type = 'checkbox';
+          checkboxElement.className = 'forward-checkbox';
+          if(!item.querySelector('input')){
+            item.insertBefore(checkboxElement,item.firstChild);
+          }
+        });
+        $('#chatForwrdContainer').removeClass('hide');
       }
     }.bind(this),
     items: {
       delete: {
         name: '撤回',
         icon: 'delete'
+      },
+      multiple: {
+        name: '多选',
+        icon: 'multiple'
       }
     }
   });
@@ -298,12 +319,13 @@ YX.fn.sendRecordAudio = function() {
     });
   });
   self.cancelRecordAudio()
-}
+};
 
 YX.fn.stopRecordAndAudio = function () {
   YX.fn.stopRecordAudio()
   YX.fn.stopPlayAudio()
-}
+};
+
 YX.fn.recordAudio = function() {
   YX.fn.stopPlayAudio()
   var self = this
@@ -343,7 +365,8 @@ YX.fn.recordAudio = function() {
       });
     }
   }
-}
+};
+
 YX.fn.showRecorderTime = function () {
   var self = this
   if (YX.fn.recorder) {
@@ -352,7 +375,8 @@ YX.fn.showRecorderTime = function () {
     YX.fn.recordTime = 0;
     YX.fn.recordTimeout = setTimeout(self.recordTimeRun.bind(self), 1000)
   }
-}
+};
+
 YX.fn.recordTimeRun = function () {
   var self = this
   YX.fn.recordTimeout = setTimeout(self.recordTimeRun.bind(self), 1000)
@@ -362,7 +386,8 @@ YX.fn.recordTimeRun = function () {
     self.stopRecordAudio()
   }
   self.$recordTimeDuration.html('00:' + (YX.fn.recordTime > 9 ? YX.fn.recordTime : '0' + YX.fn.recordTime))
-}
+};
+
 YX.fn.stopRecordAudio = function() {
   var $toRecord = $('#toRecord')
   var isRecording = $toRecord.hasClass('recording');
@@ -374,7 +399,7 @@ YX.fn.stopRecordAudio = function() {
       YX.fn.recorder.stop();
     }
   }
-}
+};
 
 YX.fn.cancelRecordAudio = function () {
   var $toRecord = $('#toRecord')
@@ -391,7 +416,8 @@ YX.fn.cancelRecordAudio = function () {
     $recordTimeDuration.html('00:00')
     YX.fn.recordTime = 0
   }
-}
+};
+
 /**
  * 发送消息完毕后的回调
  * @param error：消息发送失败的原因
@@ -577,6 +603,7 @@ YX.fn.backoutMsg = function(id, data) {
 
   this.nim.sendTipMsg({
     isLocal: true,
+    idClient: msg.idClient || null,
     scene: msg.scene,
     to: to,
     tip: (userUID === opeAccount ? '你' : opeNick) + '撤回了一条消息',
@@ -706,7 +733,7 @@ YX.fn.showMergeMsg = function (e) {
 
   mergeMsgsContainer.append(subContainer)
   subContainer.delegate('.j-loadMore-mergeMsgs', 'click', this.loadMergeMsgs.bind(this, mergeMsgsData, subContainer))
-}
+};
 
 YX.fn.loadMergeMsgs = function (data, $parent) {
   var self = this
@@ -828,6 +855,327 @@ YX.fn.loadMergeMsgs = function (data, $parent) {
     })
     return msg
   }
+};
+
+/**
+ * 选择转发到个人或者群组
+ */
+YX.fn.chooseFriends = function () {
+  console.log(this);
+
+	var friendList = this.cache.getFriendslistOnShow()
+  var teamList = this.cache.getTeamlist()
+  this.forwardDialog.open({ friendList: friendList, teamList:teamList, cbConfirm: this.handleChooseForwardCallback, env: this, yx: this })
 }
 
+/**
+ * 取消转发
+ */
+ YX.fn.hideForwardBtn = function () {
+  document.querySelectorAll('#chatContent>div.item').forEach((item) => {
+    var checkboxElement = item.querySelector('input');
+    if(checkboxElement){
+      item.removeChild(checkboxElement);
+    }
+  });
+  
+  $('#chatForwrdContainer').addClass('hide');
+}
 
+/**
+ * 选择转发完成回调
+ */
+ YX.fn.handleChooseForwardCallback = function (selectedObj) {
+  var that = this;
+  
+  function getPassward() {
+    var $chars = '0123456789abcdef';
+    var maxPos = $chars.length;
+    var pwd = '';
+    for (i = 0; i < 16; i++) {
+      pwd += $chars.charAt(Math.floor(Math.random() * maxPos));
+    }
+    return pwd;
+  }
+
+  function serializeMsg (obj) {
+    var map = {
+      "scene": 0,
+      "to": 1,
+      "from": 2,
+      "fromClientType": 4,
+      "fromDeviceId": 5,
+      "fromNick": 6,
+      "time": 7,
+      "type": 8,
+      "body": 9,
+      "attach": 10,
+      "idClient": 11,
+      "idServer": 12,
+      "resend": 13,
+      "userUpdateTime": 14,
+      "custom": 15,
+      "pushPayload": 16,
+      "pushContent": 17,
+      "apnsAccounts": 18,
+      "apnsContent": 19,
+      "apnsForcePush": 20,
+      "yidunEnable": 21,
+      "antiSpamContent": 22,
+      "antiSpamBusinessId": 23,
+      "clientAntiSpam": 24,
+      "antiSpamUsingYidun": 25,
+      "needMsgReceipt": 26,
+      "needUpdateSession": 28,
+      "replyMsgFromAccount": 29,
+      "replyMsgToAccount": 30,
+      "replyMsgTime": 31,
+      "replyMsgIdServer": 32,
+      "replyMsgIdClient": 33,
+      "threadMsgFromAccount": 34,
+      "threadMsgToAccount": 35,
+      "threadMsgTime": 36,
+      "threadMsgIdServer": 37,
+      "threadMsgIdClient": 38,
+      "delete": 39,
+      "callbackExt": 40,
+      "subType": 41,
+      "yidunAntiCheating": 42,
+      "env": 43,
+      "isHistoryable": 100,
+      "isRoamingable": 101,
+      "isSyncable": 102,
+      "isMuted": 104,
+      "cc": 105,
+      "isInBlackList": 106,
+      "isPushable": 107,
+      "isOfflinable": 108,
+      "isUnreadable": 109,
+      "needPushNick": 110,
+      "isReplyMsg": 111,
+      "tempTeamMemberCount": 112
+    };
+
+    var sceneMap = {
+      // 单人聊天
+      p2p: 0,
+      // 群聊
+      team: 1,
+      // 超大群
+      superTeam: 5
+    }
+    var fromClientTypeMap = {
+      'Android':1,
+      'iOS':2,
+      'PC':4,
+      'WindowsPhone':8,
+      'Web':16,
+      'Server':32,
+      'Mac':64
+    }
+    var typeMap = {
+      text: 0,
+      image: 1,
+      audio: 2,
+      video: 3,
+      geo: 4,
+      notification: 5,
+      file: 6,
+      tip: 10,
+      robot: 11, // robotIn
+      // robotOut: 12,
+      g2: 12,
+      custom: 100
+    }
+
+    if(obj.text){
+      obj.body = obj.text;
+    }
+    if(obj.scene){
+      obj.scene = sceneMap[obj.scene]
+    }
+    if(obj.fromClientType){
+      obj.fromClientType = fromClientTypeMap[obj.fromClientType]
+    }
+    if(obj.type){
+      obj.type = typeMap[obj.type]
+    }
+
+    if(typeof obj.file === 'object'){
+      obj.attach = JSON.stringify(obj.file)
+    }
+
+    var data = {}
+    for (var p in map) {
+      if (obj.hasOwnProperty(p)) {
+        data[map[p]] = obj[p]
+      }
+    }
+  return data
+  }
+
+  var selectedTeams = [];
+  var selectedFriends = [];
+  
+  for (var key in selectedObj) {
+    if (Object.hasOwnProperty.call(selectedObj, key)) {
+      var item = selectedObj[key];
+      if (item.nodeType === 'team'){
+        selectedTeams.push(item);
+      }
+      if (item.nodeType === 'friend'){
+        selectedFriends.push(item);
+      }
+    }
+  }
+
+  var selectedItems = document.querySelectorAll('#chatContent>.item>input:checked');
+  var serializedMsgs = [];
+  var messageAbstract = [];
+  for (var i = 0; i < selectedItems.length; i++) {
+    var item = selectedItems[i];
+    var contentId = $(item).parent().data('id');
+    var msg = this.cache.findMsg(this.crtSession, contentId);
+
+    if(messageAbstract.length < 2){
+      messageAbstract.push({
+        message: msg.type === 'text' ? msg.text : {
+          'file': '[文件]',
+          'image': '[图片]',
+          'audio': '[语音]',
+          'video': '[视频]',
+          'geo': '[定位]',
+          'tip': '[提示]',
+          'notification': '[通知]',
+          'robot': '[机器人]',
+          'custom': '[自定义]',
+        }[msg.type],
+        sender: msg.fromNick
+      })
+    }
+
+    for (var key in msg) {
+      if (Object.hasOwnProperty.call(msg, key)) {
+        var prop = msg[key];
+        if (typeof prop === 'boolean'){
+          msg[key] = Number(prop);
+        }
+        if (prop === undefined) {delete msg[key]}
+      }
+    }
+    var serializedMsg = serializeMsg(msg)
+    serializedMsgs.push(serializedMsg)
+  }
+
+  var fileHeader = {
+    version:0,
+    message_count: serializedMsgs.length
+  }
+
+  var fileString = '';
+  var encoder = new TextEncoder();
+  var password = getPassward();
+  var rc4 = new RC4(password);
+
+  // 文件内容字符串拼接
+  fileString = fileString + JSON.stringify(fileHeader);
+  for (var i = 0; i < serializedMsgs.length; i++) {
+    var msg = serializedMsgs[i];
+    fileString = fileString + '\n' + JSON.stringify(msg);
+  }
+
+  // 转 utf8 字节码
+  fileString = encoder.encode(fileString);
+  // rc4 加密
+  fileString = rc4.encrypt(fileString);
+  // 字节码 转 unit8array
+  fileString = new Uint8Array(fileString);
+
+  var blob = new Blob([fileString], { type: "application/octet-stream" });   
+  var browserMD5 = new browserMD5File();
+  browserMD5.md5(
+    blob,
+    (err, fileStringMd5) => {
+      if(err){
+        console.log('err:', err);
+      }else{
+        nim.getNosToken({
+          callback: (_error, tokenData)=>{
+            var fileUrl = 'https://wanproxy-web.127.net/' + tokenData.bucket + '/' + tokenData.objectName + '?offset=0&complete=true&version=1.0';
+      
+            var xhr = new XMLHttpRequest();
+            xhr.open('post', fileUrl)
+      
+            xhr.setRequestHeader('x-nos-token', tokenData.token);
+            xhr.setRequestHeader('content-type', 'application/octet-stream');
+            xhr.send(blob);
+            xhr.onreadystatechange = function() {
+              if (xhr.readyState !== 4) {
+                return;
+              }     
+              if (xhr.status === 200) {
+                nim.getUser({
+                  account: that.accid,
+                  sync: true,
+                  done: function(err, selfInfo) {
+                    var contentInfo = {
+                      data: {
+                        compressed: false,
+                        encrypted: true,
+                        md5: fileStringMd5,
+                        messageAbstract: messageAbstract,
+                        password: password,
+                        url: 'https://nim-nosdn.netease.im/' + decodeURIComponent(tokenData.objectName),
+                        sessionID: that.crtSessionAccount,
+                        sessionName: selfInfo.nick || '',
+                      },
+                      type: 15,
+                    };
+                    var contentString = JSON.stringify(contentInfo);
+            
+                    selectedTeams.length && selectedTeams.map((team)=>{
+                      nim.sendCustomMsg({
+                        scene: "team",
+                        to: team.teamid,
+                        text: "[聊天记录]",
+                        content: contentString,
+                        pushContent: "[聊天记录]",
+                        done: function(err, obj) {
+                          console.log('call sendCustomMsg finish: ', err, obj);
+                          that.hideForwardBtn.bind(that)();
+                        }
+                      })  
+                    });
+                    selectedFriends.length && selectedFriends.map((friend)=>{
+                      nim.sendCustomMsg({
+                        scene: "p2p",
+                        to: friend.account,
+                        text: "[聊天记录]",
+                        content: contentString,
+                        pushContent: "[聊天记录]",
+                        done: function(err, obj) {
+                          console.log('call sendCustomMsg finish: ', err, obj);
+                          that.hideForwardBtn.bind(that)();
+                        }
+                      })  
+                    });    
+                  }
+                });
+              }
+            };
+          },
+          nosToken: {
+            nosScene: 'im',
+            nosSurvivalTime: 86400
+          },
+          responseBody: {
+            type: 'file'
+          }
+        });  
+      }
+    },
+    progress => {
+      console.log('progress number:', progress);
+    },
+  );
+}

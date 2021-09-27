@@ -8,7 +8,7 @@
  * @param {string} option.type 打开弹窗的类型，不同类型打开不同的模板: 'list-select'(默认值) / 'list'
  * @param {num} option.limit 成员上限限制, 可以不传, 默认0
  * @param {boolean} option.isCompleteList 回调数据是否是完整的数据，即：完整就是所有选中的（包含初始传进来的selectedlist） / 还是当前手动选中的!, 可以不传, 默认false
- * @param {Array} option.list 待选择的成员列表
+ * @param {Array} option.friendList 待选择的好友列表
  * @param {string} option.selectedlist 已选择的成员列表
  * @param {object} option.env 执行环境，如果有的话，回调时需要重新绑定环境
  * @param {object} option.yx 缓存yx实例
@@ -16,7 +16,7 @@
  * @param {fn} option.cbCancel 取消回调
  */
 
-YX.fn.dialog = {
+YX.fn.forwardDialog = {
     open: function (option) {
 
         this.limit = option.limit || 0;
@@ -24,13 +24,13 @@ YX.fn.dialog = {
         this.cbConfirm = option.cbConfirm || function () { };
         this.cbCancel = option.cbCancel || function () { };
 
-        var $dialog = this.$dialog = $('#dialogTeamContainer'), that = this;
+        var $dialog = this.$dialog = $('#dialogForwardContainer'), that = this;
 
         this.type = option.type || 'list-select';
         that.yx = option.yx;
         that.env = option.env || that;
         that.selectedlist = {};
-        that.load(option.list, option.selectedlist);
+        that.load(option.friendList, option.teamList, option.selectedlist);
         that.selectedNum = 0;
 
         this.isOpen = true;
@@ -55,8 +55,10 @@ YX.fn.dialog = {
             }
             var tmpList = {};
             $dialog.find('#addUserList li.selected').each(function (index, item) {
-                item = $(item).data('account');
-                tmpList[item] = item;
+                var account = $(item).data('account');
+                var teamid = $(item).data('account');
+                var nick = $(item).data('account');
+                tmpList[item] = { account, teamid, nick };
             });
             return that.cbConfirm.call(that.env, tmpList);
         });
@@ -65,26 +67,22 @@ YX.fn.dialog = {
 
     },
     /** dom渲染流程 */
-    load: function (list, selectedlist) {
+    load: function (friendList, teamList, selectedlist) {
         var that = this;
         var dialog = that.$dialog;
-        var fname = that.fname = that.type === 'list-select' ? 'teamMember' : 'speakBan';
 
-        dialog.load('./' + fname + '.html', function () {
+        dialog.load('./forwardMessage.html', function () {
             if ($("#devices")) {
                 $("#devices").addClass('hide')
             }
             dialog.removeClass('hide')
             that.yx.$mask.removeClass('hide')
-            var $addIcon = $('#userList .first'),
-                $addUserUl = $('#addUserList ul'),
-                tmpHtml = '',
-                members = []
+            var $addUserUl = $('#addUserList ul'),
+                tmpHtml = ''
 
-            // 所有成员
-            for (var i = 0, l = list.length; i < l; ++i) {
-
-                var tmp = list[i];
+            // 所有好友
+            for (var i = 0, l = friendList.length; i < l; ++i) {
+                var tmp = friendList[i];
 
                 /** 奇怪的数据略过 */
                 if (tmp.constructor !== Object) continue;
@@ -96,14 +94,18 @@ YX.fn.dialog = {
                 tmp.name = tmp.nickInTeam;
                 // tmp.nick = getNick(tmp.account);
                 // tmp.nick = tmp.nick === tmp.account ? "" : tmp.nick;
-                tmpHtml += appUI['build' + fname + 'UI'](tmp);
+                tmpHtml += appUI.buildteamMemberUI(tmp);
+            }
+            // 所有群组
+            for (var i = 0, l = teamList.length; i < l; ++i) {
+                var tmp = teamList[i];
+                tmp.nodeType = 'team';
+                /** 奇怪的数据略过 */
+                if (tmp.constructor !== Object) continue;
+
+                tmpHtml += appUI.buildteamMemberUI(tmp);
             }
             $addUserUl.html(tmpHtml);
-
-            /** 禁言UI，放开按钮 */
-            if (fname === 'speakBan') {
-                dialog.find('.j-confirm').removeClass('disabled')
-            }
 
             if (selectedlist) {
                 that.loadSelected(selectedlist);
@@ -116,31 +118,15 @@ YX.fn.dialog = {
      * @param {any} members object或者array都可以
      */
     loadSelected: function (members) {
-        var fname = this.fname;
-
         if (!members) return;
 
         /** 对象转数组 */
         if (members.constructor === Object) {
             var arr = [];
-            for (var i in members) {
-                arr.push({
-                    account: i
-                });
+            for (var item in members) {
+                arr.push(item);
             }
             members = arr;
-        }
-
-        /** 如果禁言，UI处理不一样 */
-        if (fname === 'speakBan' && members.length > 0) {
-            var $dialog = this.$dialog;
-            for (var i = 0; i < members.length; i++) {
-                var account = members[i].account
-                $dialog.find('[data-account="' + account + '"]').addClass('selected')
-                $dialog.find('[data-account="' + account + '"] i').addClass('cur')
-            }
-            // enable和disable按钮
-            return;
         }
 
         /** 已选的ui */
@@ -149,7 +135,12 @@ YX.fn.dialog = {
         var $addUserUl = $('#addUserList ul');
         for (var i = 0; i < members.length; i++) {
             var account = members[i].account
-            $addUserUl.find('[data-account="' + account + '"] i').addClass('cur2')
+            var teamid = members[i].teamid
+            if(teamid){
+                $addUserUl.find('[data-teamid="' + teamid + '"] i').addClass('cur2')
+            }else{
+                $addUserUl.find('[data-account="' + account + '"] i').addClass('cur2')
+            }
         }
     },
     /** 成员选择事件 */
@@ -161,13 +152,16 @@ YX.fn.dialog = {
             $addedUserNum = $('#addedUserNum'),
             $addedUserListUl = $('#addedUserList ul'),
             account = $this.data('account'),
+            teamid = $this.data('teamid'),
             name = $this.data('nick'),
             icon = $this.data('icon'),
-            addedNum = that.selectedNum
+            addedNum = that.selectedNum;
+
+            console.log(account,teamid)
+
         // 不能被选择的人不响应事件
         if (!$checkIcon.hasClass('cur2')) {
-
-            var str = '<li data-account="' + account + '" data-account="' + name + '" data-icon="' + icon + '"><img src="' + getAvatar(icon) + '" width="56" height="56"/><p class="name">' + name + '</p></li>'
+            var str = '<li data-account="' + account + '" data-account="' + name + '" data-teamid="'+ teamid + '" data-icon="' + icon + '"><img src="' + (teamid ? 'images/normal.png' : getAvatar(icon)) + '" width="56" height="56"/><p class="name">' + name + '</p></li>'
             if (!$checkIcon.hasClass('cur')) {
 
                 // 人数上限
@@ -176,12 +170,22 @@ YX.fn.dialog = {
                     return;
                 }
 
-                that.selectedlist[account] = name
+                that.selectedlist[teamid || account] = {
+                    name,
+                    nodeType: teamid? 'team' : 'friend',
+                    account,
+                    teamid,
+                };
                 $addedUserListUl.append(str)
                 addedNum++
             } else {
-                delete that.selectedlist[account]
-                $addedUserListUl.find('[data-account="' + account + '"]').remove()
+                if(teamid){
+                    delete that.selectedlist[teamid]
+                    $addedUserListUl.find('[data-teamid="' + teamid + '"]').remove()
+                }else{
+                    delete that.selectedlist[account]
+                    $addedUserListUl.find('[data-account="' + account + '"]').remove()
+                }
                 addedNum--
             }
 
@@ -190,7 +194,6 @@ YX.fn.dialog = {
             $addedUserNum.text(that.limit ? addedNum + "/8" : addedNum)
             that.selectedNum = addedNum
 
-            if (that.fname === 'speakBan') return;
             // enable和disable按钮
             that.$dialog.find('.j-confirm').toggleClass('disabled', addedNum <= 0)
         }

@@ -460,7 +460,7 @@ fn.initWebRTCEvent = function () {
             // }
             return
         }
-        obj.node = this.$netcallBox.find('.netcall-meeting-box .item[data-account=' + obj.account + ']')[0]
+        obj.node = this.$netcallBox.find('.netcall-meeting-box .item[data-account="' + obj.account + '"]')[0]
         console.log('on remoteTrack', obj)
         if (obj.track && obj.track.kind === 'audio') {
            that.setDeviceAudioOut(true);

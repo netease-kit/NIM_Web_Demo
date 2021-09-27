@@ -51,6 +51,23 @@
   content: "\EA07";
 }
 
+.context-menu-icon.context-menu-icon-multiple:before {
+  height: 1em;
+  content: "";
+  background-image: url(../images/ui-icons_multiple_30x30.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position-x: center;
+}
+.context-menu-icon.context-menu-icon-forward:before {
+  height: 1em;
+  content: "";
+  background-image: url(../images/ui-icons_forward_128x128.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position-x: center;
+}
+
 .context-menu-icon::before {
   position: absolute;
   top: 50%;

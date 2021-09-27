@@ -128,6 +128,7 @@ YX.fn.openChatBox = function(account, scene) {
   this.crtSessionAccount = account;
   //隐藏其他窗口
   $('#teamInfoContainer') && $('#teamInfoContainer').addClass('hide');
+  $('#chatForwrdContainer') && $('#chatForwrdContainer').addClass('hide');
   this.$devices && this.$devices.addClass('hide');
   this.$cloudMsgContainer && this.$cloudMsgContainer.addClass('hide');
   //退群的特殊UI

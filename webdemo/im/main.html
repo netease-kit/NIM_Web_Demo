@@ -275,6 +275,16 @@
 					</div>
 					<div class="u-chat-notice">您已退出</div>
 					<div class="chat-mask"></div>
+					<div class="chat-forward box-sizing hide" id="chatForwrdContainer">
+						<div class="btn-wrap">
+							<a class="chat-btn u-forward" id="forwardBtn"></a>
+							<p class="btn-text">转发</p>
+						</div>
+						<div class="btn-wrap">
+							<a class="chat-btn u-cancel" id="forwardCancelBtn"></a>
+							<p class="btn-text">取消</p>
+						</div>
+					</div>
 					<div class="chat-editor box-sizing" id="chatEditor" data-disabled="1">
 						<div id="emojiTag" class="m-emojiTag"></div>
 						<a class="chat-btn u-emoji" id="showEmoji"></a>
@@ -349,6 +359,8 @@
 		<div class="cloud-msg-container hide" id="mergeMsgsContainer"></div>
 		<!-- 群弹框 -->
 		<div class="dialog-team-container radius5px hide" id="dialogTeamContainer"></div>
+		<!-- 转发弹框 -->
+		<div class="dialog-team-container radius5px hide" id="dialogForwardContainer"></div>
 		<!-- 技术方案弹框 -->
 		<div class="dialog-team-container radius5px hide" id="dialogCallMethod"></div>
 		<!-- 黑名单 -->
@@ -642,14 +654,15 @@
 		}
 	</script>
 	<script src="../3rd/nim_server_conf.js"></script>
-	<script src="../3rd/NIM_Web_SDK_v8.1.0.js"></script>
-	<script src="../3rd/NIM_Web_Netcall_v8.1.0.js"></script>
-	<script src="../3rd/NIM_Web_WebRTC_v8.1.0.js"></script>
-	<script src="../3rd/NIM_Web_WhiteBoard_v8.1.0.js"></script>
+	<script src="../3rd/NIM_Web_SDK_v8.7.0.js"></script>
+	<script src="../3rd/NIM_Web_Netcall_v8.7.0.js"></script>
+	<script src="../3rd/NIM_Web_WebRTC_v8.7.0.js"></script>
+	<script src="../3rd/NIM_Web_WhiteBoard_v8.7.0.js"></script>
 	<script src="js/config.js"></script>
 	<script src="../3rd/DrawPlugin.js"></script>
 
 	<script src="./js/3rd/whiteboard.js"></script>
+	<script src="./js/3rd/browser-md5.js"></script>
 	<script src="../3rd/jquery-1.11.3.min.js"></script>
 	<!--<script src="../3rd/zepto.min.js"></script>-->
 	<script>
@@ -685,6 +698,7 @@
 	<script src="../3rd/recorder.js"></script>
 	<script src="js/emoji.js"></script>
 	<script src="js/md5.js"></script>
+	<script src="js/cryptoRC4.js"></script>
 	<script src="js/util.js?v=2"></script>
 	<script src="js/cache.js?v=2"></script>
 	<script src="js/link.js"></script>
@@ -700,6 +714,7 @@
 
 	<script src="js/module/team.js"></script>
 	<script src="js/module/dialog_team.js"></script>
+	<script src="js/module/dialog_forward.js"></script>
 	<script src="js/module/cloudMsg.js"></script>
 	<script src="js/module/notification.js"></script>
 	<script src="js/module/netcall.js"></script>

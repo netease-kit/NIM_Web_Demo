@@ -228,21 +228,40 @@ var appUI = {
   /**
    * 群成员列表
    */
-  buildteamMemberUI: function(list) {
-    list.nick = getNick(list.account);
-    list.nick = list.nick === list.account ? '' : list.nick;
+  buildteamMemberUI: function(item) {
+    if(item.nodeType && item.nodeType === 'team'){
+      return [
+        '<li data-icon="' +
+          item.avatar +
+          '" data-account="' +
+          item.account +
+          '" data-teamid="' +
+          item.teamId +
+          '" data-nick="' +
+          (item.nick || item.name || item.account) +
+          '">',
+        '<i class="icon icon-radio"></i>',
+        '<img src="images/normal.png">',
+        '<span class="name">' +
+          (item.nick || item.name || item.account) +
+          '</span>',
+        '</li>'
+      ].join('');  
+    }
+    item.nick = getNick(item.account);
+    item.nick = item.nick === item.account ? '' : item.nick;
     return [
       '<li data-icon="' +
-        list.avatar +
+        item.avatar +
         '" data-account="' +
-        list.account +
+        item.account +
         '" data-nick="' +
-        (list.nick || list.name || list.account) +
+        (item.nick || item.name || item.account) +
         '">',
       '<i class="icon icon-radio"></i>',
-      '<img src="' + getAvatar(list.avatar) + '">',
+      '<img src="' + getAvatar(item.avatar) + '">',
       '<span class="name">' +
-        (list.nick || list.name || list.account) +
+        (item.nick || item.name || item.account) +
         '</span>',
       '</li>'
     ].join('');
@@ -418,9 +437,9 @@ var appUI = {
     return (
       '<li class="item loading" style="' +
       (data.avatar ? 'background-image:url(' + data.avatar + ')' : '') +
-      '" data-account=' +
+      '" data-account="' +
       data.account +
-      '>' +
+      '">' +
       '<span class="fullScreenIcon" title="切换全屏">&nbsp;</span>' +
       '<span class="tip"><i></i><i></i><i></i></span>' +
       '<p class="name" data-account="' +

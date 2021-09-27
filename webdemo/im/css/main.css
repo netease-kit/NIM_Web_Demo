@@ -459,6 +459,11 @@ html, body {
     margin-right: 2px;
     /* vertical-align: top; */
 }
+.chat-forward .chat-btn{
+    display: inline-block;
+    vertical-align: middle;
+    position: relative;
+}
 
 .btn-send {
     background-color: #0888ff;
@@ -597,12 +602,26 @@ html, body {
 }
 .u-emoji{
     position: relative;
-    /*top: 10px;
-    left: 8px;*/
     width: 30px;
     height: 30px;
     background: url(../images/icons.png) no-repeat center;
     background-position: 2px -187px;
+}
+.u-forward{
+    position: relative;
+    width: 30px;
+    height: 30px;
+    background-image: url(./images/ui-icons_forward_128x128.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+.u-cancel{
+    position: relative;
+    width: 30px;
+    height: 30px;
+    background-image: url(./images/ui-icons_cancel_128x128.png);
+    background-size: contain;
+    background-repeat: no-repeat;
 }
 .u-keyboard,
 .u-voice {
@@ -2982,4 +3001,45 @@ width: 40px;
 }
 .dialog-team-container .icon-micro.cur{
     background-position: -22px -262px;
+}
+
+.item>.forward-checkbox{
+    float: left;
+    margin: 12px 10px 0 5px;
+}
+
+.chat-forward{
+    display: flex;
+    position: absolute;
+    flex-direction: row;
+    justify-content: space-around;
+    bottom: 0;
+    left: 0;
+    height: 60px;
+    width: 100%;
+    padding: 0 15px;
+    background-color: #e5f4ff;
+    border-radius: 0 0 5px 5px;
+    z-index: 2;
+    -webkit-border-radius: 0 0 5px 5px;
+    -moz-border-radius: 0 0 5px 5px;
+}
+
+.chat-forward>.btn-wrap{
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: 40px;
+    height: 45px;
+    margin-right: 2px;
+    margin-top: 5px;
+    cursor: pointer;
+}
+.chat-forward>.btn-wrap>.btn-text{
+    width: 100%;
+    height: 15px;
+    text-align: center;
+    line-height: 15px;
+    font-weight: 600;
 }
