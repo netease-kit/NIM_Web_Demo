@@ -23,7 +23,8 @@ demo地址https://github.com/netease-im/NIM_Web_Demo
 1. 下载Demo源码
 2. 下载SDK
 3. 将SDK的js文件拷贝至Demo文件夹下的 `./webdemo/3rd/`
-4. 在Demo的根目录下执行 `npm run env`，根据提示输入新的版本号，格式如 `7.1.0`
+4. 在`webdemo/im/js/config.js` 以及 `webdemo/imNew/js/config.js` 中填入您的appKey
+5. 在Demo的根目录下执行 `npm run env`，根据提示输入新的版本号，格式如 `7.1.0`
 
 
 ## IM功能

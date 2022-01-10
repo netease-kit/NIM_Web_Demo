@@ -85,8 +85,8 @@ var Login = {
     //自己的appkey就不用加密了
     // setCookie('sdktoken',pwd);
     if (
-      window.CONFIG.appkey === 'fe416640c8e8a72734219e1847ad2547' ||
-      window.CONFIG.appkey === '45c6af3c98409b18a84451215d0bdd6e'
+      window.CONFIG.appkey === '' ||
+      window.CONFIG.appkey === ''
     ) {
       var password = MD5(pwd);
     } else {
