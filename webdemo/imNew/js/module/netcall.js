@@ -366,23 +366,10 @@ fn.initNetcall = function () {
         token:readCookie('sdktoken')
     })
     // 设置安全模式
-    this.webrtc.setTokenService(function(uid) {
-        // todo：此获取token函数需要业务方自己实现，然后替换该示例
-        // 警告：如果直接使用该接口上线，出了问题，概不负责
-        return new Promise((resolve, reject) => {
-            $.ajax({
-                url: `https://nrtc.netease.im/demo/getChecksum.action?uid=${uid}&appkey=${CONFIG.appkey}`,
-                contentType:"application/json",
-                type: 'POST',
-            }).done(function(res) {
-                if (res.code === 200) {
-                    resolve(res.checksum)
-                } else {
-                    reject(res.desc)
-                }
-            })
-        })
-    })
+    // this.webrtc.setTokenService(function(uid) {
+    //     // todo：此获取token函数需要业务方自己实现，然后替换该示例
+    //     return token
+    // })
 
     this.initWebRTCEvent();
     //this.initNetcallEvent();
