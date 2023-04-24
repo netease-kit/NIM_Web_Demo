@@ -1,0 +1,71 @@
+.modify-wrapper {
+  padding-top: 40rpx;
+}
+/*修改昵称  */
+.nick-wrapper {
+  width: 100%;
+}
+.nick-desc {
+  display:block;
+  margin: 70rpx 0 40rpx 20rpx;
+  font-size: 32rpx;
+  color: #999;
+}
+
+/*修改性别  */
+.gender-wrapper {
+  width: 100%;
+  background-color: #fff;
+}
+.gender-item {
+  display: block;
+  height: 70rpx;
+  line-height: 70rpx;
+  margin-left: 40rpx;
+  border-bottom: 1px solid rgba(220,220,220,0.5);
+
+}
+.gender-item-text {
+  float: left;
+}
+.gender-item-icon {
+  margin: 16rpx 20rpx;
+  float: right;
+}
+/*修改手机号*/
+.tel-wrapper {
+  width: 100%;
+}
+/*修改个性签名*/
+.sign-textarea {
+  width: 100%;
+  background-color: #fff;
+  color: #000;
+  font-size: 30rpx;
+  padding: 15rpx 0 15rpx 20rpx;
+  height: 120rpx;
+  line-height: 30rpx;
+  margin-bottom: 60rpx;
+  box-sizing: border-box;
+}
+
+/*公用样式：昵称，手机*/
+.single-input {
+  background-color: #fff;
+  color: #000;
+  font-size: 30rpx;
+  padding: 15rpx 0 15rpx 20rpx;
+  height: 60rpx;
+  line-height: 60rpx;
+  margin-bottom: 60rpx;
+}
+.save-btn {
+  width: 90%;
+  margin-left: 5%;
+  background-color: rgb(0, 152, 248);  
+  color: #fff;
+  /* border: 1px solid #ccc; */
+}
+.last {
+  border-bottom: none;
+}

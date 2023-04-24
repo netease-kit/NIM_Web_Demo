@@ -1,0 +1,24 @@
+ <view class='emoji-wrapper'>
+  <view class='emoji-content'>
+    <swiper indicator-dots='true' class='emoji-content-swiper'>
+     <block> 
+      <view style='display: inline-block;' wx:for="{{currentAlbumKeys}}"  wx:for-item="currentEmojiArr" wx:key="{{Math.random()}}" bindtap='emojiTap'>
+          <swiper-item>
+            <view class='emoji-content-item'  wx:for="{{currentEmojiArr}}"  wx:for-item="currentEmojiKey" wx:key="{{currentEmojiKey}}">
+              <image src="{{emojiList[currentAlbum][currentEmojiKey].img}}" class='{{currentAlbum == "emoji" ? "emoji-content-img-emoji" : "emoji-content-img-other"}}' data-emoji='{{currentEmojiKey}}'></image>
+            </view>
+          </swiper-item>
+        </view>  
+      </block>
+    </swiper>
+  </view>
+  <view class='emoji-album'>
+     <!-- <view class='emoji-album-left' wx:for="{{albumArr}}" wx:for-item="album" wx:key="{{album.album}}" data-album="{{album.album}}" bindtap='switchAlbum'>
+      <image src='{{album.img}}' class='{{album.album == currentAlbum ? "emoji-album-left-img album-active" : "emoji-album-left-img"}}'></image> 
+    </view>  -->
+     <view class='emoji-album-left' wx:for="{{albumArr}}" wx:for-item="album" wx:for-index="index" wx:key="{{album.album}}" data-album="{{album.album}}" bindtap='switchAlbum'>
+      <image src='{{localAlbumImages[index]}}' class='{{album.album == currentAlbum ? "emoji-album-left-img album-active" : "emoji-album-left-img"}}'></image> 
+    </view> 
+    <view class='emoji-send' bindtap='emojiSend'>发送</view>
+  </view>
+</view>

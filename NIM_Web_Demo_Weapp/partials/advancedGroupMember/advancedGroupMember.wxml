@@ -1,0 +1,8 @@
+<view class='card-wrapper'>
+  <view class='card-header'>
+    <view wx:for="{{currentGroupMembers}}" wx:for-item='person' wx:for-index='index' wx:key='person' class='card-header-item' data-index="{{index}}" bindtap='settingMember'>
+      <image src='{{personList[person.account] && personList[person.account].avatar || person.avatar || defaultAvatar}}' class='card-header-icon'></image>
+      <text class='card-header-nick'>{{person.nickInTeam || person.account}}</text>
+    </view>
+  </view>
+</view>

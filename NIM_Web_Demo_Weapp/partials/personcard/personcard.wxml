@@ -1,0 +1,52 @@
+<view class='personcard-wrapper'>
+  <view class='personcard-header'>
+    <image src='{{userCard.avatar}}' class='personcard-header-icon'></image>
+    <view class='personcard-header-text'>
+      <text class='personcard-header-nick'>{{userCard.nick}}</text>
+      <text class='personcard-header-account'>账号: {{userCard.account}}</text>
+    </view>
+  </view>
+  <view class='personcard-content'>
+    <view class='personcard-content-item'>
+      <text class='personcard-content-item-left'>性别</text>
+      <text class='personcard-content-item-right'>{{userCard.gender == 'male' ? '男' : userCard.gender == 'female' ? '女' : '其他'}}</text>
+    </view>
+    <view class='personcard-content-item'>
+      <text class='personcard-content-item-left'>生日</text>
+      <text class='personcard-content-item-right'>{{userCard.birth}}</text>
+    </view>
+    <view class='personcard-content-item'>
+      <text class='personcard-content-item-left'>手机</text>
+      <text class='personcard-content-item-right'>{{userCard.tel}}</text>
+    </view>
+    <view class='personcard-content-item'>
+      <text class='personcard-content-item-left'>邮箱</text>
+      <text class='personcard-content-item-right value'>{{userCard.email}}</text>
+    </view>
+    <view class='personcard-content-item'>
+      <text class='personcard-content-item-left'>签名</text>
+      <text class='personcard-content-item-right value'>{{userCard.sign}}</text>
+    </view>
+
+    <view class='personcard-content-another'>
+      <view  class='personcard-content-item' bindtap='changeRemark'>
+        <text class='personcard-content-item-left'>备注名</text>
+        <text class='personcard-content-item-right'> > </text>
+        <text class='personcard-content-item-right value'>{{userCard.alias || userCard.remark}}</text>
+      </view>
+      <view class='personcard-content-item'>
+        <text class='personcard-content-item-left'>黑名单</text>
+        <switch class='personcard-content-item-right' bindchange='toggleBlackList' checked='{{isBlack}}'></switch>
+      </view>
+    </view>
+  </view>
+  <view catchtap='stopEventPropagation'>
+    <input-modal wx:if="{{editFlag}}" title="修改备注" catch:inputModalClick="valueClickHandler">
+      <input placeholder='请输入文本' type='text' confirm-type='send' class='modal-input' bindinput='valueInputChange' bindconfirm='sureToChangValue' maxlength="32"></input>
+    </input-modal>
+  </view>
+  <view class='personcard-content-btn'>
+    <button type='primary' bindtap='chatBtnHandler'>聊天</button>
+    <button type='warn' bindtap='deleteFriendBtnHandler'>删除好友</button>
+  </view>
+</view>

@@ -1,0 +1,105 @@
+.container {
+  width: 100%;
+  height: 100%;
+}
+/* 被叫 */
+.becalling-wrapper {
+  position: relative;
+  width:100%;
+  height:100%;
+  background-color:#777;
+  color:#fff;
+  font-size:40rpx;
+}
+.becalling-wrapper .becalling-text {
+  position: absolute;
+  top:400rpx;
+  left:50%;
+  margin-left:-220rpx;
+}
+.becalling-wrapper .becalling-button-group {
+  position: absolute;
+  width:100%;
+  box-sizing:border-box;
+  bottom: 100rpx;
+  padding: 0 40rpx;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.becalling-button-group .button {
+  width:220rpx;
+  height:80rpx;
+  border-radius:10rpx;
+  justify-content:center;
+  display:flex;
+  align-items:center;
+  font-size:33rpx;
+  color:#000;
+}
+.becalling-button-group .reject-button {
+  background-color:#f00;
+}
+.becalling-button-group .accept-button {
+  background-color:rgb(26, 155, 252);
+}
+
+.calling-coverview {
+  width:100%;
+  height:100rpx;
+  background-color:#ccc;
+  color:#fff;
+  font-size:40rpx;
+  text-align:center;
+  line-height:100rpx;
+}
+/* 视频容器 */
+.video-wrapper {
+  width: 100%;
+  height: 100%;
+  padding-bottom: 100rpx;
+  box-sizing: border-box;
+  position: relative;
+  background-color: #000;
+}
+.control-wrapper {
+  width: 100%;
+  box-sizing: border-box;
+  position: absolute;
+  bottom: 0;
+}
+.calling-voerview {
+  background-color:#ccc;
+  color:#fff;
+  height: 160rpx;
+  font-size: 40rpx;
+  text-align: center;
+  line-height: 160rpx;
+}
+.control-wrapper {
+  position: fixed;
+  bottom: 18px;
+  left:0;
+  display: flex;
+  width: 100%;
+  box-sizing: border-box;
+  flex-direction:row;
+  justify-content: space-between;
+  padding: 0 42rpx;
+  height: 200rpx;
+}
+.control-wrapper .item{
+  width: 92rpx;
+  height: 92rpx;
+  margin-top: 100rpx;
+}
+.netcall-time-text {
+  position:absolute;
+  bottom:160rpx;
+  width:100%;
+  height: 40rpx;
+  color:#fff;
+  font-size:40rpx;
+  text-align:center;
+  left:0;
+}

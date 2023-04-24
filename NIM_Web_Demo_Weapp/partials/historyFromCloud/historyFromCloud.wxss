@@ -1,0 +1,169 @@
+.history-wrapper {
+  width: 100%;
+  min-height: 100%;
+  position: relative;
+  /* margin: 70rpx 0 100rpx; */
+  box-sizing: border-box;
+  /* overflow: hidden; */
+  background: #F3F4F6;
+}
+/*聊天记录  */
+.record-wrapper {
+  width: 100%;
+  /* overflow-y: scroll; */
+  /* padding-bottom: 100rpx; */
+}
+.record-chatting-item {
+  width: 100%;
+  padding: 20rpx 20rpx;
+  box-sizing: border-box;
+}
+.record-item-time-wrapper {
+  display:flex;
+  flex-direction:row;
+  justify-content:center;
+}
+.record-item-time {
+  padding:4rpx 10rpx;
+  background: #D6D6D6;
+  border-radius: 8rpx;
+  font-size: 24rpx;
+  color: #fff;
+}
+.record-chatting-item-img {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 100%;
+  display: inline-block;
+}
+.record-chatting-item-text {
+  max-width: 70%;
+  border-radius: 10rpx;
+  background-color: #3387FF;
+  padding: 16rpx;
+  box-sizing:border-box;
+  word-wrap:break-word;
+  overflow: hidden;
+}
+/* tip消息富文本 */
+.tip-rich-text {
+  background-color:#ccc;
+  text-align:center;
+  align-self:center;
+  min-height:40rpx;
+  word-break:break-word;
+  font-size:26rpx;
+  padding:0 20rpx;
+  color:#000;
+  border-radius: 10rpx;
+}
+
+.self {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  color: #fff;
+}
+.other {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  color: #fff;
+}
+.left-triangle{
+  height:0px;
+  width:0px;
+  border-width:20rpx;
+  border-style:solid;
+  border-color:transparent #fff transparent transparent;
+  margin-top: 20rpx;
+}
+.right-triangle{
+  height:0px;
+  width:0px;
+  border-width:20rpx;
+  border-style:solid;
+  border-color:transparent transparent transparent #3387FF;
+  margin-top: 20rpx;
+}
+.video-triangle {
+  height:0px;
+  width:0px;
+  border-width:30rpx;
+  border-style:solid;
+  border-color:transparent transparent transparent #777;
+  margin-top: 20rpx;
+  margin-left: 30rpx;
+}
+
+.small-map-wrapper {
+  width: 200rpx;
+  height:200rpx;
+  position:relative;
+  padding:10rpx;
+  background-color:#fff;
+  border-radius:14rpx;
+}
+.small-map-wrapper .small-geo-img {
+  width: 100%;
+  height: 100%;
+  background-color: pink;
+}
+.small-map-wrapper .text {
+  line-height: 32rpx;
+  font-size: 28rpx;
+  text-align: center;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  color:#000;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(30, 30, 30, .5);
+}
+
+.small-video-wrapper {
+  width:200rpx;
+  height:200rpx;
+  padding:10rpx;
+  background-color:#fff;
+  border-radius:20rpx;
+  display:flex;
+  justify-content:center;
+  flex-direction:column;
+  align-items:center;
+}
+.small-video-wrapper .video {
+  max-width:200px;
+  max-height:300px;
+}
+
+.audio-wrapper {
+  background-color:#fff;
+  border-radius:28rpx;
+  display:flex;
+  justify-content:space-between;
+  padding:0 20rpx;
+  min-width: 30%;
+}
+.audio-wrapper .image {
+  width:70rpx;
+  height:70rpx;
+  align-self:center;
+}
+.audio-wrapper .text {
+  align-self:center;
+  color:#000;
+}
+.self .audio-wrapper .text {
+  color:#fff;
+}
+/* 加载完成 */
+.history-load-done {
+  text-align:center;
+  margin-bottom:10rpx;
+  color:#aaa;
+}

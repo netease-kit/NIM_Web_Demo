@@ -1,0 +1,70 @@
+/*
+* 布局
+*/
+
+/* 手机全屏占比 */
+html, body, .g-window {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-size: 1rem;
+  color: $color_base_font;
+}
+
+/* 外面嵌套g-window 为了覆盖weui默认样式 */
+.g-window {
+  /*顶部布局*/
+  .g-header {
+    /* 移动端用fixed定位会有bug */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 5;
+    &.vux-tab {
+      height: $height_nav;
+      a {
+        line-height: $height_nav;
+      }
+    }
+    .router-link {
+      height: $height_nav;
+      line-height: $height_nav;
+      color: $color_nav_font;
+      background-color: $color_nav_background;
+    }
+    .router-link-active {
+      color: $color_nav_active_font;
+      background-color: $color_nav_active_background;
+    }
+  }
+
+  /* 水平垂直居中布局 */
+  .g-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 80%;
+    height: auto;
+    transform: translate(-50%, -50%);
+  }
+
+  /* 继承布局 */
+  .g-inherit {
+    position: inherit;
+    display: inherit;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+  /* flex布局-中央布局 */
+  .g-flex-c {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+  }
+}

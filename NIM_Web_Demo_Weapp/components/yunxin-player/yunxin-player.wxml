@@ -1,0 +1,28 @@
+<!--components/yunxin-player/yunxin-player.wxml-->
+<view class="play-container" style="left:{{config.x}}px; top:{{config.y}}px; width: {{config.width}}px; height: {{config.height}}px; ">
+  <live-player 
+    id="yunxinplayer-{{uid}}"
+    src="{{url}}" 
+    mode="RTC" 
+    class="player" 
+    orientation="{{orientation}}" 
+    min-cache="0.2" 
+    max-cache="0.8" 
+    bindstatechange="stateChangeHandler" 
+    object-fit="{{objectFit}}" 
+    autoplay
+    style="height: {{config.height}}px; position: absolute; width: 100%; top: 0; left: 0;background-color: transparent;"
+    debug="{{debug}}">
+    <slot />
+    <cover-view 
+      wx-if="{{status !== 'ready'}}" 
+      class="sud flex-center-column" 
+      style="display:none;">
+      <!-- style="position: absolute; width: 100%; height:100%;display:flex;justify-content:center;align-items:center;"> -->
+      <cover-image style="width: 182rpx;height:240rpx" src="../../images/yunxin/{{status}}.png"></cover-image>
+    </cover-view>
+    <cover-view style="position: absolute;top:10px;left:10px;font-size: 28rpx; right: 10px;color:#ccc;" wx-if="{{coverText.length != 0}}">
+      {{coverText}}
+    </cover-view>
+  </live-player>  
+</view>

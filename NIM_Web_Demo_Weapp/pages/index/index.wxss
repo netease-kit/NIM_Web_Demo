@@ -1,0 +1,8 @@
+.button-style {
+  width: 50%;
+  height: 50rpx;
+  background-color: #aaa;
+  display: inline-block;
+  border-radius: 10rpx;
+  text-align: center;
+}

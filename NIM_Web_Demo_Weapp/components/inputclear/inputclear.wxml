@@ -1,0 +1,4 @@
+<view class='input-clear-wrapper'>
+  <input type='{{type}}' value='{{inputVal}}' placeholder='{{placeholder}}' maxlength='{{maxlength}}' bindinput='bindInput' bindconfirm='confirmHandler'></input>
+  <icon wx:if="{{inputVal.length != 0}}" catchtap='clearInput' type='clear' size='17' class='clear-icon'></icon>
+</view>

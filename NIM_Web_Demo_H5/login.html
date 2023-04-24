@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>WEB DEMO</title>
+    <link rel="stylesheet" href="dist/css/theme.css">
+  </head>
+  <body>
+    <div class="g-window">
+      <div class="g-inherit m-album">
+        <div id="form-data" class="g-center m-login" style="display:none">
+          <div class="cells">
+            <img class="logo" :src="logo">
+          </div>
+          <div class="cells">
+            <div class="cell">
+              <span class="icon icon-account"></span>
+              <input type="text" class="ipt ipt-account" maxlength="20" v-model="account" placeholder="请输入帐号"/>
+            </div>
+            <div class="cell">
+              <span class="icon icon-pwd"></span>
+              <input type="password" class="ipt ipt-account" maxlength="20" v-model="password" placeholder="请输入密码"/>
+            </div>
+          </div>
+          <div class="cells">
+            <div v-show="errorMsg" class="error">{{errorMsg}}</div>
+          </div>
+          <div class="cells">
+            <button type="button" class="btn btn-login" @click="login">登录</button>
+            <button type="button" class="btn btn-regist" @click="regist">注册</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 如果需要真机调试，可以修改此行 -->
+    <!-- // <script src="http://192.168.1.104:2002/target/target-script-min.js#anonymous"></script> -->
+    <script src="dist/js/login.js"></script>
+  </body>
+</html>

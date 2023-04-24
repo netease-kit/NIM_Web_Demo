@@ -1,0 +1,44 @@
+page {
+  height: auto;
+}
+.addfriend-wrapper {
+  margin-top: 20rpx;
+  display: flex;
+  width: 100%;
+  height: 96rpx;
+  line-height: 96rpx;
+  padding-left:30rpx;
+  box-sizing:border-box;
+  font-size: 32rpx;
+  color: #888;
+}
+.addfriend-input-wrapper {
+  width: 90%;
+  height: 100%;
+  align-self: center;
+  background-color: #fff;
+  display:flex;
+}
+.addfriend-search-icon {
+  position: absolute;
+  left: 55rpx;
+  top: 42rpx;
+}
+.addfriend-clear-icon {
+  position: absolute;
+  right: 123rpx;
+  top: 38rpx;
+  z-index: 100;
+}
+.addfriend-input {
+  width: 100%;
+  box-sizing:border-box;
+  padding-left:86rpx;
+  align-self:center;
+}
+.addfriend-cancel {
+  width: 15%;
+  height: 96rpx;
+  background-color: transparent;
+  text-align: center;
+}

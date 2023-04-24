@@ -1,0 +1,39 @@
+/*分类表头  */
+.contact-catagory-header {
+  width: 100%;
+  padding-left: 20rpx;
+  font-size: 32rpx;
+  color: #aaa;
+  margin-top: 20rpx;
+}
+/*好友列表 */
+.forward-contact-wrapper {
+  margin-top: 20rpx;
+}
+.contact-firend-item {
+  height: 100rpx;
+  display: flex;
+  background-color:#fff;
+  border-bottom:1px solid #ccc;
+}
+.contact-friend-item-logo {
+  width:80rpx;
+  height:80rpx;
+  margin:0 40rpx;
+  align-self:center;
+  border-radius:50%;
+}
+.contact-friend-item-nick {
+  align-self:center;
+  font-size: 32rpx;
+}
+
+/*公共样式*/
+/* .contact-item-hover {
+  background-color: #eee;
+} */
+.radio-class {
+  display:flex;
+  justify-content:center;
+  margin:0 -20rpx 0 10rpx;
+}

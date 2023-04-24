@@ -1,0 +1,45 @@
+<view class='message-wrapper'>
+  <view class='swiper-tab'>
+    <view class='swiper-tab-item {{currentTab == 0 ? "swiper-tab-item-on" : ""}}' data-current="0" bindtap='switchNav'>系统通知</view>
+    <view class='swiper-tab-item {{currentTab == 1 ? "swiper-tab-item-on" : ""}}' data-current="1" bindtap='switchNav'>自定义通知</view>
+  </view>
+  <view wx:if="{{currentTab == 0}}" style='width: 100%;overflow:hidden;'>
+    <view wx:if="{{notificationList.system.length === 0}}" class='swiper-noitem'>
+      <image src="{{iconNoMessage}}" class='swiper-noitem-image'></image>
+      <text class='swiper-noitem-text'>暂无任何消息</text>
+    </view>
+    <view wx:if="{{notificationList.system.length !== 0}}" class='notificationList-content' style='max-height: {{windowMaxHeight}}px;'>
+      <view wx:for="{{notificationList.system}}" wx:for-item="notification" wx:key="*this" wx:for-index="index" data-data="{{index}}" catchtap='deleteSysItem'>
+        <swipe-delete>
+          <view class='notification-item'  data-data="{{index}}" catchtap='actionSysItem'>
+            <image src='/images/notice.png' class='notification-item-img' ></image>
+            <view class='notification-item-right'>
+              <text class='notification-item-top'>{{notification.desc}}</text>
+              <text wx:if="{{notification.state}}" class='notification-item-right-intro'>{{notification.state}}</text>
+            </view>
+          </view>
+        </swipe-delete>
+      </view>
+    </view>
+    <view wx:if="{{notificationList.system.length !== 0}}" class='clearNotificationBtn' catchtap='sysClear'>清空消息</view>
+  </view>
+  <view wx:if="{{currentTab == 1}}">
+    <view wx:if="{{notificationList.custom.length == 0}}" class='swiper-noitem'>
+      <image src="{{iconNoMessage}}" class='swiper-noitem-image'></image>
+      <text class='swiper-noitem-text'>暂无任何消息</text>
+    </view>
+    <view wx:if="{{notificationList.custom.length != 0}}" class='notificationList-content' style='max-height: {{windowMaxHeight}}px;'>
+      <view wx:for="{{notificationList.custom}}" wx:for-item="notification" wx:key="*this" wx:for-index="index" data-data="{{index}}" catchtap='deleteCusItem'>
+        <swipe-delete>
+          <view class='notification-item'>
+            <image src='/images/notice.png' class='notification-item-img'></image>
+            <view class='notification-item-right'>
+              <text class='notification-item-top'>{{notification.desc}}</text>
+            </view>
+            </view>
+        </swipe-delete>
+      </view>
+    </view>
+    <view wx:if="{{notificationList.custom.length !== 0}}" class='clearNotificationBtn' catchtap='cusClear'>清空消息</view>
+  </view>
+</view>

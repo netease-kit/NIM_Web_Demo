@@ -1,0 +1,16 @@
+<view class='forward-contact-wrapper'>
+  <radio-group class="radio-group" bindchange="radioChange">
+  <view wx:if="{{cataHeader.length !== 0}}" class='contact-friend-wrapper'>
+    <view wx:for='{{cataHeader}}'  wx:for-item='header' wx:key="header">
+      <view class='contact-catagory-header'>{{header}}</view>
+      <view wx:for='{{friendCata[header]}}' wx:for-item='friendCard' class='contact-firend-item' wx:key="friendCard.account">
+        <radio value="{{friendCard.accountAndNick}}" class='radio-class'/>
+        <view style='border-radius: 50%;overflow:hidden;margin-top:10rpx;'>
+          <image src='{{friendCard.avatar}}' class='contact-friend-item-logo'></image>
+        </view>
+        <text class='contact-friend-item-nick'>{{friendCard.nick}}</text>
+      </view>
+    </view>
+  </view>
+  </radio-group>
+</view>

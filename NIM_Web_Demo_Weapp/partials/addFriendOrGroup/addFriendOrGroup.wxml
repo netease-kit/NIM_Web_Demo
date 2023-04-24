@@ -1,0 +1,10 @@
+<view class='addfriend-wrapper'>
+  <view class='addfriend-input-wrapper'>
+    <icon type='search' size='20' class='addfriend-search-icon' bindtap='search'></icon>
+    <input wx:if="{{addType === 'friend'}}" maxlength='20' confirm-type='search' value='{{inputVal}}' placeholder="{{tip}}" class='addfriend-input' bindconfirm='search' bindinput='textChange'></input>
+    <input wx:if="{{addType === 'group'}}" type="number"  maxlength='16' confirm-type='search' value='{{inputVal}}' placeholder="{{tip}}" class='addfriend-input' bindconfirm='search' bindinput='textChange'></input>
+    <icon wx:if="{{inputVal.length != 0}}" catchtap='clearInput' type='clear' size='17' class='addfriend-clear-icon'></icon>
+  </view>
+  <text wx:if="{{addType === 'friend'}}" catchtap='cancel' class='addfriend-cancel'>取消</text>
+  <text wx:if="{{addType === 'group'}}" catchtap='search' class='addfriend-cancel'>搜索</text>
+</view>

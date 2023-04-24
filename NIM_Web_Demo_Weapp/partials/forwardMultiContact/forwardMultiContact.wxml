@@ -1,0 +1,31 @@
+<view>
+  <view class='top-function'>
+    <text class='top-function-cancel' catchtap='cancelSelectHandler'>取消</text>
+    <text>选择联系人</text>
+    <text>{{chooseList.length}}/8</text>
+  </view>
+  <view class='forward-contact-wrapper'>
+    <checkbox-group class="radio-group" bindchange="radioChange">
+      <view wx:if="{{cataHeader.length !== 0}}" class='contact-friend-wrapper'>
+        <view wx:for='{{cataHeader}}'  wx:for-item='header' wx:key="header">
+          <view class='contact-catagory-header'>{{header}}</view>
+          <view wx:for='{{friendCata[header]}}' wx:for-item='friendCard' class='contact-firend-item' wx:key="friendCard.account">
+            <checkbox value="{{friendCard.accountAndNick}}" checked='{{checkedMap[friendCard.account] || false}}' class='radio-class'/>
+            <view style='border-radius: 50%;overflow:hidden;margin-top:10rpx;'>
+              <image src='{{friendCard.avatar}}' class='contact-friend-item-logo'></image>
+            </view>
+            <text class='contact-friend-item-nick'>{{friendCard.nick}}</text>
+          </view>
+        </view>
+      </view>
+    </checkbox-group>
+  </view>
+  <view class='bottom-function'>
+    <view>
+      <block wx:for="{{chooseList}}" wx:key="*this">
+        <image src="{{item.avatar}}"></image>
+      </block>
+    </view>
+    <view class='bottom-function-confirm' catchtap='confirmSelecthandler'>确定</view>
+  </view>
+</view>

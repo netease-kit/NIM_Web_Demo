@@ -1,0 +1,351 @@
+/*
+* 元件
+*/
+
+/* 外面嵌套g-window 为了覆盖weui默认样式 */
+.g-window {
+  i {
+    font-style: normal;
+  }
+  /* 白底输入框 */
+  .u-ipt-default {
+    color: $color_input_light;
+    input::placeholder {
+      color: $color_tip_background;
+    }
+  }
+  /* 透明底输入框 */
+  .u-ipt-transparent {
+    color: $color_white;
+    background-color: transparent;
+    input::placeholder {
+      color: $color_white;
+      opacity: 0.5;
+    }
+  }
+  /* 双选切换控件 */
+  .u-switch {
+    .weui-switch:checked, .weui-switch-cp__input:checked ~ .weui-switch-cp__box {
+      background-color: $color_nav_active_font;
+      border-color: $color_nav_active_font;
+    }
+  }
+  .u-card {
+    margin: 1rem 0;
+    .weui-cells {
+      background-color: #fff;
+    }
+    .icon {
+      display: inline-block;
+      margin-right: 0.8rem;
+      width: 2rem;
+      height: 2rem;
+    }
+  }
+  .u-search {
+    margin: 0;
+    margin-bottom: 2rem;
+    height: 2rem;
+    .weui-cells:after, .weui-cells:before {
+      border-color: #f0f0f0;
+    }
+  }
+  /* 列表 */
+  .u-list {
+    width: 100%;
+  }
+  .u-list-item {
+    min-height: 2rem;
+    vertical-align: middle;
+    .icon {
+      display: inline-block;
+      margin-right: 0.6rem;
+      width: 2rem;
+      height: 2rem;
+    }
+  }
+  /* 会话删除tag */
+  .u-tag-del {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 24%;
+    height: 100%;
+    text-align: center;
+    color: $color_white;
+    background-color: $color_error;
+    transition: all 0.5s;
+    transform: translate3d(100%, 0, 0);
+    &::after {
+      position: relative;
+      content: "删除";
+      font-size: 1rem;
+      top: 32%;
+      margin-top: -0.5rem;
+    }
+    &.active {
+      transform: translate3d(0, 0, 0);
+    }
+  }
+  /*时间提示*/
+  .u-session-time {
+    display: inline-block;
+    position: absolute;
+    right: 1.8rem;
+    top: 1.1rem;
+  }
+  /* 未读数标签 */
+  .u-unread {
+    display: inline-block;
+    position: absolute;
+    right: 0.4rem;
+    top: 1.1rem;
+    padding: 2px;
+    min-width: 1rem;
+    min-height: 1rem;
+    line-height: 1rem;
+    font-size: 12px;
+    background-color: #f00;
+    color: #fff;
+    text-align: center;
+    border-radius: 0.8rem;
+  }
+  .item-you .msg-audio.unreadAudio i:after {
+    content: ' ';
+    display: block;
+    position: absolute;
+    top: 3px;
+    right: -10px;
+    width: 5px;
+    height: 5px;
+    border-radius: 5px;
+    background: red;
+  }
+  /* 消息记录 */
+  .u-msg {
+    position: relative;
+    padding: 0.2rem 0;
+    &.session-chat {
+      padding: 0.6rem 0;
+      clear: both;
+    }
+    /* 用户头像 */
+    .msg-head {
+      position: relative;
+      display: inline-block;
+      top: 0.1rem;
+      margin: 0;
+      margin-right: 0.6rem;
+      margin-left: 0.6rem;
+      padding: 0;
+      width: 2rem;
+      height: 2rem;
+      vertical-align: top;
+      img {
+        position: relative;
+        display: inline-block;
+        margin: 0;
+        width: inherit;
+        height: inherit;
+      }
+    }
+    .msg-user {
+      font-style: italic;
+      color: #999;
+      em {
+        font-weight: normal;
+        margin-right: 1rem;
+      }
+    }
+    .msg-audio img{
+      float: right;
+      margin-right: 0.3rem !important;
+    }
+    .msg-text {
+      position: relative;
+      display: inline-block;
+      max-width: 54%;
+      min-height: 1.2rem;
+      word-break: break-word;
+      height: auto;
+      line-height: 1.2rem;
+      font-size: 0.9rem;
+      border: none;
+      img {
+        position: relative;
+        display: inline-block;
+        margin: 0;
+        padding: 0;
+        max-width: 100%;
+        vertical-align: bottom;
+        &.emoji-small {
+          width: 1.4rem;
+          height: 1.4rem;
+          vertical-align: bottom;
+        }
+        &.emoji-big {
+          width: 3rem;
+          height: 3rem;
+          vertical-align: middle;
+        }
+        &.emoji-big {
+          width: 4.8rem;
+          height: 4.8rem;
+          vertical-align: middle;
+        }
+      }
+      embed, video {
+        position: relative;
+        display: inline-block;
+        max-width: 100%;
+        max-height: 8rem;
+        vertical-align: bottom;
+        background-color: #000;
+        text-align: center;
+        color: #fff;
+      }
+      &::before, &::after {
+        content:' ';
+        position: absolute;
+        top: 0.8rem;
+        border-top: 0.4rem solid transparent;
+        border-bottom: 0.4rem solid transparent;
+        width: 0;
+        height: 0;
+      }
+      &.notify {
+        max-width: 100%;
+      }
+      .button {
+        margin: 0.1rem 0;
+        padding: 0.1rem 0.2rem;
+        border: 1px solid #fff;
+        border-radius: 0.2rem;
+        background-color: $color_nav_active_background;
+        color: #666;
+      }
+    }
+    .msg-failed {
+      position: relative;
+      float: right;
+      margin-right: 0.2rem;
+      vertical-align: top;
+      font-size: 0.92rem;
+      line-height: 2.0rem;
+    }
+    .msg-link {
+      display: block;
+      position: absolute;
+      bottom: -2rem;
+      right: 0;
+      min-width: 4rem;
+      min-height: 1.2rem;
+      word-break: normal;
+      height: auto;
+      line-height: 1.2rem;
+      font-size: 1.0rem;
+      border: none;
+      a {
+        color: $color_nav_active_font;
+        text-decoration: underline;
+        float: right;
+      }
+    }
+    &.session-chat .msg-text {
+      padding: 0.4rem;
+      margin-bottom: 0.8rem;
+      border-radius: 0.4rem;
+    }
+    &.session-chat .msg-robot {
+      min-width: 3rem;
+      margin-bottom: 3rem;
+    }
+    &.session-chat.item-you {
+      .msg-head, .msg-text {
+        float: left;
+      }
+      .msg-text {
+        background-color: $msg_bg_you;
+        color: $msg_tx_you;
+        &::before {
+          right: 99%;
+          border-right: 0.4rem solid $msg_bg_you;
+        }
+        &::after {
+          background: none;
+        }
+      }
+    }
+    &.session-chat.item-me {
+      .msg-head, .msg-text {
+        float: right;
+      }
+      .msg-text {
+        color: $msg_tx_me;
+        background-color: $msg_bg_me;
+        &::before {
+          background: none;
+        }
+        &::after {
+          left: 99%;
+          border-left: 0.4rem solid $msg_bg_me;
+        }
+      }
+    }
+    &.item-time {
+      font-size: 0.8rem;
+      text-align: center;
+      color: $color_tip_font;
+    }
+    &.item-tip {
+      font-size: 0.8rem;
+      text-align: center;
+      .tip {
+        margin: 0 auto;
+        width: 10rem;
+        padding: 0.1rem;
+        background-color: $color_tip_background;
+        border-radius: 0.4rem;
+      }
+    }
+    .notification {
+      font-size: 0.8rem;
+      text-align: center;
+      color: $color_tip_font;
+    }
+    .notify {
+      color: #f50;
+      font-size: 0.8rem;
+    }
+  }
+  .u-error {
+    color: $color_error;
+  }
+  .u-icon {
+    display: inline-block;
+    width: inherit;
+    height: inherit;
+    &.icon-file {
+      background-position: -7.6rem -7rem;
+    }
+  }
+  .u-icon {
+    background-size: 20rem;
+    background-image: url(http://yx-web-nosdn.netease.im/webdoc/h5/im/icons.png);
+  }
+  .u-icon-img {
+    position: relative;
+    width: inherit;
+    height: inherit;
+    img {
+      position: relative;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+    }
+  }
+  .u-circle {
+    border-radius: 50%;
+  }
+}

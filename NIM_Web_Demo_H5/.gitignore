@@ -1,0 +1,10 @@
+# Dependency directories
+node_modules
+*.sublime*
+*.log*
+*.lock
+.eslintrc.js
+package-lock.json
+.history
+dist/
+h5/

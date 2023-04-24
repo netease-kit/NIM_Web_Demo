@@ -1,0 +1,62 @@
+{
+  "pages": [
+    "pages/login/login",
+    "pages/register/register",
+    "pages/recentchat/recentchat",
+    "pages/contact/contact",
+    "pages/index/index",
+    "pages/setting/setting",
+    "components/emoji/emoji",
+    "components/inputclear/inputclear",
+    "components/inputmodal/inputmodal",
+    "partials/personcard/personcard",
+    "partials/modifyAccountInfo/modifyAccountInfo",
+    "partials/groupList/groupList",
+    "partials/advancedGroupCard/advancedGroupCard",
+    "partials/normalGroupCard/normalGroupCard",
+    "partials/chooseContact/chooseContact",
+    "partials/announcement/announcement",
+    "partials/advancedGroupMember/advancedGroupMember",
+    "partials/advancedGroupMemberCard/advancedGroupMemberCard",
+    "partials/blacklist/blacklist",
+    "partials/strangercard/strangercard",
+    "partials/addFriendOrGroup/addFriendOrGroup",
+    "partials/chating/chating",
+    "partials/messageNotification/messageNotification",
+    "partials/historyFromCloud/historyFromCloud",
+    "partials/forwardContact/forwardContact",
+    "partials/videoCall/videoCall",
+    "partials/forwardMultiContact/forwardMultiContact",
+    "partials/videoCallMeeting/videoCallMeeting"
+  ],
+  "window": {
+    "backgroundColor": "#f0f0f0",
+    "navigationBarBackgroundColor": "#fff",
+    "navigationBarTitleText": "云信DEMO",
+    "navigationBarTextStyle": "black"
+  },
+  "tabBar": {
+    "selectedColor": "#378aff",
+    "backgroundColor": "#fff",
+    "list": [
+      {
+        "pagePath": "pages/recentchat/recentchat",
+        "text": "云信",
+        "iconPath": "images/yunxin1.png",
+        "selectedIconPath": "images/yunxin2.png"
+      },
+      {
+        "pagePath": "pages/contact/contact",
+        "text": "通信录",
+        "iconPath": "images/contact1.png",
+        "selectedIconPath": "images/contact2.png"
+      },
+      {
+        "pagePath": "pages/setting/setting",
+        "text": "我的",
+        "iconPath": "images/setting1.png",
+        "selectedIconPath": "images/setting2.png"
+      }
+    ]
+  }
+}

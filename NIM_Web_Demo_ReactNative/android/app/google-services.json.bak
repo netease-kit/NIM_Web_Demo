@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "666346423763",
+    "firebase_url": "https://nim-rn.firebaseio.com",
+    "project_id": "nim-rn",
+    "storage_bucket": "nim-rn.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:666346423763:android:5a1c12505ebd8261",
+        "android_client_info": {
+          "package_name": "com.nim_reactnative_demo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "666346423763-hkko5bqb8e65oo7i4dia285elirquhjd.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "666346423763-hkko5bqb8e65oo7i4dia285elirquhjd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-5bV-0wBKP0mlKwCCA8jDesz2xSy5k5A"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

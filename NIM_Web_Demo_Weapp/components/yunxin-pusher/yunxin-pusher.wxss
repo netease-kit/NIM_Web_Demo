@@ -1,0 +1,14 @@
+/* components/yunxin-pusher/yunxin-pusher.wxss */
+.pusher-container{
+  background: black;
+  display: block;
+  position: absolute;
+}
+
+.sud{
+  background-color: #1B2A38;
+  opacity:0.65; 
+}
+.camera {
+  z-index: 1000;
+}

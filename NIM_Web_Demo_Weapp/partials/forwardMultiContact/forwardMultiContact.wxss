@@ -1,0 +1,85 @@
+.container {
+}
+.top-function {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  height:80rpx;
+  margin-top:4rpx;
+  padding:0 20rpx;
+  background-color:#fff;
+}
+.top-function-cancel {
+  color:#3387Ff;
+  font-size:30rpx;
+}
+.bottom-function {
+  position:fixed;
+  bottom:0;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  box-sizing:border-box;
+  width:100%;
+  background-color:rgba(31,31,31,0.82);
+  height:104rpx;
+  box-shadow:0 0 0 0 rgba(0,0,0,0.25);
+  padding:20rpx 20rpx;
+}
+.bottom-function image {
+  width:60rpx;
+  height:60rpx;
+  margin-right:10rpx;
+  border-radius:100%;
+}
+.bottom-function .bottom-function-confirm {
+  display:inline-block;
+  width:108rpx;
+  height:52rpx;
+  color:#fff;
+  background-color:#4F8DFF;
+  border-radius:8rpx;
+  line-height:52rpx;
+  text-align:center;
+}
+/*分类表头  */
+.contact-catagory-header {
+  width: 100%;
+  padding-left: 20rpx;
+  font-size: 32rpx;
+  color: #aaa;
+  margin-top: 20rpx;
+}
+/*好友列表 */
+.forward-contact-wrapper {
+  margin-top: 20rpx;
+  padding-bottom:110rpx;
+  max-height:100%;
+}
+.contact-firend-item {
+  height: 100rpx;
+  display: flex;
+  background-color:#fff;
+  border-bottom:1px solid #ccc;
+}
+.contact-friend-item-logo {
+  width:80rpx;
+  height:80rpx;
+  margin:0 40rpx;
+  align-self:center;
+  border-radius:50%;
+}
+.contact-friend-item-nick {
+  align-self:center;
+  font-size: 32rpx;
+}
+
+/*公共样式*/
+/* .contact-item-hover {
+  background-color: #eee;
+} */
+.radio-class {
+  display:flex;
+  justify-content:center;
+  margin:0 -20rpx 0 10rpx;
+}

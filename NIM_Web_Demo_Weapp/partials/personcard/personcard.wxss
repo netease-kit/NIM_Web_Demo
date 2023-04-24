@@ -1,0 +1,87 @@
+.personcard-wrapper {
+  width: 100%;
+  padding-top: 40rpx;
+}
+/*头部  */
+.personcard-header {
+  width: 100%;
+  height: 120rpx;
+  display: flex;
+  background-color: #fff;
+}
+.personcard-header-icon {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 100%;
+  margin: 20rpx 40rpx;
+}
+.personcard-header-text {
+  display: flex;
+  flex-direction: column;
+  margin-left: 20rpx;
+}
+.personcard-header-nick {
+  height: 60rpx;
+  line-height: 60rpx;
+  align-self: flex-start;
+  color: #000;
+  font-size:32rpx;
+  font-weight:500;
+}
+.personcard-header-account {
+  height: 60rpx;
+  line-height: 60rpx;
+  align-self: center;
+  color: #ccc;
+}
+/*中间内容  */
+.personcard-content {
+  width: 100%;
+  margin-top: 30rpx;
+}
+/* 好友关系分隔 */
+.personcard-content-another {
+  margin-top: 30rpx;
+}
+.personcard-content-item {
+  width: 100%;
+  height: 80rpx;
+  font-size: 32rpx;
+  background-color: #fff;
+  border-bottom: 1px solid #ccc;
+}
+.personcard-content-item-left {
+  line-height: 80rpx;
+  margin-left: 30rpx;
+  color: #000;
+  font-weight:500;
+}
+.personcard-content-item-right {
+  line-height: 80rpx;
+  float: right;
+  color: #ccc;
+  margin-right: 20rpx;
+  white-space: nowrap;
+  font-size: 28rpx;
+}
+.personcard-content-item-right.value {
+  overflow: hidden;
+  display: inline-block;
+  max-width: 450rpx;
+  text-overflow: ellipsis;
+}
+switch.personcard-content-item-right {
+  margin-top: 8rpx;
+  line-height: 0;
+}
+/*底部按钮  */
+.personcard-content-btn {
+  margin-top: 60rpx;
+  width: 100%;
+}
+.personcard-content-btn button {
+  width: 90%;
+  margin-left: 5%;
+  margin-bottom: 30rpx;
+  color: #fff;
+}

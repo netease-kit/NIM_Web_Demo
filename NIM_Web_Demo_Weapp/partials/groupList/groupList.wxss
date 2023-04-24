@@ -1,0 +1,46 @@
+.list-wrapper {
+  width: 100%;
+  min-height: 100%;
+  overflow-y: scroll;
+}
+.list-no {
+  width: 100%;
+  text-align: center;
+  margin-top: 300rpx;
+  color: #666;
+}
+.list-item {
+  display:flex;
+  height: 112rpx;
+  line-height: 112rpx;
+  padding-left: 30rpx;
+  border-bottom:1px solid #ccc;
+  background-color: #fff;
+}
+.list-item-img {
+  width:80rpx;
+  height:80rpx;
+  margin:0 40rpx;
+  border-radius: 100%;
+  align-self:center;
+}
+.list-item-nick {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width:500rpx;
+  align-self:center;
+  font-size: 32rpx;
+  color: #000;
+}
+.list-item-arrow {
+  align-self:center;
+  position:absolute;
+  right:20rpx;
+  color:#aaa;
+  font-size:40rpx;
+}
+/*公共样式*/
+.list-item-hover {
+  background-color: #eee;
+}

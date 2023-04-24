@@ -1,0 +1,512 @@
+/*
+ * 模块
+ */
+
+/* 外面嵌套g-window 为了覆盖weui默认样式 */
+.g-window {
+  .m-main, .m-album, .m-article, .m-room {
+    position: absolute;
+    padding-top: $height_nav;
+    display: block;
+    box-sizing: border-box;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* 控制元素在移动设备上是否使用滚动回弹效果 */
+    -webkit-overflow-scrolling: touch;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  /* 封面皮肤 */
+  .m-album {
+    background: $album_background;
+  }
+  /* 主背景皮肤 */
+  .m-main {
+    background: $theme_background;
+  }
+  .m-article {
+    background: $theme_background;
+  }
+
+  /* 登录注册页面 */
+  .m-login {
+    .cells {
+      position: relative;
+      margin: 10px auto;
+      .cell {
+        position: relative;
+        width: 100%;
+        border-bottom: 1px solid #ddf;
+        line-height: 2rem;
+      }
+      .logo {
+        display: block;
+        margin: 1rem auto;
+        width: 50%;
+        height: auto;
+      }
+      .ipt {
+        box-sizing: border-box;
+        padding: 0.6rem 0 0.6rem 2.4rem;
+        font-size: 0.9rem;
+        color: #fff;
+        width: 100%;
+        border: none;
+        background-color: transparent;
+        &::placeholder {
+          color: #d9d9d9;
+        }
+      }
+      .icon {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        background-image: url(http://yx-web-nosdn.netease.im/webdoc/h5/im/icons.png);
+        background-repeat: no-repeat;
+        vertical-align: middle;
+      }
+      .icon-loading {
+        background-position: 0 -112px;
+      }
+      .icon-account {
+        background-position: 0 -112px;
+        position: absolute;
+        left: 0.4rem;
+        top: 0.6rem;
+      }
+      .icon-pwd {
+        background-position: 0 -133px;
+        position: absolute;
+        left: 0.4rem;
+        top: 0.6rem;
+      }
+      .btn {
+        margin: 0.6rem 0;
+        box-sizing: border-box;
+        width: 100%;
+        line-height: 2.4rem;
+        height: 2.4rem;
+        border-radius: 0.4rem;
+        background: #fff;
+        color: $color_button_primary;
+        font-size: 1rem;
+        border: none;
+        cursor: pointer;
+      }
+      .btn-regist {
+        background: transparent;
+        color: #fff;
+        /*border: 1px solid #d9d9d9;*/
+      }
+      .error {
+        float: right;
+        clear: both;
+        color: $color_error;
+      }
+    }
+    .u-card {
+      .weui-cells {
+        background-color: inherit;
+      }
+    }
+  }
+
+  /* 按钮tab切换 */
+  .m-tab {
+    color: $color_nav_active_font;
+    background-color: $color_nav_active_background;
+    .vux-header-left {
+      .left-arrow {
+        &::before {
+          border-color: $color_nav_active_font;
+        }
+      }
+    }
+  }
+  .m-tab-top  {
+    .u-tab-top {
+      color: $color_nav_font;
+      border: 1px solid $color_nav_active_font;
+      /* 选中状态 */
+      &.vux-button-group-current {
+        color: $color_nav_background;
+        background-color: $color_nav_active_font;
+      }
+    }
+  }
+  .m-article {
+    top: 0;
+  }
+  /* 直播页面 */
+  .m-room {
+    padding-top: 0;
+  }
+  /* 用于左右留白布局 */
+  .m-cards {
+    position: relative;
+    display: block;
+    width: 90%;
+    height: auto;
+    margin: 1rem auto;
+    z-index: 1;
+  }
+  .m-list {
+    position: absolute;
+    display: block;
+    box-sizing: border-box;
+    top: 0;
+    bottom: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    -webkit-overflow-scrolling: touch;
+    overflow-y: scroll;
+    overflow-x: hidden;
+  }
+  /* 二级页面的tab */
+  .m-tab {
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 10px 0;
+    width: 100%;
+    height: $height_tab;
+    overflow: hidden;
+    z-index: 3;
+    .vux-header-left, .vux-header-right {
+      top: 20px;
+    }
+    .m-tab-top {
+      position: relative;
+      padding: 0;
+      font-size: 1.3rem;
+
+      &.vux-button-group {
+        margin: 4px auto;
+      }
+    }
+    .m-tab-right {
+      position: absolute;
+      right: 0;
+      top: 0.1rem;
+      font-size: 0.8rem;
+      text-align: right;
+      width: 4rem;
+    }
+  }
+
+  /* 会话列表 */
+  .m-article-main, .m-chat-main {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+  /* 名片页面 */
+  .m-robot {
+    .u-logo {
+      position: relative;
+      margin: 1rem auto;
+      text-align: center;
+      .logo {
+        display: inline-block;
+        margin: 1rem 0;
+        width: 40%;
+        height: auto;
+      }
+      h3 {
+        margin: 1rem 0;
+        font-weight: bold;
+        font-size: 1.4rem;
+      }
+    }
+    .u-desc {
+      position: relative;
+      margin: 1rem auto;
+      width: 80%;
+      text-align: left;
+      color: $color_input_light;
+    }
+  }
+
+  /* 聊天页面 */
+  .m-chat-main {
+    /* 聊天页面有输入框 */
+    padding: 0 0 $height_editor 0;
+    /* 聊天历史记录没有输入框 */
+    &.m-chat-history {
+      padding-bottom: 0;
+    }
+    .m-chat-list {
+      position: relative;
+      display: block;
+      box-sizing: border-box;
+      padding: 1rem 2%;
+      width: 100%;
+      -webkit-overflow-scrolling: touch;
+      overflow-y: scroll;
+      overflow-x: hidden;
+    }
+  }
+  .m-chat-editor {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: $height_editor;
+    background-color: $color_chat_editor_background;
+  }
+  /* 聊天按钮组件 */
+  .m-chat-editor-main {
+    position: relative;
+    display: block;
+    box-sizing: border-box;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    .u-editor-input {
+      position: relative;
+      display: inline-block;
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0.2rem;
+      padding-right: 13rem;
+      width: 100%;
+      height: $height_editor;
+      textarea {
+        position: relative;
+        display: inline-block;
+        box-sizing: border-box;
+        padding: 0.2rem;
+        font-size: 1rem;
+        width: 100%;
+        height: 100%;
+        text-align: left;
+        border: 1px solid #ccc;
+        border-radius: 0.4rem;
+      }
+      i {
+        font-style: normal;
+      }
+      .u-btn-record {
+        position: relative;
+        display: inline-block;
+        box-sizing: border-box;
+        margin: 1rem 0 0;
+        width: 100%;
+        height: 1.9rem;
+        line-height: 1.8rem;
+        border: 1px solid #ccc;
+        border-radius: 0.3rem;
+        text-align: center;
+        font-size: 1rem;
+        &.recording {
+          background: #ccc;
+        }
+      }
+      .u-record-time {
+        position: absolute;
+        top: -2.5rem;
+        left: 0;
+        width: 4.2rem;
+        height: 2.2rem;
+        line-height: 1.8rem;
+        text-align: center;
+        color: #fff;
+        font-style: normal;
+        background: url(https://yx-web-nosdn.netease.im/quickhtml%2Fassets%2Fyunxin%2Fdefault%2Frecord-time.png) no-repeat;
+        transform: translateX(3rem);
+        &.with-close-btn {
+          &:after {
+            content: ' ';
+            position: absolute;
+            top: 0;
+            right: -2rem;
+            display: block;
+            width: 2rem;
+            height: 2rem;
+            background: url(https://yx-web-nosdn.netease.im/quickhtml%2Fassets%2Fyunxin%2Fdefault%2Fstop-record.png) no-repeat;
+          }
+        }
+      }
+    }
+    .u-editor-icons {
+      position: absolute;
+      display: inline-block;
+      right: 0;
+      top: 0;
+      width: 13rem;
+      height: $height_editor;
+      .u-editor-icon {
+        position: relative;
+        display: inline-block;
+        top: calc($height_editor / 2 - 0.8);
+        width: 1.6rem;
+        height: 1.6rem;
+        margin-left: 0.2rem;
+        vertical-align: middle;
+        input[type="file"] {
+          position: absolute;
+          display: inline-block;
+          left: 0;
+          top: 0;
+          width: inherit;
+          height: inherit;
+          opacity: 0;
+          font-size: 1rem;
+        }
+      }
+    }
+    .u-editor-send {
+      position: relative;
+      display: inline-block;
+      top: calc($height_editor / 2 - 0.8);
+      margin-left: 0.2rem;
+      width: 2.6rem;
+      height: 1.6rem;
+      line-height: 1.6rem;
+      padding: 0.1rem 0.2rem;
+      border-radius: 0.2rem;
+      font-size: 0.9rem;
+      color: $color_button_font;
+      background-color: $color_chat_editor_button;
+      text-align: center;
+    }
+  }
+
+/* 聊天室相关页面 */
+  /* 聊天室入口页面 */
+  .m-room-entry {
+    text-align: center;
+    .u-box {
+      position: relative;
+      display: inline-block;
+      margin: 0.5rem 0;
+      width: 50%;
+      min-height: 4rem;
+      text-align: center;
+      overflow: hidden;
+      .album, .desc {
+        position: relative;
+        display: block;
+        margin: 0 auto;
+        width: 90%;
+        box-sizing: border-box;
+        line-height: 1.6;
+        border: 1px solid #ccc;
+      }
+      .album {
+        position: relative;
+        height: 6.4rem;
+        font-size: 0.9rem;
+        overflow: hidden;
+        background-color: #000;
+        .pic {
+          position: absolute;
+          width: auto;
+          height: inherit;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%);
+        }
+        .status {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          height: 1.6rem;
+          line-height: 1.6rem;
+          text-align: left;
+          color: #333;
+          background-color: #fff;
+          opacity: 0.8;
+          strong {
+            margin-left: 0.4rem;
+          }
+          em {
+            margin-right: 0.4rem;
+            float: right;
+            color: inherit;
+          }
+        }
+      }
+      .desc {
+        margin-top: -1px;
+        text-align: left;
+        text-indent: 0.5rem;
+        line-height: 1.6rem;
+        min-height: 1.6rem;
+        color: #999;
+        background-color: #fff;
+      }
+    }
+  }
+  /* 聊天室内页 */
+  .m-room-album {
+    position: absolute;
+    display: block;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: $height_room_banner;
+    background-color: #000;
+    z-index: 2;
+    .img-wraper {
+      width: 50%;
+      margin-left: 50%;
+      height: inherit;
+    }
+    .room-img {
+      position: relative;
+      display: block;
+      height: inherit;
+      width: auto;
+      transform: translate(-50%, 0);
+    }
+  }
+  .m-room-tabs {
+    position: absolute;
+    top: $height_room_banner;
+    left: 0;
+    height: $height_room_tabs;
+    width: 100%;
+    z-index: 3;
+    .u-tab {
+      position: relative;
+      display: inline-block;
+      box-sizing: border-box;
+      width: 33.333%;
+      height: inherit;
+      line-height: $height_room_tabs;
+      text-align: center;
+      cursor: pointer;
+      &.active {
+        color: $color_nav_active_font;
+        border-bottom: $color_nav_active_font 0.4rem solid;
+      }
+    }
+  }
+  .m-room-container {
+    position: absolute;
+    display: block;
+    box-sizing: border-box;
+    top: 0;
+    left: 0;
+    padding-top: calc($height_room_banner + $height_room_tabs);
+    width: 100%;
+    height: 100%;
+  }
+  .room-cnt {
+    position: relative;
+    display: block;
+    height: 100%;
+    width: 100%;
+  }
+}

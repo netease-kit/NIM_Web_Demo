@@ -1,0 +1,137 @@
+/* 重置WEUI样式 */
+
+.g-window {
+  .weui-mask_transparent {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 99;
+    background-color: #000;
+    opacity: 0.3;
+  }
+  .weui-cells {
+    margin-top: 0;
+    font-size: inherit;
+    background-color: transparent;
+  }
+  .weui-cell {
+    font-size: 1.08rem;
+    padding: 0.5rem 0.7rem;
+    .vux-label-desc {
+      font-size: 0.8rem;
+      color: #999;
+    }
+    &:before {
+      /*left: 0;*/
+    }
+  }
+  /* 按钮组 */
+  .weui-btn {
+    font-size: 1rem;
+    &:after {
+      border: none;
+    }
+  }
+  .weui-btn_default {
+    color: $color_button_primary;
+  }
+  .weui-btn_transparent {
+    color: $color_white;
+    background-color: inherit;
+  }
+  .weui-btn_primary, .weui-btn_warn {
+    width: 90%;
+  }
+  .weui-btn_primary {
+    background-color: $color_button_primary;
+  }
+  .weui-btn_warn {
+    background-color: $color_button_warn;
+  }
+  /* 输入框组 */
+  .weui-input {
+    font-size: 1.08rem;
+  }
+  /* switch 元件 */
+  .weui-switch:checked, .weui-switch-cp__input:checked ~ .weui-switch-cp__box {
+    background-color: inherit;
+    border-color: inherit;
+  }
+  /* 导航元件 */
+  .vux-tab {
+    .vux-tab-item {
+      font-size: inherit;
+      & > a {
+        display: inline-block;
+        width: inherit;
+        height: inherit;
+      }
+      &.vux-tab-selected {
+        color: inherit;
+      }
+    }
+  }
+  .vux-button-group {
+    & > a.vux-button-group-current, & > a.hover, & > a:active {
+      background-color: inherit;
+    }
+  }
+  .vux-header {
+    .vux-header-title, h1 {
+      margin: 0 20%;
+      color: inherit;
+    }
+    .vux-header-left, .vux-header-right {
+      color: inherit;
+      a, button {
+        color: inherit;
+      }
+    }
+  }
+  .weui-cell__ft {
+    font-size: 0.96rem;
+    color: inherit;
+  }
+  .weui-search-bar {
+    background-color: transparent;
+  }
+  .weui-icon-search {
+    line-height: 2rem;
+  }
+  .weui-icon-warn {
+    font-size: inherit;
+  }
+  .weui-search-bar__box {
+    .weui-search-bar__input, .weui-icon-search {
+      line-height: 2rem;
+      font-size: 1.08rem;
+    }
+  }
+  .vux-label-desc {
+    display: inline-block;
+    max-width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .vux-datetime.weui-cell {
+    padding: 0;
+  }
+  .left-arrow {
+    &:before {
+      content: "";
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border: 1px solid #ccc;
+      border-width: 1px 0 0 1px;
+      -webkit-transform: rotate(315deg);
+      -moz-transform: rotate(315deg);
+      transform: rotate(315deg);
+      top: 8px;
+      left: 7px;
+    }
+  }
+}

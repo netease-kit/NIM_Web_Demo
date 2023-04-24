@@ -1,0 +1,34 @@
+<view class='card-wrapper'>
+  <view class='card-header'>
+    <view class='card-header-item'>
+      <image src='{{card.avatar || defaultAvatar}}' class='card-header-icon'></image>
+      <text class='card-header-nick'>{{card.account}}</text>
+    </view>
+  </view>
+  <view class='card-content'>
+    <view class='card-content-another'>
+      <view class='card-content-item' bindtap='changeName' >
+        <text class='card-content-item-left'>群昵称</text>
+        <text wx-if="{{isSelf}}" class='card-content-item-right'> > </text>
+        <text class='card-content-item-right'>{{card.nickInTeam || '未设置'}}</text>
+      </view>
+      <view class='card-content-item' bindtap='changeIdentity' >
+        <text class='card-content-item-left'>身份</text>
+        <text wx-if="{{isOwner && !isSelf}}" class='card-content-item-right'> > </text>
+        <text class='card-content-item-right'>{{(card.type === 'manager' ? '管理员' : (card.type === 'owner' ? '群主' : '普通成员'))}}</text>
+      </view>
+      <view  wx-if="{{(limit && !isSelf && card.type != 'owner' && card.type != 'manager') || (isOwner && !isSelf)}}" class='card-content-item'>
+        <text class='card-content-item-left'>设置禁言</text>
+        <switch class='card-content-item-right' bindchange='toggleDisableSendMsg' checked='{{disableSendMsg}}'></switch>
+      </view>
+    </view>
+  </view>
+  <view catchtap='stopEventPropagation'>
+    <input-modal wx:if="{{editNameFlag}}" title="修改群昵称" catch:inputModalClick="nameClickHandler">
+      <input placeholder='请输入文本' type='text' confirm-type='send' class='modal-input' bindinput='nameInputChange' bindconfirm='sureToChangeName'></input>
+    </input-modal>
+  </view>
+  <view class='card-content-btn'>
+    <button wx-if="{{(limit && !isSelf && card.type != 'owner' && card.type != 'manager') || (isOwner && !isSelf)}}" type='warn' bindtap='removePerson'>移出本群</button>
+  </view>
+</view>
