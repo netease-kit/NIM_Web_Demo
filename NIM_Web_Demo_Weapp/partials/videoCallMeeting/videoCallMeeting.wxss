@@ -1,0 +1,90 @@
+.calling-coverview {
+  position:relative;
+  background:rgba(0,0,0,0.50);
+  width:100%;
+  bottom:0;
+  height:100%;
+}
+.calling-control {
+  position: absolute;
+  bottom:88rpx;
+  color:#fff;
+  display: flex;
+  justify-content: space-around;
+  flex-direction: row;
+  padding: 0 60rpx;
+  box-sizing: border-box;
+  width: 100%;
+}
+.calling-image-wrpper {
+  display:inline-block;
+  text-align:center;
+}
+.calling-control .cover-image {
+  width:140rpx;
+  height:140rpx;
+  margin-bottom:20rpx;
+}
+.video-wrapper {
+  width: 100%;
+  height: 100%;
+  padding-bottom: 100rpx;
+  box-sizing: border-box;
+}
+.control-wrapper {
+  position: fixed;
+  bottom: 18px;
+  left:0;
+  display: flex;
+  width: 100%;
+  box-sizing: border-box;
+  flex-direction:row;
+  justify-content: space-between;
+  padding: 0 42rpx;
+}
+.control-wrapper .item{
+  width: 92rpx;
+  height: 92rpx;
+}
+
+/* 被叫 */
+.becalling-wrapper {
+  position: relative;
+  width:100%;
+  height:100%;
+  background-color:#777;
+  color:#fff;
+  font-size:40rpx;
+}
+.becalling-wrapper .becalling-text {
+  position: absolute;
+  top:400rpx;
+  left:50%;
+  margin-left:-220rpx;
+}
+.becalling-wrapper .becalling-button-group {
+  position: absolute;
+  width:100%;
+  box-sizing:border-box;
+  bottom: 100rpx;
+  padding: 0 40rpx;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.becalling-button-group .button {
+  width:220rpx;
+  height:80rpx;
+  border-radius:10rpx;
+  justify-content:center;
+  display:flex;
+  align-items:center;
+  font-size:33rpx;
+  color:#000;
+}
+.becalling-button-group .reject-button {
+  background-color:#f00;
+}
+.becalling-button-group .accept-button {
+  background-color:rgb(26, 155, 252);
+}

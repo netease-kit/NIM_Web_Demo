@@ -1,0 +1,22 @@
+<view class='background-wrapper'>
+  <view class='login-wrapper'>
+    <view class='login-title'>
+      <image src='/images/logo.png'></image>
+    </view>
+    <form bindsubmit='doLogin'>
+      <view class='login-item'>
+        <text class='login-item-text'>账号</text>
+        <input bindinput='inputHandler' data-type='account' class='login-item-input' placeholder='请输入' type='text' confirm-type='next'></input>
+      </view>
+      <view class='login-item'>
+        <text class='login-item-text'>密码</text>
+        <input bindinput='inputHandler' data-type='password' type='password' class='login-item-input' placeholder='请输入' confirm-type='done'></input>
+      </view>
+      <button form-type='submit' loading='{{isLogin}}' disabled='{{!account || !password}}' class='login-submit-btn'>登录</button>
+    </form>
+    <view class='to-register'>
+      <text class='login-to-unregister'>没有账号？</text>
+      <text bindtap='registerTap' class='login-to-register'>立即注册</text>
+    </view>
+  </view>
+</view>

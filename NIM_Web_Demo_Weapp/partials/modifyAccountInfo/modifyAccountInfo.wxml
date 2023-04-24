@@ -1,0 +1,38 @@
+<view class='modify-wrapper'>
+  <view wx:if="{{type == 'nick'}}" class='nick-wrapper'>
+    <input-clear type='text' catch:inputClearChange='nickChange' placeholder='限10字以内' maxlength='10'></input-clear>
+    <text class='nick-desc'>好的昵称可以让你的朋友更容易记住你</text>
+    <button catchtap='submit' class='save-btn' disabled='{{!nick}}' loading='{{isSaving}}'>保存</button>
+  </view>
+  <view wx:if="{{type == 'gender'}}" class='gender-wrapper'>
+    <view class='gender-item' data-gender='male' catchtap='genderChange'>
+      <text class='gender-item-text'>男</text>
+      <icon wx:if="{{gender == 'male'}}" type="success_no_circle" size="20" color="rgb(0,152,248)" class='gender-item-icon' />
+    </view>
+    <view data-gender='female' class='gender-item' catchtap='genderChange'>
+      <text class='gender-item-text'>女</text>
+      <icon wx:if="{{gender == 'female'}}" type="success_no_circle" size="20" color="rgb(0,152,248)" class='gender-item-icon'/>
+    </view>
+    <view data-gender='unknown' class='gender-item last' catchtap='genderChange'>
+      <text class='gender-item-text'>其他</text>
+      <icon wx:if="{{gender == 'unknown'}}" type="success_no_circle" size="20" color="rgb(0,152,248)" class='gender-item-icon'/>
+    </view>
+  </view>
+  <view wx:if="{{type == 'birth'}}">
+    <picker mode="date" bindchange='birthChange'></picker>
+  </view>
+  <view wx:if="{{type == 'tel'}}" class='tel-wrapper'>
+    <!-- <input type='number' bindinput='telChange' placeholder='请输入手机号' maxlength='13' class='single-input'></input> -->
+    <input-clear type='number' catch:inputClearChange='telChange' placeholder='请输入手机号' maxlength='13'></input-clear>
+    <button catchtap='submit' disabled='{{!tel}}' loading='{{isSaving}}' class='save-btn' style='margin-top:80rpx;'>保存</button>
+  </view>
+  <view wx:if="{{type == 'email'}}">
+    <!-- <input type='text' bindinput='emailChange' placeholder='请输入邮箱' class='single-input'></input> -->
+    <input-clear type='text' catch:inputClearChange='emailChange' placeholder='请输入邮箱' maxlength='30'></input-clear>
+    <button catchtap='submit' disabled='{{!email}}' loading='{{isSaving}}' class='save-btn' style='margin-top:80rpx;'>保存</button>
+  </view>
+  <view wx:if="{{type == 'sign'}}">
+    <textarea bindinput='signChange' value='{{sign}}' placeholder='内容限20字' maxlength='20' class='sign-textarea'></textarea>
+    <button catchtap='submit' disabled='{{!sign}}' loading='{{isSaving}}' class='save-btn'>保存</button>
+  </view>
+</view>

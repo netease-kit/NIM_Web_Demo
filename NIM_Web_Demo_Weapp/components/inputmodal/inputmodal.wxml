@@ -1,0 +1,12 @@
+<view class='inputmodal-wrapper'>
+  <view class='content'>
+    <view class='title'>{{title}}</view>
+    <view class='slot'>
+      <slot></slot>
+    </view>
+    <view class='button-group'>
+      <view class='btn' hover-class='btn-hover' style='border-right: 2rpx solid #ccc;' bindtap='cancel'>取消</view>
+      <view class='btn' hover-class='btn-hover' style='color: rgb(99,181,130);' bindtap='confirm'>确定</view>
+    </view>
+  </view>
+</view>

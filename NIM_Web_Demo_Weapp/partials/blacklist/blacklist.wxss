@@ -1,0 +1,42 @@
+.blacklist-wrapper {
+  width: 100%;
+  min-height: 100%;
+  overflow-y: scroll;
+  background-color: #fff;
+}
+/*无黑名单  */
+.blacklist-no {
+  width: 100%;
+  text-align: center;
+  margin-top: 300rpx;
+  color: #666;
+}
+/*黑名单列表  */
+.blacklist-item {
+  height: 120rpx;
+  display:flex;
+  border-bottom:1px solid #ccc;
+}
+.blacklist-item-img {
+  width:80rpx;
+  height:80rpx;
+  margin:0 40rpx;
+  border-radius: 100%;
+  align-self:center;
+}
+.blacklist-item-nick {
+  align-self:center;
+  font-size: 32rpx;
+  color: #000;
+}
+.blacklist-item-arrow {
+  align-self:center;
+  position:absolute;
+  right:20rpx;
+  color:#aaa;
+  font-size:40rpx;
+}
+/*公共样式*/
+.blacklist-item-hover {
+  background-color: #eee;
+}

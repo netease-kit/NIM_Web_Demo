@@ -1,0 +1,94 @@
+<view>
+  <view class='card-header'>
+    <image src='../../images/advanced.png' class='card-header-icon'></image>
+    <view class='card-header-text'>
+      <text class='card-header-nick'>{{currentGroup.name}}</text>
+      <text class='card-header-account'>{{currentGroup.owner}} 于 {{createTime}} 创建</text>
+    </view>
+  </view>
+  <view class='card-wrapper'>
+    <text wx:if="{{!currentGroup.isCurrentNotIn && aLineMembers.length}}" class="card-member-tt">群成员</text>
+    <view wx:if="{{!currentGroup.isCurrentNotIn && aLineMembers.length}}" class='card-member' bindtap='lookMembers'>
+      <view wx:if="{{isManager || isOwner || inviteMode === 'all'}}" class='card-member-item'  data-add="true">
+        <image src='../../images/add.png' class='card-member-icon card-member-add' data-add="true"></image>
+      </view>
+      <view wx:for="{{aLineMembers}}" wx:for-item='person' wx:for-index='index' wx:key='person' class='card-member-item'>
+        <image src='{{personList[person.account] && personList[person.account].avatar || person.avatar || defaultAvatar}}' class='card-member-icon'></image>
+      </view>
+      <view wx:if="{{!isManager && !isOwner && inviteMode !== 'all' && currentGroupMembers[6]}}" class='card-member-item'>
+        <image src='{{currentGroupMembers[6].avatar || defaultAvatar}}' class='card-member-icon'></image>
+      </view>
+    </view>
+    <view class='card-content'>
+      <view class='card-content-another'>
+        <view class='card-content-item' bindtap='openChangeBox' data-attr="name">
+          <text class='card-content-item-left'>群名称</text>
+          <text wx:if="{{!currentGroup.isCurrentNotIn && (isManager || isOwner || updateTeamMode == 'all')}}" class='card-content-item-right'> > </text>
+          <text class='card-content-item-right value'>{{currentGroup.name || '高级群'}}</text>
+        </view>
+        <view wx:if="{{!currentGroup.isCurrentNotIn}}" class='card-content-item' bindtap='openChangeBox' data-attr="nickInTeam">
+          <text class='card-content-item-left'>群昵称</text>
+          <text class='card-content-item-right'> > </text>
+          <text class='card-content-item-right value'>{{userCard.nickInTeam || '未设置'}}</text>
+        </view>
+        <view class='card-content-item' bindtap='openChangeBox' data-attr="intro">
+          <text class='card-content-item-left'>群介绍</text>
+          <text wx:if="{{!currentGroup.isCurrentNotIn && (isManager || isOwner || updateTeamMode == 'all')}}" class='card-content-item-right'> > </text>
+          <text class='card-content-item-right value'>{{currentGroup.intro || '未设置'}}</text>
+        </view>
+        <view class='card-content-item' bindtap='lookAnnouncement'>
+          <text class='card-content-item-left'>群公告</text>
+          <text class='card-content-item-right'> > </text>
+        </view>
+        <!-- <view wx:if="{{!currentGroup.isCurrentNotIn}}" class='card-content-item' bindtap='settingMsgRemind'>
+          <text class='card-content-item-left'>消息提醒</text>
+          <text class='card-content-item-right'> > </text>
+          <text class='card-content-item-right value'>{{msgRemindTxt}}</text>
+        </view> -->
+      </view>
+    </view>
+
+    <view  wx:if="{{!currentGroup.isCurrentNotIn && isOwner}}" class='card-content'>
+      <view class='card-content-another'>
+        <view class='card-content-item' bindtap='settingAuthentication' >
+          <text class='card-content-item-left'>身份验证</text>
+          <text class='card-content-item-right'> > </text>
+          <text class='card-content-item-right value'>{{joinModeTxt}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{!currentGroup.isCurrentNotIn && isOwner}}" class='card-content'>
+      <view class='card-content-another'>
+        <view class='card-content-item' bindtap='settingInviteLimit' >
+          <text class='card-content-item-left'>邀请他人权限</text>
+          <text class='card-content-item-right'> > </text>
+          <text class='card-content-item-right value'>{{inviteModeTxt}}</text>
+        </view>
+        <view class='card-content-item' bindtap='settingCardChange' >
+          <text class='card-content-item-left'>群资料修改权限</text>
+          <text class='card-content-item-right'> > </text>
+          <text class='card-content-item-right value'>{{updateTeamModeTxt}}</text>
+        </view>
+        <view class='card-content-item' bindtap='settingBeInvitedPass' >
+          <text class='card-content-item-left'>被邀请人身份验证</text>
+          <text class='card-content-item-right'> > </text>
+          <text class='card-content-item-right value'>{{beInviteModeTxt}}</text>
+        </view>
+      </view>
+    </view>
+
+    <view catchtap='stopEventPropagation'>
+      <input-modal wx:if="{{editFlag}}" title="{{changeBoxTitle}}" catch:inputModalClick="changeBoxClickHandler">
+        <input placeholder='请输入文本' type='text' confirm-type='send' class='modal-input' bindinput='changeBoxInputChange' bindconfirm='sureToChange' maxlength='32'></input>
+      </input-modal>
+    </view>
+
+    <view class='card-content-btn'>
+      <button wx:if="{{currentGroup.isCurrentNotIn}}" type='warn' bindtap='applyJoin'>申请入群</button>
+      <button wx:if="{{!currentGroup.isCurrentNotIn && !isOwner}}" type='warn' bindtap='deleteGroup'>退出高级群</button>
+      <button wx:if="{{!currentGroup.isCurrentNotIn && isOwner}}" type='warn' bindtap='dismissGroup'>解散群聊</button>
+    </view>
+
+  </view>
+</view>

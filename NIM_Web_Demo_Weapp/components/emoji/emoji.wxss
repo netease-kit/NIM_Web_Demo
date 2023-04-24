@@ -1,0 +1,60 @@
+.emoji-wrapper {
+ width: 100%;
+ height: 100%;
+  background-color: #fff;
+}
+/*内容  */
+.emoji-content {
+  width: 100%;
+  height: 400rpx;
+  /* padding-top: 30rpx; */
+  padding-left: 20rpx;
+  box-sizing:border-box;
+}
+.emoji-content-swiper {
+  width: 100%;
+  height: 100%;
+}
+.emoji-content-item {
+  display: inline-block;
+  margin: 17rpx;
+}
+.emoji-content-img-emoji {
+  width: 56rpx;
+  height: 56rpx;
+}
+.emoji-content-img-other {
+  width: 100rpx;
+  height: 100rpx;
+}
+/*底部类别  */
+.emoji-album {
+  width: 100%;
+  height: 88rpx;
+  border: 2rpx solid #999;
+  box-sizing: border-box;
+  background-color: #fff;
+}
+.emoji-album-left {
+  display: inline-block;
+  height: 100%;
+}
+.emoji-album-left-img {
+  width:88rpx;
+  height:100%;
+  padding:8rpx 10rpx;
+  box-sizing:border-box;
+  border-right:2rpx soild #999
+}
+.emoji-send {
+  width: 88rpx;
+  height: 100%;
+  line-height:88rpx;
+  background-color: #0091e4;
+  text-align: center;
+  float: right;
+  color: #fff;
+}
+.album-active {
+  background-color: #aaa;
+}

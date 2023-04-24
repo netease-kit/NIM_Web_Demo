@@ -1,0 +1,14 @@
+/* components/yunxin-player/yunxin-player.wxss */
+.play-container{
+  background: black;
+  display: block;
+  position: absolute;
+}
+
+.sud{
+  background-color: #1B2A38;
+  opacity:0.65; 
+}
+.player {
+  z-index: 10;
+}

@@ -1,0 +1,301 @@
+.chating-wrapper {
+  width: 100%;
+  min-height: 100%;
+  position: relative;
+  /* margin: 70rpx 0 100rpx; */
+  box-sizing: border-box;
+  /* overflow: hidden; */
+  background: #F3F4F6;
+}
+/* 收起键盘热区 */
+.fold-keyboad-wrapper {
+  position: fixed;
+  top: 70rpx;
+  width: 100%;
+  height: 500rpx;
+}
+/*历史消息  */
+.chating-history {
+  position: fixed;
+  padding: 0 20rpx;
+  width:100%;
+  height:80rpx;
+  line-height:80rpx;
+  box-sizing: border-box;
+  border: 1px solid #E7E7E7;
+  background-color: #E7E7E7;
+  z-index: 1;
+  color: #888888;
+  font-size: 30rpx;
+}
+.chating-history-left {
+  float: left;
+  color: #666;
+}
+.chating-history-right {
+  float: right;
+}
+/*聊天输入框  */
+.chatinput-wrapper {
+  width: 100%;
+  background-color: #fff;
+  border: 2rpx solid #ccc;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+}
+.chatinput-content {
+  width: 100%;
+  height: 100rpx;
+}
+.chatinput-img{
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 100%;
+  margin: 20rpx 20rpx;
+  display: inline-block;
+}
+.chatinput-img.emoji{
+  margin-right: 0;
+}
+.chatinput-img:active {
+  opacity: .6;
+}
+ .chatinput-input {
+  width: 466rpx;
+  min-height: 72rpx;
+  border-radius: 12rpx;
+  border: 1px solid #ccc;
+  margin-top: 15rpx;
+  display: inline-block;
+  vertical-align:top;
+  box-sizing:border-box;
+  padding-left: 20rpx;
+  font-size: 30rpx;
+}
+.chatinput-voice-mask {
+  width: 466rpx;
+  height: 76rpx;
+  line-height: 76rpx;
+  display: inline-block;
+  border-radius: 12rpx;
+  border: 1px solid #ccc;
+  margin-top: 12rpx;
+  vertical-align:top;
+  box-sizing:border-box;
+  /* padding-left: 20rpx; */
+  font-size: 30rpx;
+  text-align: center;
+  color: #333336;
+  background-color: #fff;
+  letter-spacing: 4rpx;
+}
+.chatinput-voice-mask-hover {
+  background-color: #cecece;
+  color: #333336;
+}
+/*subcontent wrapper  */
+.chatinput-subcontent {
+ width: 100%;
+ height: 470rpx;
+ background-color: #999;
+}
+.fr {
+  float: right;
+}
+/* more-subcontent */
+.more-subcontent {
+  padding: 40rpx 30rpx;
+  border:2rpx solid #ccc;
+}
+.more-subcontent .more-subcontent-item {
+  display:flex;
+  flex-direction:column;
+  margin-bottom: 30rpx;
+}
+.more-subcontent .more-subcontent-item .image {
+  width:112rpx;
+  height:112rpx;
+  border-radius:50%;
+  margin-bottom: 12rpx;
+}
+.more-subcontent .more-subcontent-item .text {
+  font-size: 24rpx;
+  text-align:center;
+  color: #6C7074;
+}
+/*聊天记录  */
+.record-wrapper {
+  width: 100%;
+  padding-bottom: 100rpx;
+  padding-top:80rpx;
+}
+.record-chatting-item {
+  width: 100%;
+  padding: 20rpx 20rpx;
+  box-sizing: border-box;
+}
+.record-item-time-wrapper {
+  display:flex;
+  flex-direction:row;
+  justify-content:center;
+}
+.record-item-time {
+  padding:4rpx 10rpx;
+  background: #D6D6D6;
+  border-radius: 8rpx;
+  font-size: 24rpx;
+  color: #fff;
+}
+.record-chatting-item-img {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 100%;
+  display: inline-block;
+}
+
+.record-chatting-item-text {
+  max-width: 70%;
+  border-radius: 8rpx;
+  background-color: #3387FF;
+  padding: 16rpx;
+  box-sizing:border-box;
+  word-wrap:break-word;
+  overflow: hidden;
+  font-size: 32rpx;
+  line-height: 48rpx;
+}
+.record-chatting-item-text.nobg {
+  background: transparent;
+  margin-left: 20rpx;
+  margin-right: 20rpx;
+}
+/* tip消息富文本 */
+.tip-rich-text {
+  background-color:#ccc;
+  text-align:center;
+  align-self:center;
+  min-height:40rpx;
+  word-break:break-word;
+  font-size:26rpx;
+  padding:0 20rpx;
+  color:#000;
+  border-radius: 10rpx;
+}
+
+.self {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  color: #fff;
+}
+.other {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  color: #222;
+}
+.left-triangle{
+  height:0px;
+  width:0px;
+  border-width:20rpx;
+  border-style:solid;
+  border-color:transparent #fff transparent transparent;
+  margin-top: 20rpx;
+}
+.right-triangle{
+  height:0px;
+  width:0px;
+  border-width:20rpx;
+  border-style:solid;
+  border-color:transparent transparent transparent #3387FF;
+  margin-top: 20rpx;
+}
+.video-triangle {
+  height:0px;
+  width:0px;
+  border-width:30rpx;
+  border-style:solid;
+  border-color:transparent transparent transparent #777;
+  margin-top: 20rpx;
+  margin-left: 30rpx;
+}
+
+.small-map-wrapper {
+  overflow: hidden;
+  width: 452rpx;
+  height:300rpx;
+  position:relative;
+  border-radius:8rpx;
+}
+.self .small-map-wrapper {
+  margin-right: 20rpx;
+}
+.other .small-map-wrapper {
+  margin-left: 20rpx;
+}
+.small-map-wrapper .small-geo-img {
+  width: 100%;
+  height: 100%;
+  background-color: pink;
+}
+.small-map-wrapper .text {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 10rpx;
+  min-height: 70rpx;
+  /* line-height: 70rpx; */
+  opacity: 0.75;
+  font-size: 28rpx;
+  /* white-space: nowrap; */
+  text-align: center;
+  text-overflow: ellipsis;
+  background-color:#444;
+  color:#fff;
+}
+
+.small-video-wrapper {
+  margin-left: 20rpx;
+  margin-right: 20rpx;
+  width:200rpx;
+  height:200rpx;
+  padding:10rpx;
+  background-color:#fff;
+  border-radius:20rpx;
+  display:flex;
+  justify-content:center;
+  flex-direction:column;
+  align-items:center;
+}
+.small-video-wrapper .video {
+  max-width:200px;
+  max-height:300px;
+}
+
+.audio-wrapper {
+  background-color:#fff;
+  border-radius:28rpx;
+  display:flex;
+  justify-content:space-between;
+  padding:0 20rpx;
+  min-width: 30%;
+  box-sizing:border-box;
+  margin-left:-2px;
+}
+.audio-wrapper .image {
+  width:70rpx;
+  height:70rpx;
+  align-self:center;
+}
+.audio-wrapper .text {
+  align-self:center;
+  color:#fff;
+}

@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "云信",
+    "usingComponents": {
+      "swipe-delete": "../../components/swipedelete/swipedelete"
+    }
+}

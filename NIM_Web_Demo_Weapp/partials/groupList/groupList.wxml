@@ -1,0 +1,15 @@
+<view class='list-wrapper'>
+  <view wx:if='{{!list.length}}' class='list-no'>
+    暂无{{groupTypeName}}
+  </view>
+  <view wx:if='{{list.length}}'>
+    <view wx:for='{{list}}' wx:for-item='group' wx:for-index='index' wx:key="group" class='list-item' hover-class='list-item-hover'>
+       <view data-teamid='{{group.teamId}}' data-index='{{index}}' catchtap='switchToGroupChat' style='display:flex;width:100%;'>
+        <!-- <image wx:if="{{groupType === 'advanced'}}" src='../../images/advanced.png' class='list-item-img'></image> -->
+        <!-- <image wx:if="{{groupType === 'normal'}}" src='../../images/normal.png' class='list-item-img'></image> -->
+        <text class='list-item-nick'>{{group.name}}</text>
+        <!-- <text class='list-item-arrow'>></text> -->
+       </view>
+    </view>
+  </view>
+</view>

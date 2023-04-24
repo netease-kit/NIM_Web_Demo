@@ -1,0 +1,115 @@
+.card-wrapper {
+  width: 100%;
+}
+/*头部  */
+.card-header,
+.card-member {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  padding:0 10rpx;
+}
+.card-header {
+  height: 188rpx;
+}
+.card-member {
+  padding: 0 15rpx;
+  height: 94rpx;
+  background-color: #fff;
+}
+.card-member-tt {
+  display: block;
+  padding: 26rpx 30rpx;
+  font-size: 32srpx;
+  color: #222;
+  background-color: #fff;
+}
+.card-header-text {
+  margin-top: 40rpx;
+  max-width: 540rpx;
+}
+.card-header-nick {
+  height: 60rpx;
+  line-height: 60rpx;
+  color: #000;
+  align-self: flex-start;
+  font-size:32rpx;
+  font-weight:500;
+}
+.card-header-nick,
+.card-header-account {
+  overflow: hidden;
+  display: block;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.card-member-item {
+  position: relative;
+  text-align: center;
+}
+.card-header-icon {
+  width: 108rpx;
+  height: 108rpx;
+  border-radius: 100%;
+}
+.card-member-icon,
+.card-member-add {
+  width: 68rpx;
+  height: 68rpx;
+  border-radius: 100%;
+  margin: 0 10rpx;
+
+}
+.card-header-icon {
+  margin: 40rpx 20rpx 0 30rpx;
+}
+/*中间内容  */
+.card-content {
+  width: 100%;
+  margin-top: 30rpx;
+}
+/* 好友关系分隔 */
+.card-content-another {
+  margin-top: 20rpx;
+}
+.card-content-item {
+  clear: both;
+  display: block;
+  width: 100%;
+  height: 96rpx;
+  line-height: 96rpx;
+  font-size: 32rpx;
+  color: #222;
+  background-color: #fff;
+  border-bottom: 1px solid #ccc;
+}
+.card-content-item-left {
+  line-height: 80rpx;
+  margin-left: 30rpx;
+  color: #000;
+  font-weight:500;
+}
+.card-content-item-right {
+  float: right;
+  margin-right: 20rpx;
+  font-size: 30rpx;
+  color: #959595;
+}
+.card-content-item-right.value {
+  overflow: hidden;
+  max-width: 400rpx;
+  display: inline-block;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+/*底部按钮  */
+.card-content-btn {
+  margin-top: 60rpx;
+  width: 100%;
+}
+.card-content-btn button {
+  width: 90%;
+  margin-left: 5%;
+  margin-bottom: 30rpx;
+  color: #fff;
+}

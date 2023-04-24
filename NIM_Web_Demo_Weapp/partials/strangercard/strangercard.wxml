@@ -1,0 +1,38 @@
+<view class='addfriendresult-wrapper'>
+  <view class='addfriendresult-header'>
+    <image src='{{user.avatar}}' class='addfriendresult-header-icon'></image>
+    <view class='addfriendresult-header-text'>
+      <text class='addfriendresult-header-nick'>{{user.nick}}</text>
+      <text class='addfriendresult-header-account'>账号: {{user.account}}</text>
+    </view>
+  </view>
+  <view class='addfriendresult-content'>
+    <view class='addfriendresult-content-item'>
+      <text class='addfriendresult-content-item-left'>性别</text>
+      <text class='addfriendresult-content-item-right'>{{user.gender == 'male' ? '男' : user.gender == 'female' ? '女' : '其他'}}</text>
+    </view>
+    <view class='addfriendresult-content-item'>
+      <text class='addfriendresult-content-item-left'>生日</text>
+      <text class='addfriendresult-content-item-right'>{{user.birth}}</text>
+    </view>
+    <view class='addfriendresult-content-item'>
+      <text class='addfriendresult-content-item-left'>手机</text>
+      <text class='addfriendresult-content-item-right'>{{user.tel}}</text>
+    </view>
+    <view class='addfriendresult-content-item'>
+      <text class='addfriendresult-content-item-left'>邮箱</text>
+      <text class='addfriendresult-content-item-right'>{{user.email}}</text>
+    </view>
+    <view class='addfriendresult-content-item'>
+      <text class='addfriendresult-content-item-left'>签名</text>
+      <text class='addfriendresult-content-item-right'>{{user.sign}}</text>
+    </view>
+    <view class='addfriendresult-content-item'>
+      <text class='addfriendresult-content-item-left'>黑名单</text>
+      <switch class='addfriendresult-content-item-right' bindchange='toggleBlackList' checked='{{isBlack}}'></switch>
+    </view>
+  </view>
+  <view class='addfriendresult-content-btn'>
+    <button type='primary' bindtap='addFriendBtnHandler'>添加好友</button>
+  </view>
+</view>

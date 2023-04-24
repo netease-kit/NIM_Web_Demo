@@ -1,0 +1,81 @@
+.contact-add-button {
+  width: 89%;
+  font-size:32rpx;
+  margin-top: 20rpx;
+  background-color: #fff;
+}
+.contact-content-wrapper {
+  width: 100%;
+  padding-top: 20rpx;
+  box-sizing:border-box;
+  overflow:hidden;
+}
+/*消息通知、黑名单、我的电脑  */
+.contact-function-wrapper {
+  width: 100%;
+}
+.contact-header-item {
+  height: 120rpx;
+  display:flex;
+  position: relative;
+  border-bottom:1px solid rgba(220,220,220,0.5);
+  background-color:#fff;
+}
+.contact-header-item-img {
+  width:80rpx;
+  height:80rpx;
+  margin:0 40rpx;
+  align-self:center;
+}
+.contact-header-item-text {
+  align-self:center;
+  font-size: 32rpx;
+}
+.contact-header-item-arrow {
+  align-self:center;
+  position:absolute;
+  right:20rpx;
+  color:#aaa;
+  width: 30rpx;
+  height: 30rpx;
+}
+/*分类表头  */
+.contact-catagory-header {
+  width: 100%;
+  height: 46rpx;
+  line-height: 46rpx;
+  padding-left: 30rpx;
+  font-size: 28rpx;
+  color: #959595;
+}
+/*好友列表 */
+.contact-friend-wrapper {
+  padding-bottom:20rpx;
+}
+.contact-firend-item {
+  display: flex;
+  height: 112rpx;
+  line-height: 112rpx;
+  background-color:#fff;
+  border-bottom:1px solid rgba(220,220,220,0.5);
+}
+.contact-friend-item-logo {
+  width:80rpx;
+  height:80rpx;
+  margin:0 40rpx;
+  align-self:center;
+  border-radius:50%;
+}
+.contact-friend-item-nick {
+  align-self:center;
+  font-size: 32rpx;
+}
+
+/*公共样式*/
+.contact-item-hover {
+  background-color: #eee;
+}
+.gray {
+  filter: grayscale(100%);
+  /* filter: gray; */
+}

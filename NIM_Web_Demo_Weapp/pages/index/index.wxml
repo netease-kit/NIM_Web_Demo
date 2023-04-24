@@ -1,0 +1,6 @@
+<!--index.wxml-->
+<view>
+  <view>{{num}}</view>
+  <view type="button" class='button-style' catchtap='plusOne'>+1</view>
+  <view type="button" class='button-style' catchtap='minusOne'>-1</view>
+</view>

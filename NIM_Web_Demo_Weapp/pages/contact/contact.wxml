@@ -1,0 +1,43 @@
+<view>
+  <button class='contact-add-button' catchtap='addFriendHandler'>+ 添加好友</button>
+  <view class='contact-content-wrapper'>
+    <view class='contact-function-wrapper'>
+      <view class='contact-header-item' hover-class='contact-item-hover' catchtap='switchToMessageNotification'>
+        <image src='/images/notice.png' class='contact-header-item-img'></image>
+        <text class='contact-header-item-text'>消息通知</text>
+        <image src="{{iconRightArrow}}" class='contact-header-item-arrow'></image>
+      </view>
+      <view class='contact-header-item' hover-class='contact-item-hover' catchtap='switchToGroupListHandler' data-type="advanced">
+        <image src='/images/advanced.png' class='contact-header-item-img'></image>
+        <text class='contact-header-item-text'>高级群</text>
+        <image src="{{iconRightArrow}}" class='contact-header-item-arrow'></image>
+      </view>
+      <view class='contact-header-item' hover-class='contact-item-hover' catchtap='switchToGroupListHandler' data-type="normal">
+        <image src='/images/normal.png' class='contact-header-item-img'></image>
+        <text class='contact-header-item-text'>讨论组</text>
+        <image src="{{iconRightArrow}}" class='contact-header-item-arrow'></image>
+      </view>
+      <view class='contact-header-item' hover-class='contact-item-hover' catchtap='switchToBlacklistHandler'>
+        <image src='/images/black.png' class='contact-header-item-img'></image>
+        <text class='contact-header-item-text'>黑名单</text>
+        <image src="{{iconRightArrow}}" class='contact-header-item-arrow'></image>
+      </view>
+      <view class='contact-header-item' hover-class='contact-item-hover' catchtap='switchToChating'>
+        <image src='{{iconMyComputer}}' class='contact-header-item-img'></image>
+        <text class='contact-header-item-text'>我的电脑</text>
+        <image src="{{iconRightArrow}}" class='contact-header-item-arrow'></image>
+      </view>
+    </view>
+    <view wx:if="{{cataHeader.length !== 0}}" class='contact-friend-wrapper'>
+      <view wx:for='{{cataHeader}}' wx:for-item='header' wx:key="header">
+        <view class='contact-catagory-header'>{{header}}</view>
+        <view wx:for='{{friendCata[header]}}' wx:for-item='cardItem' wx:if="{{!cardItem.isBlack}}" class='contact-firend-item' hover-class='contact-item-hover' wx:key="cardItem.account" catchtap='friendItemClick' data-account='{{cardItem.account}}'>
+          <view style='border-radius: 50%;overflow:hidden;margin-top:10rpx;'>
+            <image src='{{cardItem.avatar ? cardItem.avatar : defaultUserLogo}}' class='{{cardItem.status == "离线" ? "contact-friend-item-logo gray" : "contact-friend-item-logo"}}'></image>
+          </view>
+          <text class='contact-friend-item-nick'>[{{onlineList[cardItem.account] || cardItem.status}}]{{cardItem.nick}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

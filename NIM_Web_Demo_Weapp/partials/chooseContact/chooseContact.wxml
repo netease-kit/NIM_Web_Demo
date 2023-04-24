@@ -1,0 +1,29 @@
+<view>
+  <view class='contact-content-wrapper'>
+    <view wx:if='{{cataHeader.length === 0}}' class='list-no'>
+      暂无可邀请好友
+    </view>
+    <view wx:if="{{cataHeader.length !== 0}}" class='contact-friend-wrapper'>
+      <view wx:for='{{cataHeader}}' wx:for-item='header' wx:key="header">
+        <view class='contact-catagory-header'>{{header}}</view>
+        <view wx:for='{{friendCata[header]}}' wx:for-item='cardItem' wx:if="{{!cardItem.isBlack}}" class='contact-firend-item' hover-class='contact-item-hover' wx:key="cardItem.account" catchtap='friendItemClick' data-account='{{cardItem.account}}'>
+          <checkbox class="contact-friend-checkbox" value="{{cardItem.account}}" checked="{{addListMap[cardItem.account]}}"/>
+          <view style='border-radius: 50%;overflow:hidden;margin-top:10rpx;'>
+            <image src='{{cardItem.avatar ? cardItem.avatar : defaultUserLogo}}' class='{{cardItem.status == "离线" ? "contact-friend-item-logo gray" : "contact-friend-item-logo"}}'></image>
+          </view>
+          <text class='contact-friend-item-nick'>[{{onlineList[cardItem.account] || cardItem.status}}]{{cardItem.nick}}</text>
+        </view>
+      </view>
+    </view>
+    <view class='contact-function-wrapper'>
+      <view class='add-list'>
+        <view wx:for="{{addList1to6}}" wx:for-item='person' wx:key="person" class='add-list-item'>
+          <image class='add-list-item-logo' src="{{person.avatar || defaultUserLogo}}" ></image>
+        </view>
+      </view>
+      <view class='add-list-btns'>
+        <button size="mini" class="add-list-btn" hover-class='add-list-btn-hover' disabled="{{addList1to6.length === 0}}" catchtap='sureChoose'>确定</button>
+      </view>
+    </view>
+  </view>
+</view>

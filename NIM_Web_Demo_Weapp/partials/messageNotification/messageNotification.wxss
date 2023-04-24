@@ -1,0 +1,106 @@
+.message-wrapper {
+  width: 100%;
+  min-height: 100%;
+  background-color: #fff;
+}
+/*头部  */
+.swiper-tab {
+  width: 100%;
+  height: 80rpx;
+  line-height: 80rpx;
+  font-size: 32rpx;
+  border-bottom: 2rpx solid #ccc;
+  text-align: center;
+}
+.swiper-tab-item {
+  display: inline-block;
+  width: 50%;
+}
+.swiper-tab-item-on {
+  color: #90b3ec;
+  border-bottom: 4rpx solid #90b3ec;
+}
+/* 中间容器 */
+.notificationList-content {
+  overflow-y: scroll;
+  overflow-x: hidden;
+  width: 100%;
+}
+/*底部容器  */
+.swiper-wrapper {
+  width: 100%;
+  display: block;
+}
+.swiper-noitem {
+  width: 100%;
+  text-align: center;
+  margin-top: 200rpx;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+}
+.swiper-noitem-image {
+  width:550rpx;
+  height:200rpx;
+  margin-bottom:40rpx;
+}
+.swiper-noitem-text {
+  width:100%;
+  text-align:center;
+  color: #aaa;
+}
+/* 每一条 */
+.notification-item {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  padding: 20rpx 20rpx;
+  box-sizing: border-box;
+  border-bottom: 2rpx solid #ccc;
+}
+.notification-item .notification-item-img {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 100%;
+  align-self: center;
+}
+.notification-item .notification-item-right {
+  position: relative;
+  display: flex;
+  margin-left: 20rpx;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 80%;
+  font-size: 28rpx;
+  width: 100%;
+}
+.notification-item-right-intro {
+  text-align: right;
+}
+.notification-item-top {
+  overflow: hidden;
+  display: inline-block;
+  width: 100%;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+/* .notification-item .notification-item-right .notification-item-top {
+  font-size: 28rpx;
+  color: #000;
+}
+.notification-item .notification-item-right .notification-item-bottom {
+  font-size: 28rpx;
+  color: #ccc;
+} */
+.clearNotificationBtn {
+  position: absolute;
+  width: 90%;
+  height: 80rpx;
+  line-height: 80rpx;
+  text-align: center;
+  left: 5%;
+  bottom: 50rpx;
+  box-sizing: border-box;
+  border: 2rpx solid #ccc;
+}

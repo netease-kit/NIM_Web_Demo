@@ -1,0 +1,54 @@
+<view class='fullscreen'>
+  <view  wx:if="{{beCalling}}" class='becalling-wrapper'>
+    <view class='becalling-text'>对方邀请你开始视频聊天</view>
+    <view class='becalling-button-group'>
+      <view class='reject-button button' catchtap='rejectCallHandler'>拒绝</view>
+      <view class='accept-button button' catchtap='acceptCallHandler'>接听</view>
+    </view>
+  </view>
+  <view wx:else class='fullscreen'>
+    <view wx:if="{{isCalling}}" class="fullscreen">
+      <camera mode="normal" device-position="front" class="fullscreen" flash="off" binderror="cameraOpenErrorHandler" class='fullscreen' style="width:{{callingPosition.width}}px; height: {{callingPosition.height}}px;">
+        <cover-view class='calling-coverview'>
+          正在呼叫请稍后
+        </cover-view>
+      </camera>
+    </view>
+    <view wx:else class='fullscreen'>
+      <view class='video-wrapper'>
+        <block wx:for="{{userlist}}" wx:for-item="user" wx:for-index="index" wx:key="{{user.uid}}">
+          <yunxin-pusher
+            wx:if="{{user.uid === loginUser.uid}}"
+            wx:key="{{user.uid}}"
+            id="yunxin-pusher"
+            url="{{user.url}}"
+            enable-camera="{{enableCamera}}"
+            muted="{{muted}}"
+            beauty="true" 
+            config="{{selfPosition}}"
+            bindpushfailed="onPusherFailed"
+          >
+          </yunxin-pusher>
+          <yunxin-player
+            wx:if="{{user.uid !== loginUser.uid}}"
+            wx:key="{{user.uid}}"
+            id="yunxinplayer-{{user.uid}}"
+            uid="{{user.uid}}"
+            url="{{user.url}}"
+            config="{{otherPosition}}"
+            bindpullfailed="onPullFailed"
+            >
+            <cover-view class='control-wrapper'>
+              <cover-view class='netcall-time-text'>{{duration}}</cover-view>
+              <cover-image class="item" src="/images/netcall-call-{{callTypeIconKind == 'video' ? 'voice' : 'video'}}.png" catchtap="switchToVoiceCallHandler">语音通话</cover-image>
+              <cover-image class="item" src="/images/netcall-revert-camera.png" wx:if="{{callTypeIconKind == 'video'}}" catchtap="switchCameraHandler">切摄像头</cover-image>
+              <cover-image class="item" src="/images/netcall-camera{{enableCamera ? '' : '-close'}}.png" wx:if="{{callTypeIconKind == 'video'}}" data-mode="1" catchtap="switchMeetingModeHandler">关闭摄像头</cover-image>
+              <cover-image class="item" src="/images/netcall-micro{{muted ? '-close' : ''}}.png" data-mode="2" catchtap="switchMeetingModeHandler">关闭麦克风</cover-image>
+              <cover-image class="item" src="/images/netcall-reject.png" catchtap="hangupHandler">挂断</cover-image>
+            </cover-view>
+          </yunxin-player>
+        </block>
+      </view>
+    </view>
+  </view>
+</view>

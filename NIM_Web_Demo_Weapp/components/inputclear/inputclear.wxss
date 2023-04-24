@@ -1,0 +1,16 @@
+.input-clear-wrapper {
+  position: relative;
+  width: 100%;
+}
+.input-clear-wrapper input {
+  background-color: #fff;
+  width: 100%;
+  padding: 15rpx 0 15rpx 20rpx;
+}
+.input-clear-wrapper .clear-icon {
+  position: absolute;
+  top:50%;
+  right:17rpx;
+  margin-top:-17rpx;
+  z-index: 100;
+}

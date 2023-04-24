@@ -1,0 +1,15 @@
+<view wx-if="{{!isEditing}}" class='modify-wrapper'>
+  <view class='line-wrapper'>
+    <text class="info info-tt">{{title || '暂无公告'}}</text>
+    <text wx:if="{{title}}" class="info info-desc">{{account}} 于 {{datetime}} 发布</text>
+    <text wx:if="{{title}}" class="info info-ct">{{content}}</text>
+  </view>
+  <button wx:if="{{limit}}" catchtap='edit' class='save-btn'>创建群公告</button>
+</view>
+<view wx-if="{{isEditing}}" class='modify-wrapper'>
+  <view class='line-wrapper'>
+    <input type='text' bindinput='titleChange' value='{{newTitle}}' placeholder='标题' maxlength='32' class="input"></input>
+    <textarea bindinput='contentChange' value='{{newContent}}' placeholder='内容限900字' maxlength='900' class='textarea'></textarea>
+  </view>
+  <button wx:if="{{limit}}" catchtap='submit' class='save-btn' disabled='{{(!newTitle || !newContent)}}' loading='{{isSaving}}'>保存</button>
+</view>

@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "群公告",
+  "usingComponents": {
+    "input-clear": "/components/inputclear/inputclear"
+  }
+}

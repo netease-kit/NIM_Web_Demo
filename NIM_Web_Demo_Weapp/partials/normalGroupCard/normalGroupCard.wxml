@@ -1,0 +1,38 @@
+<view class='card-wrapper'>
+  <view class='card-header'>
+    <view wx:for="{{currentGroupMembers}}" wx:for-item='person' wx:for-index='index' wx:key='person' class='card-header-item'>
+      <image src='{{personList[person.account] && personList[person.account].avatar || person.avatar || defaultAvatar}}' class='card-header-icon'></image>
+      <text class='card-header-nick'>{{person.nickInTeam || person.account}}</text>
+      <view wx:if="{{deleteThe && person.account !== userInfo.account}}" class='card-header-item-del' bindtap='deletePerson' data-index="{{index}}"  data-account="{{person.account}}">-</view>
+    </view>
+    <view wx:if="{{!currentGroup.isCurrentNotIn}}" class='card-header-item' bindtap='addPerson'>
+      <image src='../../images/add.png' class='card-header-add'></image>
+      <text class='card-header-nick'>加入</text>
+    </view>
+    <view wx-if="{{!currentGroup.isCurrentNotIn && currentGroup.owner === userInfo.account}}" class='card-header-item' bindtap='openDelPerson'>
+      <image src='../../images/del.png' class='card-header-del'></image>
+      <text class='card-header-nick'>移除</text>
+    </view>
+  </view>
+  <view class='card-content'>
+    <view class='card-content-another'>
+      <view class='card-content-item' bindtap='changeName' >
+        <text class='card-content-item-left'>讨论组名称</text>
+        <text wx-if="{{!currentGroup.isCurrentNotIn}}" class='card-content-item-right'> > </text>
+        <text class='card-content-item-right value'>{{currentGroup.name || '讨论组'}}</text>
+      </view>
+      <!-- <view wx-if="{{!currentGroup.isCurrentNotIn}}" class='card-content-item'>
+        <text class='card-content-item-left'>消息提醒</text>
+        <switch class='card-content-item-right' bindchange='toggleMsgRemind' checked='{{msgRemind}}'></switch>
+      </view> -->
+    </view>
+  </view>
+  <view catchtap='stopEventPropagation'>
+    <input-modal wx:if="{{editNameFlag}}" title="修改讨论组名称" catch:inputModalClick="nameClickHandler">
+      <input placeholder='请输入文本' type='text' confirm-type='send' class='modal-input' bindinput='nameInputChange' bindconfirm='sureToChangeName' maxlength='32'></input>
+    </input-modal>
+  </view>
+  <view class='card-content-btn'>
+    <button wx-if="{{!currentGroup.isCurrentNotIn}}" type='warn' bindtap='deleteGroup'>退出讨论组</button>
+  </view>
+</view>

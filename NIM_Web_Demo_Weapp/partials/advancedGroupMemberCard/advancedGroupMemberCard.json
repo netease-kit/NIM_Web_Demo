@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "群成员",
+  "usingComponents": {
+    "input-modal": "/components/inputmodal/inputmodal"
+  }
+}

@@ -1,0 +1,67 @@
+page {
+  height: auto;
+}
+.modify-wrapper {
+  padding-top: 40rpx;
+}
+/*修改昵称  */
+.line-wrapper {
+  width: 100%;
+}
+.info {
+  display: block;
+  background-color: #fff;
+}
+.info-tt {
+  padding: 23rpx;
+  font-size: 36rpx;
+  color: #222;
+  word-break:break-word;
+}
+.info-desc {
+  padding: 0 26rpx 10rpx;
+  line-height: 50rpx;
+  border-bottom: 1px solid #eee;
+  font-size: 24rpx;
+  color: #888;
+  word-break:break-word;
+}
+.info-ct {
+  padding: 26rpx;
+  font-size: 30rpx;
+  line-height: 44rpx;
+  color: #222;
+  word-break:break-word;
+}
+.input,
+.textarea {
+  display: block;
+  width: 100%;
+  background-color: #fff;
+  color: #000;
+  box-sizing: border-box;
+}
+.input {
+  height: 80rpx;
+  line-height: 80rpx;
+  padding: 0 20rpx;
+  font-size: 32rpx;
+}
+.textarea {
+  margin-bottom: 60rpx;
+  padding: 15rpx 20rpx;
+  min-height: 800rpx;
+  line-height: 30rpx;
+  font-size: 30rpx;
+  border-top:1px solid #eee;
+}
+
+.save-btn {
+  width: 90%;
+  margin: 60rpx 0 80rpx 5%;
+  background-color: rgb(0, 152, 248);
+  color: #fff;
+}
+.last {
+  border-bottom: none;
+}

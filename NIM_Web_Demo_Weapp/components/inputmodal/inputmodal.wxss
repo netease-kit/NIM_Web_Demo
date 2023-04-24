@@ -1,0 +1,64 @@
+.inputmodal-wrapper {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, .5);
+  z-index: 9998;
+}
+.inputmodal-wrapper .content {
+  width: 540rpx;
+  height: 300rpx;
+  background-color: #F3F4F6;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-left: -270rpx;
+  margin-top: -150rpx;
+  border-radius: 24rpx;
+  z-index: 9999;
+}
+.inputmodal-wrapper .content .title {
+  width:100%;
+  text-align:center;
+  line-height:114rpx;
+  font-size:34rpx;
+  color: #030303;
+}
+.inputmodal-wrapper .content .slot {
+  height: 110rpx;
+  display: flex;
+  flex-direction: column;
+  /* justify-content: center; */
+}
+.inputmodal-wrapper .content input{
+  margin: 0 auto;
+  width: 90%;
+  height: 64rpx;
+  padding: 0 8rpx;
+  line-height: 64rpx;
+  background-color: #fff;
+  border: 0 solid #4D4D4D;
+  font-size: 30rpx;
+}
+.button-group {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 84rpx;
+  display: flex;
+  flex-direction: row;
+  border-top: 2rpx solid #ccc;
+  font-size: 34rpx;
+  color: #007AFF;
+}
+.button-group .btn {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.button-group .btn-hover {
+  background-color: rgba(0, 0, 0, .1);
+}

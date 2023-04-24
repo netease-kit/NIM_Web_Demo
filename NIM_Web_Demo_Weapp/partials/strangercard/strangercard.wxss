@@ -1,0 +1,80 @@
+.addfriendresult-wrapper {
+  width: 100%;
+  padding-top: 40rpx;
+}
+/*头部  */
+.addfriendresult-header {
+  width: 100%;
+  height: 120rpx;
+  display: flex;
+  background-color: #fff;
+}
+.addfriendresult-header-icon {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 100%;
+  margin: 20rpx 40rpx;
+}
+.addfriendresult-header-text {
+  display: flex;
+  flex-direction: column;
+  margin-left: 20rpx;
+}
+.addfriendresult-header-nick {
+  height: 60rpx;
+  line-height: 60rpx;
+  align-self: flex-start;
+  color: #000;
+  font-size:32rpx;
+  font-weight:500;
+}
+.addfriendresult-header-account {
+  height: 60rpx;
+  line-height: 60rpx;
+  align-self: center;
+  color: #ccc;
+}
+/*中间内容  */
+.addfriendresult-content {
+  width: 100%;
+  margin-top: 30rpx;
+}
+/* 好友关系分隔 */
+.addfriendresult-content-another {
+  margin-top: 30rpx;
+}
+.addfriendresult-content-item {
+  width: 100%;
+  height: 80rpx;
+  font-size: 32rpx;
+  background-color: #fff;
+  border-bottom: 1px solid #ccc;
+}
+.addfriendresult-content-item-left {
+  line-height: 80rpx;
+  margin-left: 30rpx;
+  color: #000;
+  font-weight:500;
+}
+.addfriendresult-content-item-right {
+  line-height: 80rpx;
+  float: right;
+  color: #ccc;
+  margin-right: 20rpx;
+  font-size: 28rpx;
+}
+switch.addfriendresult-content-item-right {
+  margin-top: 8rpx;
+  line-height: 0;
+}
+/*底部按钮  */
+.addfriendresult-content-btn {
+  margin-top: 60rpx;
+  width: 100%;
+}
+.addfriendresult-content-btn button {
+  width: 90%;
+  margin-left: 5%;
+  margin-bottom: 30rpx;
+  color: #fff;
+}

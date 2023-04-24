@@ -1,0 +1,44 @@
+<view class='setting-wrapper'>
+  <view class='setting-header' hover-class='setting-hover' catchtap='chooseLogo'>
+     <image src='{{loginUser.avatar}}' class='setting-header-icon'></image> 
+    <text class='setting-header-nick'>{{loginUser.nick}}</text>
+    <text class='setting-header-account'>账号：{{loginUser.account}}</text>
+    <image src="{{iconRightArrow}}" class='setting-header-arrow'></image>
+  </view>
+
+  <view class='setting-detail' catchtap='detailTapHandler'>
+    <view class='setting-item' hover-class='setting-hover' data-type='nick'>
+      <text class='setting-item-left' data-type='nick'>昵称</text>
+      <image src="{{iconRightArrow}}" data-type='nick' class='setting-item-arrow'></image>
+      <text class='setting-item-right' data-type='nick'>{{loginUser.nick}}</text>
+    </view>
+    <view class='setting-item' hover-class='setting-hover' data-type='gender'>
+      <text class='setting-item-left' data-type='gender'>性别</text>
+      <image src="{{iconRightArrow}}" data-type='gender' class='setting-item-arrow'></image>
+      <text class='setting-item-right' data-type='gender'>{{loginUser.gender == 'male' ? '男' : loginUser.gender == 'female' ? '女' : '未知'}}</text>
+    </view>
+    <picker mode="date" bindchange='dateChange'>
+     <view class='setting-item' data-type='birth'>
+        <text class='setting-item-left' data-type='birth'>生日</text>
+        <image src="{{iconRightArrow}}" data-type='birth' class='setting-item-arrow'></image>
+        <text class='setting-item-right' data-type='birth'>{{loginUser.birth}}</text>  
+      </view>
+    </picker>
+    <view class='setting-item' hover-class='setting-hover' data-type='tel'>
+      <text class='setting-item-left' data-type='tel'>手机</text>
+      <image src="{{iconRightArrow}}" data-type='tel' class='setting-item-arrow'></image>
+      <text class='setting-item-right' data-type='tel'>{{loginUser.tel ? loginUser.tel : '未知'}}</text>
+    </view>
+    <view class='setting-item' hover-class='setting-hover' data-type='email'>
+      <text class='setting-item-left' data-type='email'>邮箱</text>
+      <image src="{{iconRightArrow}}" data-type='email' class='setting-item-arrow'></image>
+      <text class='setting-item-right' data-type='email'>{{loginUser.email ? loginUser.email : '未知'}}</text>
+    </view>
+    <view class='setting-item last-item' hover-class='setting-hover' data-type='sign'>
+      <text class='setting-item-left' data-type='sign'>签名</text>
+      <image src="{{iconRightArrow}}" data-type='sign' class='setting-item-arrow'></image>
+      <text class='setting-item-right' data-type='sign'>{{loginUser.sign ? loginUser.sign : '未知'}}</text>
+    </view>
+  </view>
+    <button catchtap='logout' class='setting-logout-btn'>注销</button>
+</view>
